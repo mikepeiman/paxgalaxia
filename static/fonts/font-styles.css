@@ -1,0 +1,96 @@
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-Regular.ttf");
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-Extralight.ttf");
+    font-weight: 100;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-Light.ttf");
+    font-weight: 200;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-Medium.ttf");
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-SemiBold.ttf");
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-Bold.ttf");
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-ExtraBold.ttf");
+    font-weight: 800;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-Black.ttf");
+    font-weight: 900;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Cairo";
+    src: url("./Cairo/static/Cairo-Regular.ttf");
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("./Josefin_Sans/static/JosefinSans-Extralight.ttf");
+    font-weight: 100;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("./Josefin_Sans/static/JosefinSans-Light.ttf");
+    font-weight: 200;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("./Josefin_Sans/static/JosefinSans-Medium.ttf");
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("./Josefin_Sans/static/JosefinSans-SemiBold.ttf");
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("./Josefin_Sans/static/JosefinSans-Bold.ttf");
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("./Josefin_Sans/static/JosefinSans-ExtraBold.ttf");
+    font-weight: 800;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Josefin Sans";
+    src: url("./Josefin_Sans/static/JosefinSans-Black.ttf");
+    font-weight: 900;
+    font-style: normal;
+}

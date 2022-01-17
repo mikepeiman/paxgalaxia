@@ -1,0 +1,20 @@
+diff --git a/node_modules/canvas-sketch/lib/core/SketchManager.js b/node_modules/canvas-sketch/lib/core/SketchManager.js
+index d30ba6a..0bde5ed 100644
+--- a/node_modules/canvas-sketch/lib/core/SketchManager.js
++++ b/node_modules/canvas-sketch/lib/core/SketchManager.js
+@@ -519,15 +519,6 @@ class SketchManager {
+     // Currently update() is only focused on resizing,
+     // but later we will support other options like switching
+     // frames and such.
+-    const notYetSupported = [
+-      'animate'
+-    ];
+-
+-    Object.keys(opt).forEach(key => {
+-      if (notYetSupported.indexOf(key) >= 0) {
+-        throw new Error(`Sorry, the { ${key} } option is not yet supported with update().`);
+-      }
+-    });
+ 
+     const oldCanvas = this._settings.canvas;
+     const oldContext = this._settings.context;

@@ -1,0 +1,72 @@
+/* Write your global styles here, in SCSS syntax. Variables and mixins from the src/variables.scss file are available here without importing */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import 'svelte-hamburgers/scss/base';
+@import 'svelte-hamburgers/scss/types/spin';
+// @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,300;0,500;0,800;1,100;1,300;1,500;1,800&display=swap');
+
+// @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Newsreader:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Noto+Sans+Display:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Source+Sans+3:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Source+Serif+4:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Vollkorn:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import '../static/fonts/cairo.scss';
+@import '../static/fonts/eczar.scss';
+@import '../static/fonts/inter.scss';
+@import '../static/fonts/josefin-sans.scss';
+@import '../static/fonts/open-sans.scss';
+@import '../static/fonts/merriweather.scss';
+@import '../static/fonts/inconsolata.scss';
+@import '../static/fonts/newsreader.scss';
+@import '../static/fonts/fira-sans.scss';
+@import '../static/fonts/vollkorn.scss';
+@import '../static/fonts/montserrat.scss';
+// @import '../static/fonts/font-styles.css';
+
+@import './prose.scss';
+@layer components {
+    .articles-change {
+        grid-template-areas: 'intro posts'
+            'separator separator';
+        grid-template-columns: minmax(10rem, 3fr) minmax(10rem, 2fr);
+        // min-width: 10rem;
+        // width: 100%;
+    }
+    .blog-post-fancy-bg {
+        background: linear-gradient(90deg, var(--color-winterblues-300) 0%, var(--color-winterblues-100) 5%, rgba(0,0,0,1) 10%, rgba(0,0,0,1) 80%,var(--color-winterblues-100) 95%, var(--color-winterblues-300) 100%);
+    }
+}
+
+@layer utilities {
+    .delay-100 {
+        delay: 0.1s;
+    }
+
+    .delay-200 {
+        delay: 0.2s;
+    }
+
+    .delay-300 {
+        delay: 0.3s;
+    }
+
+    .delay-450 {
+        delay: 0.45s;
+    }
+}
+
+html {
+    max-width: 100vw;
+    width    : 100%;
+}
+
+body {
+    // background: rgba(14,20,35,1);
+}
+
+.main {
+    display        : flex;
+    flex-direction : column;
+    justify-content: center;
+    align-items    : center;
+    // font-family    : 'Montserrat', sans-serif;
+}

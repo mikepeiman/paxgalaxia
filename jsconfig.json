@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"$lib": ["src/lib"],
+			"$lib/*": ["src/lib/*"],
+			"$components": ["src/components"],
+			"$components/*": ["src/components/*"],
+			"$utils": ["src/utils"],
+			"$utils/*": ["src/utils/*"],
+			"$stores": ["src/stores"],
+			"$stores/*": ["src/stores/*"],
+			"$api": ["src/routes/api"],
+			"$api/*": ["src/routes/api/*"],
+			"$static": ["static"],
+			"$static/*": ["static/*"],
+		}
+	},
+	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte", "static/upload index.json copy.js", "static/index.json from dgraph code.js"]
+}

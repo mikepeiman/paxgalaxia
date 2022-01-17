@@ -1,0 +1,159 @@
+/* Variables and mixins declared here will be available in all other SCSS files */
+.post-title {
+    h1 {
+        // font-size        : 2.5rem;
+        // color            : var(--color-winterblues-700);
+        // line-height      : 3rem;
+        // // padding-bottom: 1rem;
+        // padding-top      : .5rem;
+        // font-weight      : 700;
+        // font-family      : 'Vollkorn', 'Josefin', 'Open Sans', sans-serif;
+        // margin           : 0;
+        // border: 2px solid var(--color-winterblues-300);
+        // background: linear-gradient(to right, var(--color-winterblues-300) 0%, var(--color-gray-900) 3%, black);
+    }
+
+}
+
+.post-card {
+    h1 {
+        font-size        : 1.75rem;
+        color            : var(--color-winterblues-300);
+        line-height      : 2rem;
+        // padding-bottom: 1rem;
+        padding-top      : 0.5rem;
+        font-weight      : 700;
+        font-family      : 'Vollkorn', 'Josefin', 'Open Sans', sans-serif;
+        margin           : 0;
+        // border: 2px solid var(--color-winterblues-300);
+        // background: linear-gradient(to right, var(--color-winterblues-300) 0%, var(--color-gray-900) 3%, black);
+    }
+
+}
+
+article.blog-post {
+
+    h1 {
+        font-size     : 2.25rem;
+        color         : var(--color-amber-500);
+        line-height   : 2.5rem;
+        padding-bottom: 0;
+        font-weight   : 700;
+        font-family   : 'Vollkorn', 'Josefin', 'Open Sans', sans-serif;
+        margin-top    : 1.5rem;
+
+    }
+
+    h2 {
+        font-size     : 1.75rem;
+        font-weight   : 700;
+        color         : var(--color-amber-500);
+        line-height   : 2rem;
+        padding-bottom: 1rem;
+        font-family   : 'Vollkorn', 'Josefin', 'Open Sans', sans-serif;
+        padding-bottom: 0;
+        margin-top    : 1.5rem;
+    }
+
+    h3 {
+        font-size            : 1.5rem;
+        font-weight          : 600;
+        color                : var(--color-amber-500);
+        line-height          : 1.5rem;
+        padding-bottom       : 1rem;
+        font-family          : 'Josefin', 'Open Sans', sans-serif;
+        padding-bottom       : 0;
+        margin-top           : 1.5rem;
+        text-decoration      : dashed;
+        text-decoration      : underline;
+        text-decoration-color: var(--color-amber-700);
+    }
+
+    h4 {
+        font-size            : 1.25rem;
+        font-weight          : 500;
+        color                : var(--color-amber-500);
+        line-height          : 1.5rem;
+        padding-bottom       : 1rem;
+        font-family          : 'Josefin', 'Open Sans', sans-serif;
+        padding-bottom       : 0;
+        margin-top           : 1.5rem;
+        text-decoration      : dashed;
+        text-decoration      : underline;
+        text-decoration-color: var(--color-amber-700);
+    }
+
+    h5 {
+        font-size            : 1.15rem;
+        font-weight          : 900;
+        color                : var(--color-amber-500);
+        line-height          : 1.5rem;
+        padding-bottom       : 1rem;
+        font-family          : 'Josefin', 'Open Sans', sans-serif;
+        padding-bottom       : 0;
+        margin-top           : 1.5rem;
+        text-decoration      : dashed;
+        text-decoration      : underline;
+        text-decoration-color: var(--color-amber-700);
+    }
+
+    h6 {
+        font-size            : 1rem;
+        font-weight          : 700;
+        color                : var(--color-amber-500);
+        line-height          : 1.5rem;
+        padding-bottom       : 1rem;
+        font-family          : 'Josefin', 'Open Sans', sans-serif;
+        padding-bottom       : 0;
+        margin-top           : 1.5rem;
+        text-decoration      : dashed;
+        text-decoration      : underline;
+        text-decoration-color: var(--color-amber-700);
+    }
+
+    p {
+        color        : var(--color-gray-200);
+        // opacity   : .9;
+        margin-bottom   : 1.5rem;
+        a {
+            color: var(--color-sky-400);
+        }
+    }
+
+    blockquote {
+        --quote-mark-size : 3rem;
+        --quote-mark-color: var(--color-sky-400);
+        --quote-mark-font : 'Newsreader';
+        color             : var(--color-sky-200);
+        opacity           : .9;
+        margin-top        : 1.5rem;
+        margin-bottom     : 2rem;
+        font-family       : 'Fira Sans', 'Merriweather', 'Vollkorn', 'Newsreader';
+        padding           : 1.5rem 0 0 1.5rem;
+        position          : relative;
+        width             : 100%;
+        height            : 100%;
+
+        &:before {
+            content    : '\201c';
+            font-size  : var(--quote-mark-size);
+            font-family: var(--quote-mark-font);
+            position   : absolute;
+            left       : 0;
+            top        : 1.25rem;
+            color      : var(--quote-mark-color);
+        }
+
+        &:after {
+            content    : '\201d';
+            position   : absolute;
+            display    : inline-block;
+            font-size  : var(--quote-mark-size);
+            font-family: var(--quote-mark-font);
+            color      : var(--quote-mark-color);
+            padding    : 0 0 0 0.5rem;
+            margin     : 1.5rem 0 -2rem 0;
+            line-height: 1rem;
+        }
+    }
+}

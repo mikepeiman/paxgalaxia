@@ -1,0 +1,97 @@
+
+// ----------------------------------------
+// Usage
+// ----------------------------------------
+// (1) Set 'variables' below to override the defaults
+//
+// (2) Include this mixin
+// @import 'mixin-fontface';
+// 
+// (3) Add this line for each weight & style, preferably in separate scss files:
+// @include fontFace( #{$font-name}<-weight>, <weight numbers>, <font style> );
+
+// variables
+$path-prefix: '/fonts' !default;
+$font-subfolder: '' !default;
+$font-name: 'generic-font-name' !default;
+$font-family: $font-name !default;
+$font-formats: EOT WOFF SVG TTF !default; // EOT WOFF WOFF2 SVG OTF TTF
+
+// append slash
+@if $font-subfolder not "" {
+  // $font-subfolder: "#{$font-subfolder}/";
+}
+
+// subfolders for each font format
+$EOT:   '#{$font-subfolder}EOT' !default;
+$WOFF:  '#{$font-subfolder}' !default;
+$WOFF2: '#{$font-subfolder}WOFF2' !default;
+$OTF:   '#{$font-subfolder}OTF' !default;
+$SVG:   '#{$font-subfolder}SVG' !default;
+$TTF:   '#{$font-subfolder}' !default;
+
+// list to contain formats
+$format-list: parseFontList($font-formats);
+
+//  ----------------------------------------------
+//  fontFace
+//
+//  Compiles to a font face rule.
+//  Uses variables set above.
+//  ----------------------------------------------
+@mixin fontFace( $filename, $fw, $fs ) {
+  // blank list to compile
+  $font-list: ();
+  // if format listed, add to compile list
+  @if index($font-formats, 'EOT') {
+    $font-list: append(
+      $font-list, 
+      unquote("url(#{$path-prefix}/#{$EOT}/#{$filename}.eot?#iefix) format('embedded-opentype')"), 
+      comma
+    );
+  }
+  @if index($font-formats, 'WOFF') {
+    $font-list: append(
+      $font-list, 
+      unquote("url(#{$path-prefix}/#{$WOFF}/#{$filename}.woff) format('woff')"), 
+      comma
+    );
+  }
+  @if index($font-formats, 'WOFF2') {
+    $font-list: append(
+      $font-list, 
+      unquote("url(#{$path-prefix}/#{$WOFF2}/#{$filename}.woff2) format('woff2'),"), 
+      comma
+    );
+  }
+  @if index($font-formats, 'SVG') {
+    $font-list: append(
+      $font-list, 
+      unquote("url(#{$path-prefix}/#{$SVG}/#{$filename}.svg##{$font-name}) format('svg')"), 
+      comma
+    );
+  }
+  @if index($font-formats, 'TTF') {
+    $font-list: append(
+      $font-list, 
+      unquote("url(#{$path-prefix}/#{$font-subfolder}/#{$filename}.ttf) format('truetype')"), 
+      comma
+    );
+  }
+  @if index($font-formats, 'OTF') {  
+    $font-list: append(
+      $font-list, 
+      unquote("url(#{$path-prefix}/#{$OTF}/#{$filename}.otf) format('opentype');"), 
+      comma
+    );
+  }
+  // create @font-face rule
+  @font-face {
+    font-family: $font-family;
+    font-weight: $fw;
+    font-style: $fs;
+    src:
+      $font-list
+      ;
+  }
+}

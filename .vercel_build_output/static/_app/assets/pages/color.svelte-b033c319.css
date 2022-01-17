@@ -1,0 +1,1 @@
+:root{--grid-tracks:24;--min-w:calc(90vw / var(--grid-tracks));--min-h:calc(90vh / var(--grid-tracks))}.grid-col.svelte-1g200cd{grid-template-columns:repeat(var(--grid-tracks),minmax(var(--min-h),1fr))}.grid-row.svelte-1g200cd{grid-template-rows:repeat(var(--grid-tracks),minmax(3rem,1fr))}

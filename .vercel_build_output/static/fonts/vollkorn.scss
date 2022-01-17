@@ -1,0 +1,56 @@
+// example font-face file
+
+/* -----------------------------------------
+  Geometrica Font
+------------------------------------------*/
+
+// Source:
+// -------
+// DesignCuts: Exceptional Best-Selling Fonts Complete
+// Latinotype
+
+// variables
+$path-prefix: '/fonts';
+$font-subfolder: 'Vollkorn/static';
+$font-name: 'Vollkorn';
+$font-family: 'Vollkorn';
+$font-formats: TTF;
+
+@import 'mixin-fontface';
+
+/* Thin */
+@include fontFace( #{$font-name}-Thin, 100, normal );
+/* Thin Italic */
+@include fontFace( #{$font-name}-ThinItalic, 100, italic );
+/* Extra Light */
+@include fontFace( #{$font-name}-ExtraLight, 200, normal );
+/* Extra Light Italic */
+@include fontFace( #{$font-name}-ExtraLightItalic, 200, italic );
+/* Light */
+@include fontFace( #{$font-name}-Light, 300, normal );
+/* Light Italic */
+@include fontFace( #{$font-name}-LightItalic, 300, italic );
+/* Book */
+@include fontFace( #{$font-name}-Regular, 400, normal );
+/* Book Italic */
+@include fontFace( #{$font-name}-RegularItalic, 400, italic );
+/* Regular */
+@include fontFace( #{$font-name}-Regular, 500, normal );
+/* Regular Italic */
+@include fontFace( #{$font-name}-RegularItalic, 500, italic );
+/* Medium */
+@include fontFace( #{$font-name}-Medium, 600, normal );
+/* Medium Italic */
+@include fontFace( #{$font-name}-MediumItalic, 600, italic );
+/* Bold */
+@include fontFace( #{$font-name}-Bold, 700, normal );
+/* Bold Italic */
+@include fontFace( #{$font-name}-BoldItalic, 700, italic );
+/* Extra Bold */
+@include fontFace( #{$font-name}-ExtraBold, 800, normal );
+/* Extra Bold Italic */
+@include fontFace( #{$font-name}-ExtraBoldItalic, 800, italic );
+/* Black */
+@include fontFace( #{$font-name}-Black, 900, normal );
+/* Black Italic */
+@include fontFace( #{$font-name}-BlackItalic, 900, italic );
