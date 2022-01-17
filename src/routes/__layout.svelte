@@ -18,10 +18,9 @@
 	:global(#app-layout) {
 		// height: 100vh;
 		// width: 100vw;
-		grid-template-rows: 5rem auto 80px;
+		grid-template-rows: auto 80px;
 		grid-template-columns: auto;
 		grid-template-areas:
-			' header '
 			' layout-main '
 			' footer ';
 	}

@@ -13,9 +13,9 @@
 	<div class="flex flex-col z-10 w-full h-full align-center justify-center text-center">
 		<h1 class="text-6xl md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display">MetaBrain</h1>
 		<div
-			class="flex flex-col py-8 my-4 w-full bg-gradient-to-r from-cyan-700 via-fuchsia-700 to-cyan-700 bg-opacity-50 text-xl md:text-2xl lg:text-3xl xl:text-4xl font-montserrat"
+			class="flex flex-col py-8 my-4 w-full bg-black bg-opacity-25 text-xl md:text-2xl lg:text-3xl xl:text-4xl font-montserrat"
 		>
-			<h2 class="p-2">One app to rule them all. One app to unite them.</h2>
+			<h2 class="p-2">One app to rule them all, one app to unite them;</h2>
 			<h2 class="p-2">One app to knowledge graph, to learn and track a lifetime.</h2>
 		</div>
 	</div>

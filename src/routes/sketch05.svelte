@@ -79,7 +79,7 @@
 		// w = window.innerWidth
 		let canvasContainer = document.getElementById('canvasContainer');
 		let canvasContainerWidth = canvasContainer.offsetWidth;
-		let canvasContainerHeight = canvasContainer.offsetHeight - 80;
+		let canvasContainerHeight = canvasContainer.offsetHeight ;
 		w = c.width = canvasContainerWidth;
 		console.log(`🚀 ~ file: sketch05.svelte ~ line 92 ~ onMount ~ w`, w);
 		h = c.height = canvasContainerHeight;
@@ -90,7 +90,7 @@
 
 		window.addEventListener('resize', function () {
 			let canvasContainerWidth = canvasContainer.offsetWidth;
-			let canvasContainerHeight = canvasContainer.offsetHeight - 80;
+			let canvasContainerHeight = canvasContainer.offsetHeight ;
 			w = c.width = canvasContainerWidth;
 			h = c.height = canvasContainerHeight;
 			setResponsiveParams() 
