@@ -1,1 +1,0 @@
-import{S as s,i as r,s as u,t as l,g as c,f,E as a,d as i}from"../../chunks/vendor-4c0561e8.js";function d(n){let t;return{c(){t=l("You found the fallback page for unknown routes.")},l(e){t=c(e,"You found the fallback page for unknown routes.")},m(e,o){f(e,t,o)},p:a,i:a,o:a,d(e){e&&i(t)}}}class h extends s{constructor(t){super();r(this,t,null,d,u,{})}}export{h as default};

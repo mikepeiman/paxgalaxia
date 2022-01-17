@@ -2,8 +2,8 @@ import preprocess from 'svelte-preprocess';
 import path from 'path'
 import { normalizePath } from 'vite'
 import adaptorVercel from '@sveltejs/adapter-vercel';
-import adaptorNode from '@sveltejs/adapter-node';
-import adaptorStatic from '@sveltejs/adapter-static';
+// import adaptorNode from '@sveltejs/adapter-node';
+// import adaptorStatic from '@sveltejs/adapter-static';
 import Icons from 'unplugin-icons/vite'
 import { promises as fs } from 'fs'
 // loader helpers
