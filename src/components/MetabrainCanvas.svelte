@@ -178,7 +178,7 @@
 			lines.push(line);
 		}
 
-		ctx.fillStyle = '#222';
+		ctx.fillStyle = '#000';
 		ctx.fillRect(0, 0, w, h);
 		ctx.lineCap = 'round';
 	}
