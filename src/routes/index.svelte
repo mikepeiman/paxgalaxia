@@ -1,23 +1,32 @@
 <script>
-	import Time from 'svelte-time';
+	// import Time from 'svelte-time';
 	import { onMount } from 'svelte';
 	import Sketch05 from './sketch05.svelte';
+	let mounted = false;
 	onMount(() => {
-		// resizeCanvases();
+		mounted = true;
 	});
-	// import { collections } from '@iconify/collections';
-	// console.log(`🚀 ~ file: index.svelte ~ line 18 ~ collections`, collections.fa);
-
-	import { page } from '$app/stores';
-	$: path = $page.url.pathname;
-	$: console.log(`🚀 ~ file: index.svelte ~ line 24 ~ path`, path);
 </script>
 
-<div id="sketchLayout" class="flex flex-col w-full h-full relative align-center justify-center">
-	<h1 class="text-6xl md:text-[5rem] lg:text-[7rem] xl:text-[10rem]  z-10 w-full text-center font-display">MetaBrain</h1>
-
-<div class="absolute w-screen h-screen top-0 left-0 z-0">
-	
+<!-- {#if mounted} -->
+<div class="flex flex-col w-screen h-screen relative align-center justify-center ">
+	<div class="flex flex-col z-10 w-full h-full align-center justify-center text-center">
+		<h1 class="text-6xl md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display">MetaBrain</h1>
+		<div
+			class="flex flex-col py-8 my-4 w-full bg-gradient-to-r from-cyan-700 via-fuchsia-700 to-cyan-700 bg-opacity-50 text-xl md:text-2xl lg:text-3xl xl:text-4xl font-montserrat"
+		>
+			<h2 class="p-2">One app to rule them all. One app to unite them.</h2>
+			<h2 class="p-2">One app to knowledge graph, to learn and track a lifetime.</h2>
+		</div>
+	</div>
+	<div class="absolute w-screen h-screen top-0 left-0 z-0">
 		<Sketch05 />
+	</div>
 </div>
-</div>
+<!-- {/if} -->
+
+<style global lang="scss">
+body {
+	background: #222;
+}
+</style>

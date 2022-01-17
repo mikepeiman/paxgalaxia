@@ -1,12 +1,7 @@
 <script>
-	export let hidePanel = false;
-	import Slider from '$components/Slider.svelte';
-	import ColorInput from '$components/ColorInput.svelte';
-	import Checkbox from '$components/Checkbox.svelte';
-	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
 	import random from 'canvas-sketch-util/random.js';
-	import CanvasManager from '$components/CanvasManager.svelte';
+	
 	const data = {
 		TITLE: 'Sketch05',
 		fps: 60,
