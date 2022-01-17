@@ -12,7 +12,9 @@
 <div class="footer grid {bgColor} {textColor} font-display text-base flex align-middle items-center justify-between h-20">
     <!-- <button class="logo btn btn-outline place-content-center mx-5 p-5 rounded-lg bg-blue-700">Footer</button> -->
     <nav class="social w-full flex items-end m-0 justify-center xl:pl-24">
-        <div class="text-winterblues-300">Made with <span class="text-rose-500 text-lg px-1.5">♥</span> by Mike Peiman.</div>
+        <a href="https://www.mikepeiman.dev" target="_blank">
+            <div class="text-winterblues-300">Made with <span class="text-rose-500 text-lg px-1.5">♥</span> by Mike Peiman.</div>
+        </a>
         <a href="https://github.com/mikepeiman" target="_blank" class="w-8 h-8  text-winterblues-300 hover:text-winterblues-700 transition m-0 "><Icon icon={icons.github} class="w-8 h-8 ml-2 -mt-1" /></a>
         <!-- <a href="/">Home</a>
         <a href="/about">About</a>
