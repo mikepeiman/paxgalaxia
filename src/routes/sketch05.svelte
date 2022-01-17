@@ -26,7 +26,7 @@
 			{ value: 3, label: '4' },
 			{ value: 4, label: '5' },
 			{ value: 5, label: '6' },
-			{ value: 6, label: '7' },
+			{ value: 6, label: '7' }
 		],
 		colorFunctionsIndex: 0
 	};
@@ -36,7 +36,7 @@
 		starter = {},
 		timeSinceLast = 0;
 
-		$: lines
+	$: lines;
 	const dirs = [
 		{ x: 1, y: 0, angle: 0 },
 		{ x: 0.5, y: 0.866, angle: 60 },
@@ -67,58 +67,82 @@
 		dimensions: [1280, 1280]
 	};
 	let c, ctx, w, h;
+	w = h = 1080;
 	let logCounter = 0;
-	function getElementSizing() {
-		let controlPanel = document.getElementById('controlPanel');
-		let controlPanelWidth = controlPanel.offsetWidth;
-		let sketchLayout = document.getElementById('sketchLayout');
-		let sketchLayoutWidth = sketchLayout.offsetWidth;
-		let canvasContainer = document.getElementById('canvasContainer');
-		let canvasContainerWidth = canvasContainer.offsetWidth;
-		let windowWidth = window.innerWidth;
-		let calculatedLayoutRemaining = sketchLayoutWidth  - controlPanelWidth;
-		let calculatedWindowRemaining = windowWidth - controlPanelWidth;
-
-		return { calculatedLayoutRemaining, calculatedWindowRemaining };
-	}
+	let evenX, evenY = 50;
+	$: evenX = Math.floor(w / data.minDist);
+   $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ data.minDist`, data.minDist)
+   $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ data - `, data)
+    // $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ w`, w)
+    $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ evenX`, evenX)
+	$: evenY = Math.floor(h / data.minDist);
+	$: evenSpacingArrayX = Array.from(Array(evenX), (x, i) => i * data.minDist);
+	$: evenSpacingArrayY = Array.from(Array(evenY), (x, i) => i * data.minDist);
 	onMount(() => {
 		// let { calculatedLayoutRemaining, calculatedWindowRemaining } = getElementSizing();
 		c = document.getElementById('c');
 		// w = window.innerWidth
 		let canvasContainer = document.getElementById('canvasContainer');
 		let canvasContainerWidth = canvasContainer.offsetWidth;
-		let canvasContainerHeight = canvasContainer.offsetHeight;
-		
-		// if (calculatedWindowRemaining < calculatedLayoutRemaining) {
-			// 	w = c.width = canvasContainer.width = calculatedWindowRemaining;
-			// } else if (canvasContainerWidth > calculatedLayoutRemaining) {
-				// 	w = c.width = calculatedLayoutRemaining;
-				// } else {
-					w = c.width = canvasContainerWidth;
-					h = c.height = canvasContainerHeight
-		// }
-		// h = c.height = sketchLayout.offsetHeight;
+		let canvasContainerHeight = canvasContainer.offsetHeight - 80;
+		w = c.width = canvasContainerWidth;
+		console.log(`🚀 ~ file: sketch05.svelte ~ line 92 ~ onMount ~ w`, w);
+		h = c.height = canvasContainerHeight;
+		setResponsiveParams() 
+
+
 		ctx = c.getContext('2d');
 
 		window.addEventListener('resize', function () {
-			let { calculatedLayoutRemaining, calculatedWindowRemaining } = getElementSizing();
-			let canvasContainer = document.getElementById('canvasContainer');
 			let canvasContainerWidth = canvasContainer.offsetWidth;
-
-			if (calculatedWindowRemaining < calculatedLayoutRemaining) {
-				w = c.width = canvasContainer.width = calculatedWindowRemaining;
-			} else if (canvasContainerWidth > calculatedLayoutRemaining) {
-				w = c.width = calculatedLayoutRemaining;
-			} else {
-				w = c.width = canvasContainerWidth;
-			}
-
-			h = c.height = sketchLayout.offsetHeight;
+			let canvasContainerHeight = canvasContainer.offsetHeight - 80;
+			w = c.width = canvasContainerWidth;
+			h = c.height = canvasContainerHeight;
+			setResponsiveParams() 
 			init();
 		});
 		init();
 		anim();
 	});
+
+	function setResponsiveParams() {
+		if (w <= 600) {
+			console.log(`🚀 ~ file: sketch05.svelte ~ line 96 ~ onMount ~ w < 600`, w < 600);
+			data.minDist = 12;
+			data.maxLines = 140;
+			data.minWidth = 1;
+			data.maxWidth = 2;
+		}
+		if (w > 600) {
+			console.log(`🚀 ~ file: sketch05.svelte ~ line 96 ~ onMount ~ w < 600`, w < 600);
+			data.minDist = 14;
+			data.maxLines = 200;
+			data.minWidth = 1;
+			data.maxWidth = 2;
+		}
+		if (w > 1200) {
+			console.log(`🚀 ~ file: sketch05.svelte ~ line 103 ~ onMount ~ w < 1200`, w < 1200);
+			data.minDist = 16;
+			data.maxLines = 300;
+			data.minWidth = 1;
+			data.maxWidth = 3;
+		}
+		if (w > 1800) {
+			console.log(`🚀 ~ file: sketch05.svelte ~ line 110 ~ onMount ~ w < 1800`, w < 1800);
+			data.minDist = 20;
+			data.maxLines = 400;
+			data.minWidth = 1;
+			data.maxWidth = 3;
+		}
+		if (w >= 2400) {
+			console.log(`🚀 ~ file: sketch05.svelte ~ line 117 ~ onMount ~ w >= 1800`, w >= 1800);
+			data.minDist = 24;
+			data.maxLines = 500;
+			data.minWidth = 1;
+			data.maxWidth = 4;
+		}
+	}
+
 	function makePositive(n) {
 		return n < 0 ? (n = n * -1) : (n = n);
 	}
@@ -130,12 +154,12 @@
 		// starter.x = modX
 		// starter.y = modY
 
-		let evenSpacingArrayX = [],
-			evenSpacingArrayY = [];
-		let evenX = Math.floor(w / data.minDist);
-		let evenY = Math.floor(h / data.minDist);
-		evenSpacingArrayX = Array.from(Array(evenX), (x, i) => i * data.minDist);
-		evenSpacingArrayY = Array.from(Array(evenY), (x, i) => i * data.minDist);
+		// let evenSpacingArrayX = [],
+		// 	evenSpacingArrayY = [];
+		// let evenX = Math.floor(w / data.minDist);
+		// let evenY = Math.floor(h / data.minDist);
+		// evenSpacingArrayX = Array.from(Array(evenX), (x, i) => i * data.minDist);
+		// evenSpacingArrayY = Array.from(Array(evenY), (x, i) => i * data.minDist);
 		starter.x = random.pick(evenSpacingArrayX);
 		// console.log(`🚀 ~ file: sketch05.svelte ~ line 153 ~ setStartCoords ~ starter.x`, starter.x)
 		starter.y = random.pick(evenSpacingArrayY);
@@ -165,7 +189,6 @@
 	}
 
 	function getColor(idx, x, y, alphaFactor) {
-		
 		// console.log(`🚀 ~ file: sketch05.svelte ~ line 117 ~ getColor ~ alphaFactor`, alphaFactor)
 		// let finalFactor;
 		// finalFactor = y / h + frame * alphaFactor
@@ -181,12 +204,14 @@
 			`hsla( ${(x / w) * 180 + frame - 120}, 80%, 50%, ${frame + 1 - (frame + 1) / frame} `,
 			`hsla( ${(x / w + y) * 180 + frame / 30}, 50%, 50%, ${alphaFactor} )`,
 			`hsla( ${(x / w + y / h) * frame}, 50%, 50%, ${alphaFactor} )`,
-			`hsla( ${(x / w + y / h) * frame}, 50%, 50%, ${alphaFactor} )`,
+			`hsla( ${(x / w + y / h) * frame}, 50%, 50%, ${alphaFactor} )`
 		];
-		let thisColor
+		let thisColor;
 		// thisColor = random.pick(colorFunctions);
-		data.randomColors ? thisColor = colorFunctions[idx] : thisColor = colorFunctions[data.colorFunctionsIndex]
-        // console.log(`🚀 ~ file: sketch05.svelte ~ line 187 ~ getColor ~ line.colorFunction`, line.colorFunction)
+		data.randomColors
+			? (thisColor = colorFunctions[idx])
+			: (thisColor = colorFunctions[data.colorFunctionsIndex]);
+		// console.log(`🚀 ~ file: sketch05.svelte ~ line 187 ~ getColor ~ line.colorFunction`, line.colorFunction)
 		// Math.random() > 0.5 ? thisColor = colorFunctions[data.colorFunctionsIndex] : thisColor = colorFunctions[(data.colorFunctionsIndex + 1) % colorFunctions.length];
 		return thisColor;
 		// console.log(`🚀 ~ file: sketch05.svelte ~ line 174 ~ getColor ~ thisColor`, thisColor)
@@ -201,7 +226,6 @@
 		++frame;
 		++logCounter;
 		if (logCounter > 1000) {
-
 			console.log(`🚀 ~ file: sketch05.svelte ~ line 191 ~ anim ~ lines`, lines);
 			logCounter = 0;
 		}
@@ -215,7 +239,7 @@
 		for (let i = 0; i < lines.length; ++i) {
 			// lines[i].bounce()
 			// lines[i].width *= 0.995;
-			lines[i].reverse ? (lines[i].width *= 0.998) : (lines[i].width *= 1.002);
+			lines[i].reverse ? (lines[i].width *= 0.995) : (lines[i].width *= 1.005);
 			// lines.splice(i, 1);
 			// --i;
 			// console.log(`🚀 ~ file: sketch05.svelte ~ line 125 ~ anim ~ lines[i]`, lines[i])
@@ -244,7 +268,12 @@
 			lines.push(line);
 
 			// cover the middle;
-			ctx.fillStyle = ctx.shadowColor = getColor(line.colorFunction.value, starter.x, starter.y, Math.random());
+			ctx.fillStyle = ctx.shadowColor = getColor(
+				line.colorFunction.value,
+				starter.x,
+				starter.y,
+				Math.random()
+			);
 			ctx.beginPath();
 			// ctx.arc(starter.x, starter.y, data.minWidth / 4, 0, Math.PI * 2);
 			// ctx.fill();
@@ -294,11 +323,11 @@
 		if (this.y <= 0 || this.y >= h) {
 			this.vy *= -1;
 		}
-		this.dirIndex = (this.dirIndex + 3 )% 6
-        // this.x <= 0 ? this.x = this.vx : this.x;
-        // this.x >= w ? this.x = w - this.vx : this.x;
-        // this.y <= 0 ? this.y = this.vy : this.y;
-        // this.y >= h ? this.y = h - this.vy : this.y;
+		this.dirIndex = (this.dirIndex + 3) % 6;
+		// this.x <= 0 ? this.x = this.vx : this.x;
+		// this.x >= w ? this.x = w - this.vx : this.x;
+		// this.y <= 0 ? this.y = this.vy : this.y;
+		// this.y >= h ? this.y = h - this.vy : this.y;
 	};
 	Line.prototype.step = function () {
 		let dead = false;
@@ -347,8 +376,7 @@
 			// add 2 children
 			if (lines.length < data.maxLines) lines.push(new Line(this));
 			// if (lines.length < data.maxLines && Math.random() < 0.5) lines.push(new Line(this));
-			if(Math.random() < data.lineBirthFactor){
-
+			if (Math.random() < data.lineBirthFactor) {
 				lines.push(new Line(this));
 				// remove a random line from lines array
 				let index = (Math.random() * lines.length) | 0;
@@ -369,11 +397,16 @@
 		//  velFactor = this.vx < 0.5 ? this.vx - this.vy : this.vy - this.vx;
 		// velFactor = this.vy < 0.5 ? this.vx - this.vy : this.vy - this.vx;
 		//  velFactor = this.vx - this.vy * this.vx; // this one does up-right, minimal effect
-		 velFactor = this.vx * this.vy * this.vy; // this one does bridges up left down, a bit messy?
+		velFactor = this.vx * this.vy * this.vy; // this one does bridges up left down, a bit messy?
 		// this.width > data.maxWidth / 2 ? (velFactor = this.width / 5) : (velFactor = this.width * 5); // this is pretty slick, all angles used
 		// this.width += velFactor / 3;
 		// this.width += velFactor / 3;
-		ctx.strokeStyle = ctx.shadowColor = getColor(this.colorFunction.value, this.x, this.y, velFactor);
+		ctx.strokeStyle = ctx.shadowColor = getColor(
+			this.colorFunction.value,
+			this.x,
+			this.y,
+			velFactor
+		);
 		ctx.beginPath();
 		ctx.lineWidth = this.width;
 		// console.log(`🚀 ~ file: sketch05.svelte ~ line 368 ~ anim ~ this.width`, this.width)
@@ -401,27 +434,6 @@
 <div class="flex h-full w-screen sketch">
 	<div id="canvasContainer" class="w-full">
 		<canvas id="c" />
-	</div>
-	<div class="controls flex flex-col p-4 hidden" id="controlPanel">
-		<CanvasManager {settings} {data} {hidePanel}>
-			<Slider
-				label="Min Distance"
-				bind:value={data.minDist}
-				min="4"
-				max="1200"
-				step="4"
-				color="text-sky-400"
-			/>
-			<Slider label="Number of lines" bind:value={data.maxLines} min="10" max="500" step="10" />
-			<Slider label="Speed" bind:value={data.speed} min=".2" max="20" step=".2" />
-			<Slider label="Line Birth" bind:value={data.lineBirthFactor} min=".1" max="1" step=".1" />
-			<Slider label="FPS" bind:value={data.fps} min="1" max="60" step="1" />
-			<Slider label="Maxdist Factor" bind:value={data.maxDistFactor} min="1" max="50" step="1" />
-			<Slider label="Min Width" bind:value={data.minWidth} min="1" max="100" step="1" />
-			<Slider label="Max Width" bind:value={data.maxWidth} min="1" max="100" step="1" />
-			<Checkbox label="Random color functions?" bind:checked={data.randomColors} />
-			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
-		</CanvasManager>
 	</div>
 </div>
 
