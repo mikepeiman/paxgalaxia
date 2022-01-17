@@ -14,10 +14,13 @@
 </script>
 
 <div id="sketchLayout" class="flex flex-col w-full h-full relative align-center justify-center">
-	<h1 class="text-6xl md:text-[5rem] lg:text-[7rem] xl:text-[10rem]  z-10 w-full text-center font-display">MetaBrain</h1>
+	<h1
+		class="text-6xl md:text-[5rem] lg:text-[7rem] xl:text-[10rem]  z-10 w-full text-center font-display"
+	>
+		MetaBrain
+	</h1>
 
-<div class="absolute w-screen h-screen top-0 left-0 z-0">
-	
+	<div class="absolute w-screen h-screen top-0 left-0 z-0">
 		<Sketch05 />
-</div>
+	</div>
 </div>
