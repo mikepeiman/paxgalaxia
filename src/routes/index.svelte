@@ -2,10 +2,10 @@
 	// import Time from 'svelte-time';
 	import { onMount } from 'svelte';
 	import Sketch05 from './sketch05.svelte';
-	let mounted = false;
-	onMount(() => {
-		mounted = true;
-	});
+	// let mounted = false;
+	// onMount(() => {
+	// 	mounted = true;
+	// });
 </script>
 
 <!-- {#if mounted} -->
@@ -24,9 +24,9 @@
 	</div>
 </div>
 <!-- {/if} -->
-
+<!-- 
 <style global lang="scss">
 body {
 	background: #222;
 }
-</style>
+</style> -->
