@@ -6,7 +6,7 @@
 
 	export let open;
 	import { page } from '$app/stores';
-	$: path = $page.path;
+	$: path = $page.url.pathname;
 
 	let links = [
 		{ title: 'Home', url: '/' },

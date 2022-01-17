@@ -4,7 +4,7 @@
 	import '../app.scss';
 	import Nav from '../components/Nav.svelte';
 	import { page } from '$app/stores';
-	$: path = $page.path;
+	$: path = $page.url.pathname;
 	$: console.log(`🚀 ~ file: index.svelte ~ line 24 ~ path`, path);
 	$: console.log(
 		`🚀 ~ file: index.svelte ~ line 24 ~ path includes blog : `,

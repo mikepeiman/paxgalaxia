@@ -6,7 +6,7 @@
 	// 	// const pageObj = await page;
 	// 	console.log(`🚀 ~ file: nav.svelte ~ line 6 ~ load ~ pageObj`, pageObj);
 	// 	const paramsObj = await params;
-	// 	let path = await page.path
+	// 	let path = await page.url.pathname
 	//     console.log(`🚀 ~ file: nav.svelte ~ line 10 ~ load ~ path`, path)
 	// 	// console.log(`🚀 ~ file: nav.svelte ~ line 8 ~ load ~ paramsObj`, paramsObj);
 	// 	// return { props: { page, path } };
@@ -22,7 +22,7 @@
 
 	$: console.log(`🚀 ~ file: nav.svelte ~ line 22 ~ open`, open);
 	import { page } from '$app/stores';
-	$: path = $page.path;
+	$: path = $page.url.pathname;
 
 	let links = [
 		{ title: 'Home', url: '/' },

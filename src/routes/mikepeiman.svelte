@@ -23,7 +23,7 @@
 	// console.log(`🚀 ~ file: index.svelte ~ line 18 ~ collections`, collections.fa);
 
 	import { page } from '$app/stores';
-	$: path = $page.path;
+	$: path = $page.url.pathname;
 	$: console.log(`🚀 ~ file: index.svelte ~ line 24 ~ path`, path);
 	// import Posts from '$components/Posts.svelte';
 	export let posts;

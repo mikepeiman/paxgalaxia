@@ -18,7 +18,7 @@
 	// saveData(settings, data)
 
 	import { page } from '$app/stores';
-	$: path = $page.path;
+	$: path = $page.url.pathname;
 	readData(settings, data);
 	$: saveData(settings, data);
 
