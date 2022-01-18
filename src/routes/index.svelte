@@ -72,10 +72,10 @@ $: email.length > 3 ? fadeMceError() : ""
 							target="_blank"
 							novalidate
 						>
-							<div class="flex items-center flex-col md:flex-row mt-12">
-								<!-- <h2 class="font-newsreader text-lg mb-2 md:mb-0 text-winterblues-200 mx-4">
-									Keep in touch for updates
-								</h2> -->
+							<div class="flex items-center flex-col  mt-12">
+								<h2 class="font-display text-lg mb-1 text-winterblues-200 mx-4">
+									Get on the list for updates and early access.
+								</h2>
 								<div
 									id="mc_embed_signup_scroll"
 									class="statement px-4 flex items-center justify-center relative z-50"
