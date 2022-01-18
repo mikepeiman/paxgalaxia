@@ -23,7 +23,7 @@
 			{ value: 5, label: '6' },
 			{ value: 6, label: '7' }
 		],
-		colorFunctionsIndex: 0
+		colorFunctionsIndex: 1
 	};
 
 	let lines = [],
@@ -178,16 +178,13 @@
 			lines.push(line);
 		}
 
-		ctx.fillStyle = '#000';
+		ctx.fillStyle = '#222';
 		ctx.fillRect(0, 0, w, h);
 		ctx.lineCap = 'round';
 	}
 
 	function getColor(idx, x, y, alphaFactor) {
-		// console.log(`🚀 ~ file: sketch05.svelte ~ line 117 ~ getColor ~ alphaFactor`, alphaFactor)
-		// let finalFactor;
-		// finalFactor = y / h + frame * alphaFactor
-		// finalFactor = alphaFactor - Math.floor(alphaFactor);
+
 		alphaFactor = 1;
 		const colorFunctions = [
 			`hsla( ${(x / w) * 360 + frame}, 80%, 50%, 0.5 )`,
@@ -202,17 +199,14 @@
 			`hsla( ${(x / w + y / h) * frame}, 50%, 50%, ${alphaFactor} )`
 		];
 		let thisColor;
-		// thisColor = random.pick(colorFunctions);
 		data.randomColors
 			? (thisColor = colorFunctions[idx])
 			: (thisColor = colorFunctions[data.colorFunctionsIndex]);
-		// console.log(`🚀 ~ file: sketch05.svelte ~ line 187 ~ getColor ~ line.colorFunction`, line.colorFunction)
-		// Math.random() > 0.5 ? thisColor = colorFunctions[data.colorFunctionsIndex] : thisColor = colorFunctions[(data.colorFunctionsIndex + 1) % colorFunctions.length];
 		return thisColor;
-		// console.log(`🚀 ~ file: sketch05.svelte ~ line 174 ~ getColor ~ thisColor`, thisColor)
 	}
 
 	function anim() {
+        
 		setTimeout(function () {
 			requestAnimationFrame(anim);
 		}, 1000 / data.fps);
@@ -267,7 +261,7 @@
 				line.colorFunction.value,
 				starter.x,
 				starter.y,
-				Math.random()
+				
 			);
 			ctx.beginPath();
 			// ctx.arc(starter.x, starter.y, data.minWidth / 4, 0, Math.PI * 2);
@@ -349,12 +343,6 @@
 		// make children :D
 		// if (this.dist <= 0 && this.width > data.minWidth) {
 		if (this.lineDist <= 0) {
-			// if (this.lineDist < 0) {
-			// 	this.lineDist, this.hexDist, this.x, this.y, this.vx, this.vy, dirs[this.dirIndex];
-			// 	// console.log(`🚀 ~ file: sketch05.svelte ~ line 329 ~ anim ~ this.lineDist, this.hexDist, this.x, this.y,	this.vx, this.vy, dirs[this.dirIndex]`, this.lineDist, this.hexDist, this.x, this.y,	this.vx, this.vy, dirs[this.dirIndex])
-			// 	// console.log(`🚀 ~ file: sketch05.svelte ~ line 329 ~ anim ~ this.x, this.y,	this.vx, this.vy, dirs[this.dirIndex]`, this.x, this.y,	this.vx, this.vy, dirs[this.dirIndex])
-			// 	// console.log(`🚀 ~ file: sketch05.svelte ~ line 327 ~ anim ~ this.lineDist < 0`, this.lineDist)
-			// }
 			let dir;
 			// dir = dirs[(Math.random() * dirs.length) | 0];
 			this.dirIndex++;
@@ -402,12 +390,15 @@
 			this.y,
 			velFactor
 		);
+        // ctx.save()
 		ctx.beginPath();
 		ctx.lineWidth = this.width;
 		// console.log(`🚀 ~ file: sketch05.svelte ~ line 368 ~ anim ~ this.width`, this.width)
 		ctx.moveTo(this.x, this.y);
 		ctx.lineTo(prevX, prevY);
 		ctx.stroke();
+        // ctx.restore()
+
 		// if (this.width < data.minWidth) {
 		// 	dead = true;
 		// }
@@ -418,12 +409,28 @@
 		}
 		if (this.hexDist <= 0) {
 			dead = true;
+                    
+
 		}
 		// if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
 		// 	dead = true;
 		// }
-		if (dead) return true;
+		if (dead) {
+            // ctx.strokeStyle = black;
+            // let reps = data.minDist / greaterOf(this.vx, this.vy)
+            // let newX = reps * this.vx;
+            // let newY = reps * this.vy;
+
+            // ctx.beginPath();
+            // ctx.moveTo(newX, newY);
+            // ctx.stroke()
+            return true;
+        } 
 	};
+
+    function greaterOf(a, b) {
+return a > b ? a : b;
+    }
 </script>
 
 <div class="flex h-full w-screen sketch">
