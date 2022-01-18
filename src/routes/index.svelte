@@ -51,7 +51,7 @@ $: email.length > 3 ? fadeMceError() : ""
 {#if mounted}
 	<div class="flex flex-col w-screen h-screen relative align-center justify-center">
 		<div
-			class="flex flex-col z-10 w-auto h-full align-center justify-center text-center bg-black/50"
+			class="flex flex-col z-10 w-auto h-full align-center justify-center text-center bg-black/40"
 		>
 			<h1 class="text-6xl md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display">MetaBrain</h1>
 			<div
@@ -73,9 +73,9 @@ $: email.length > 3 ? fadeMceError() : ""
 							novalidate
 						>
 							<div class="flex items-center flex-col md:flex-row mt-12">
-								<h2 class="font-newsreader text-lg mb-2 md:mb-0 text-winterblues-200 mx-4">
+								<!-- <h2 class="font-newsreader text-lg mb-2 md:mb-0 text-winterblues-200 mx-4">
 									Keep in touch for updates
-								</h2>
+								</h2> -->
 								<div
 									id="mc_embed_signup_scroll"
 									class="statement px-4 flex items-center justify-center relative z-50"

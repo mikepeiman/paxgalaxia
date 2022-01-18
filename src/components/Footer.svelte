@@ -9,7 +9,7 @@
 
 </script>
 
-<div class="footer grid bg-winterblues-700/10 {textColor} font-display text-base flex align-middle items-center justify-between h-20 z-10">
+<div class="footer grid bg-black/40 {textColor} font-display text-base flex align-middle items-center justify-between h-20 z-10">
     <!-- <button class="logo btn btn-outline place-content-center mx-5 p-5 rounded-lg bg-blue-700">Footer</button> -->
     <nav class="social w-full flex items-end m-0 justify-center xl:pl-24">
         <a href="https://www.mikepeiman.dev" target="_blank" class="pointer font-mono  text-winterblues-700 hover:text-winterblues-400 hover:font-bold">
