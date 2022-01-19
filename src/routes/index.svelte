@@ -1,8 +1,9 @@
 <script>
 import MetabrainCanvas from '$components/MetabrainCanvas.svelte';
 	import { onMount } from 'svelte';
+	let mounted = false
 	onMount(() => {
-		// resizeCanvases();
+		mounted= true
 	});
 	import { page } from '$app/stores';
 	$: path = $page.url.pathname;
@@ -48,19 +49,19 @@ import MetabrainCanvas from '$components/MetabrainCanvas.svelte';
 		}
 	}
 </script>
-
+{#if mounted}
 <!-- <svelte:window bind:innerWidth={windowInnerWidth} /> -->
 
 <!-- <main
 	class="homepage bg-black mt-20 flex flex-col self-center justify-items-center items-center w-full lg:text-sm lg:px-12 xl:px-24 2xl:w-4/5 2xl:px-12 3xl:w-3/4 3xl:px-36 mt-4 md:mt-20"
 > -->
-	<div class="flex flex-col  w-full h-full align-center justify-start text-center bg-black/40">
-		<h1 class="text-5xl mt-[12rem] md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display">MetaBrain</h1>
+	<div class="flex flex-col w-full h-full align-center justify-start text-center bg-black/40">
+		<h1 class="relative z-10 text-5xl mt-[12rem] md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display">MetaBrain</h1>
 		<div
-			class="flex flex-col relative py-8 my-4 w-auto mx-8 rounded-xl p-0 mx-6 md:p-8 md:mx-12  text-lg md:text-2xl lg:text-3xl xl:text-4xl font-montserrat"
+			class="flex relative z-10 flex-col relative py-8 my-4 w-auto mx-8 rounded-xl p-0 mx-6 md:p-8 md:mx-12  text-lg md:text-2xl lg:text-3xl xl:text-4xl font-montserrat"
 		>
-			<h2 class="p-2">One app to rule them all, one platform to unite them;</h2>
-			<h2 class="p-2">One knowledge graph to learn and plan and prosper for a lifetime.</h2>
+			<h2 class="p-2 relative z-10">One app to rule them all, one platform to unite them;</h2>
+			<h2 class="p-2 relative z-10">One knowledge graph to learn and plan and prosper for a lifetime.</h2>
 			<!-- Begin Mailchimp Signup Form -->
 			<div class="w-full flex align-center justify-center">
 				<!-- <div id="mc_embed_signup" class="w-1/2 py-6 border-t-2 border-b-2 border-sky-50"> -->
@@ -80,14 +81,14 @@ import MetabrainCanvas from '$components/MetabrainCanvas.svelte';
 							</h2>
 							<div
 								id="mc_embed_signup_scroll"
-								class="statement px-4 flex items-center justify-center relative z-50"
+								class="statement px-4 flex items-center justify-center relative z-10"
 							>
 								<div class="mc-field-group flex items-center justify-center relative w-auto">
 									<input
 										type="email"
 										bind:value={email}
 										name="EMAIL"
-										class="z-50 text-sm md:text-base xl:text-lg required email rounded bg-transparent focus:shadow-none focus:ring-0 outline-none border-none w-[26ch] -ml-4 text-gray-100 w-auto"
+										class="z-10 text-sm md:text-base xl:text-lg required email rounded bg-transparent focus:shadow-none focus:ring-0 outline-none border-none w-[26ch] -ml-4 text-gray-100 w-auto"
 										id="mce-EMAIL"
 										placeholder="email address"
 										on:blur={checkMCEError}
@@ -128,12 +129,12 @@ import MetabrainCanvas from '$components/MetabrainCanvas.svelte';
 				</div>
 			</div>
 		</div>
-		<div class="absolute w-screen h-screen top-0 left-0 bg-black">
+		<div class="absolute w-screen h-screen top-0 left-0 ">
 			<MetabrainCanvas />
 		</div>
 	</div>
 <!-- </main> -->
-
+{/if}
 <style lang="scss">
 	.statement {
 		line-height: 1.25em;

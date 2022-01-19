@@ -77,8 +77,8 @@
 		// let { calculatedLayoutRemaining, calculatedWindowRemaining } = getElementSizing();
 		c = document.getElementById('c');
 		// w = window.innerWidth
-		// let canvasContainer = document.getElementById('canvasContainer');
-		let canvasContainer = document.getElementById('app-layout');
+		let canvasContainer = document.getElementById('canvasContainer');
+		// let canvasContainer = document.getElementById('app-layout');
 		let canvasContainerWidth = canvasContainer.offsetWidth;
 		let canvasContainerHeight = canvasContainer.offsetHeight ;
 		w = c.width = canvasContainerWidth;
@@ -434,15 +434,16 @@ return a > b ? a : b;
     }
 </script>
 
-<div class="flex h-full w-screen sketch">
-	<div id="canvasContainer" class="w-full">
-		<canvas id="c" />
+<div class="relative flex -z-1 h-full w-screen sketch">
+	<div id="canvasContainer" class="relative w-full z-0">
+		<canvas id="c" class="relative -z-1" />
 	</div>
 </div>
 
 <style global lang="scss">
-	.sketch {
-		grid-area: sketch;
+
+	canvas {
+		z-index: -1;
 	}
 
 	.controls {

@@ -3,18 +3,20 @@
 	import Footer from '$components/Footer.svelte';
 </script>
 
-<div id="app-layout" class="grid w-full min-h-screen  bg-amber-100 transition">
-	<div class="layout-main bg-fuchsia-700 flex flex-col  items-center jutify-center">
+<div id="app-layout" class="grid w-full min-h-screen   transition">
+	<div class="layout-main  flex flex-col  items-center jutify-center">
 		<slot />
 	</div>
-	<Footer />
+	<!-- <div class="relative z-20"> -->
+		<Footer />
+	<!-- </div> -->
 </div>
 
 <style global lang="scss">
 	:global(#svelte) {
 		min-height: 100vh;
 		// height: 100%;
-		background: var(--color-deepreds-600);
+		// background: var(--color-deepreds-600);
 		// height: calc(100% - 80px);
 	}
 	:global(#app-layout) {
@@ -42,13 +44,13 @@
 		max-width: 100vw;
 		width: 100%;
 		// height: 100%;
-		background-color: pink;
+		// background-color: pink;
 	}
 
 	body {
 		// min-height: 100vh;
 		margin: 0;
-		background-color: darkturquoise;
+		// background-color: darkturquoise;
 		height: 90%;
 	}
 </style>
