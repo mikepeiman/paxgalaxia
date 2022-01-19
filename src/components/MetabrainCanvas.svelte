@@ -77,7 +77,8 @@
 		// let { calculatedLayoutRemaining, calculatedWindowRemaining } = getElementSizing();
 		c = document.getElementById('c');
 		// w = window.innerWidth
-		let canvasContainer = document.getElementById('canvasContainer');
+		// let canvasContainer = document.getElementById('canvasContainer');
+		let canvasContainer = document.getElementById('app-layout');
 		let canvasContainerWidth = canvasContainer.offsetWidth;
 		let canvasContainerHeight = canvasContainer.offsetHeight ;
 		w = c.width = canvasContainerWidth;

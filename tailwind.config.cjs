@@ -257,9 +257,9 @@ module.exports = {
       },
     },
     screens: {
-      'sm': '500px',
-      'md': '800px',
-      'lg': '1200px',
+      'sm': '480px',
+      'md': '700px',
+      'lg': '1100px',
       'xl': '1600px',
       '2xl': '2000px',
       '3xl': '2400px',

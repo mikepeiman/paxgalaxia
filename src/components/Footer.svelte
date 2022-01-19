@@ -9,10 +9,10 @@
 
 </script>
 
-<div class="footer grid bg-black/40 {textColor} font-display text-base flex align-middle items-center justify-between h-20 z-10">
+<div class="footer flex bg-black/40 {textColor} w-full self-end font-display text-base flex align-middle items-center justify-between h-20 z-10">
     <!-- <button class="logo btn btn-outline place-content-center mx-5 p-5 rounded-lg bg-blue-700">Footer</button> -->
     <nav class="social w-full flex items-end m-0 justify-center xl:pl-24">
-        <a href="https://www.mikepeiman.dev" target="_blank" class="pointer font-mono  text-winterblues-700 hover:text-winterblues-400 hover:font-bold">
+        <a href="https://www.mikepeiman.dev" target="_blank" class="pointer font-mono text-base  text-winterblues-700 hover:text-winterblues-400 hover:font-bold">
             <div class="">Made with <span class="text-rose-500 text-lg px-1.5">♥</span> by Mike Peiman.</div>
         </a>
         <a href="https://github.com/mikepeiman/metabrain" target="_blank" class="w-8 h-8  text-winterblues-700 hover:text-winterblues-400 transition m-0 "><Icon icon={icons.github} class="w-8 h-8 ml-2 -mt-1" /></a>
@@ -23,14 +23,14 @@
 </div>
 
 <style lang="scss">
-    :global(.footer) {
-        grid-area: footer;
-        display: grid;
-        grid-template-areas:
-        'logo social end';
-        grid-template-columns: 1fr 10fr 1fr;
-        min-height: 80px;
-    }
+    // :global(.footer) {
+    //     // grid-area: footer;
+    //     display: grid;
+    //     grid-template-areas:
+    //     'logo social end';
+    //     grid-template-columns: 1fr 10fr 1fr;
+    //     min-height: 80px;
+    // }
 
     .logo {
         grid-area: logo;

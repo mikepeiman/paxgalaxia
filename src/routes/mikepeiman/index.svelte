@@ -166,6 +166,7 @@
 						</div>
 					</div>
 				</div>
+				{#if selectedPosts}
 				{#each selectedPosts as post}
 					<a href={`/blog/${post.slug}`} class="no-underline relative">
 						<div
@@ -192,6 +193,7 @@
 						</div>
 					</a>
 				{/each}
+				{/if}
 			</div>
 		</div>
 	</section>
