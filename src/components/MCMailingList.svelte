@@ -13,7 +13,7 @@
             console.log(`🚀 ~ file: index.svelte ~ line 30 ~ fadeMceError ~ mceError length `, mceError.length);
         }
 		console.log(`🚀 ~ file: index.svelte ~ line 33 ~ fadeMceError ~ email`, email);
-		if (email.length > 3 && ![...mceError[1].classList][0].includes('fadeOut')) {
+		if (email.length > 3 && mceError.length > 1 && ![...mceError[1].classList][0].includes('fadeOut')) {
             console.log(`🚀 ~ file: MCMailingList.svelte ~ line 17 ~ fadeMceError ~ mceError[1].classList`, mceError[1].classList)
             console.log(`🚀 ~ file: MCMailingList.svelte ~ line 17 ~ fadeMceError ~ [...mceError[1].classList]`, [...mceError[1].classList])
             mceError[1].classList.add('fadeOut');
@@ -24,7 +24,7 @@
         console.log(`🚀 ~ file: MCMailingList.svelte ~ line 21 ~ onBlurMCE ~ mceResponses`, mceResponses)
 		// let mceError = document.getElementById('mce-error-response')
 		let mceError = document.querySelectorAll('.mce_inline_error');
-        if(mceError){
+        if(mceError.length > 1){
             console.log(`🚀 ~ file: index.svelte ~ line 30 ~ onBlurMCE ~ mceError`, mceError);
             console.log(`🚀 ~ file: index.svelte ~ line 30 ~ onBlurMCE ~ mceError length `, mceError.length);
             mceError[1].classList.remove('fadeOut');
@@ -39,6 +39,18 @@
     function signupSubmit() {
         let mceResponses = document.querySelectorAll('#mce-responses')
         console.log(`🚀 ~ file: MCMailingList.svelte ~ line 29 ~ signupSubmit ~ mceResponses`, mceResponses)
+        let close = document.createElement('button');
+            close.classList.add('close');
+            close.innerHTML = '&times;';
+  
+        if(mceResponses[0].children){
+            console.log(`🚀 ~ file: index.svelte ~ line 30 ~ signupSubmit ~ mceResponses[0].children`, mceResponses[0].children)
+            mceResponses[0].children[0].classList.remove('fadeOut');
+            setTimeout(() => {
+                mceResponses[0].children[0].appendChild(close);
+            }, 100);
+        }
+
     }
 
     function closeMessage(e) {
@@ -118,7 +130,7 @@
 					>
 				</div>
 				<div id="mce-responses" class="clear foot transition absolute left-0 top-0 text-lg w-full ">
-					<div class="response h-8 block fadeOut" id="mce-error-response">
+					<div class="response h-8 relative p-1 rounded-xl fadeOut" id="mce-error-response">
 						<Icon icon={icons.x} class="h-8 w-8 p-0 absolute text-white" on:click={(e) => closeMessage(e)} />
 					</div>
 					<div
@@ -178,14 +190,59 @@
 		width: 100%;
 		border-radius: 0.25rem;
 		#mce-error-response {
-			color: var(--color-white);
+			color: white;
 			display: flex;
 			width: 100%;
-			top: 1.5rem;
-			background: var(--color-amber-500);
+            position: relative;
+			top: 3rem;
+			// background: var(--color-amber-500);
 			height: auto;
 			padding: 0.5rem;
 			border-radius: 0.5rem;
+            &:before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--color-amber-500);
+                border-radius: 0.5rem;
+                opacity: 0.75;
+                z-index: -1;
+            }
+            // &:after {
+            //     content: "x";
+            //     display: flex;
+            //     align-items: center;
+            //     justify-content: center;
+            //     background: #222;
+            //     height: 2rem;
+            //     width: 2rem;
+            //     border-radius: 1rem;
+            //     cursor: pointer;
+            //     z-index: 99;
+            //     &:hover {
+            //         background: var(--color-winterblues-400);
+            //     }
+            // }
+            a {
+                background: var(--color-winterblues-400);
+                border-radius: .25rem;
+                padding: 4px;
+                margin: 0 8px;
+                font-size: 1rem;
+                color: #222;
+                font-weight: 500;
+                &:hover {
+                    background: var(--color-winterblues-500);
+                
+                }
+            }
+            .close {
+                width: 1rem;
+                height: 1rem;
+            }
 		}
 	}
 	#mc_embed_signup div.mce_inline_error {
