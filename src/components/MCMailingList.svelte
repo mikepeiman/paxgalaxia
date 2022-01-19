@@ -1,30 +1,68 @@
 <script>
-    let email = ""
-    	$: email.length > 3 ? fadeMceError() : '';
+	let email = '';
+	$: email.length > 3 ? fadeMceError() : '';
 	$: console.log(`🚀 ~ file: index.svelte ~ line 28 ~ email`, email);
-
+	// import jQuery from '$lib/jquery-3.6.0.min.js';
 	function fadeMceError() {
+        let mceResponses = document.querySelectorAll('#mce-responses')
+        console.log(`🚀 ~ file: MCMailingList.svelte ~ line 8 ~ fadeMceError ~ mceResponses`, mceResponses)
 		// let mceError = document.getElementById('mce-error-response')
 		let mceError = document.querySelectorAll('.mce_inline_error');
-		console.log(`🚀 ~ file: index.svelte ~ line 30 ~ fadeMceError ~ mceError`, mceError[1]);
-
+        if(mceError){
+            console.log(`🚀 ~ file: index.svelte ~ line 30 ~ fadeMceError ~ mceError`, mceError);
+            console.log(`🚀 ~ file: index.svelte ~ line 30 ~ fadeMceError ~ mceError length `, mceError.length);
+        }
 		console.log(`🚀 ~ file: index.svelte ~ line 33 ~ fadeMceError ~ email`, email);
-		if (email.length > 3) {
+		if (email.length > 3 && ![...mceError[1].classList][0].includes('fadeOut')) {
+            console.log(`🚀 ~ file: MCMailingList.svelte ~ line 17 ~ fadeMceError ~ mceError[1].classList`, mceError[1].classList)
+            console.log(`🚀 ~ file: MCMailingList.svelte ~ line 17 ~ fadeMceError ~ [...mceError[1].classList]`, [...mceError[1].classList])
+            mceError[1].classList.add('fadeOut');
 		}
-		mceError[1].classList.add('fadeOut');
 	}
-	function checkMCEError() {
+	function onBlurMCE() {
+        let mceResponses = document.querySelectorAll('#mce-responses')
+        console.log(`🚀 ~ file: MCMailingList.svelte ~ line 21 ~ onBlurMCE ~ mceResponses`, mceResponses)
 		// let mceError = document.getElementById('mce-error-response')
 		let mceError = document.querySelectorAll('.mce_inline_error');
-		console.log(`🚀 ~ file: index.svelte ~ line 30 ~ fadeMceError ~ mceError`, mceError[1]);
+        if(mceError){
+            console.log(`🚀 ~ file: index.svelte ~ line 30 ~ onBlurMCE ~ mceError`, mceError);
+            console.log(`🚀 ~ file: index.svelte ~ line 30 ~ onBlurMCE ~ mceError length `, mceError.length);
+            mceError[1].classList.remove('fadeOut');
+        }
 
-		console.log(`🚀 ~ file: index.svelte ~ line 33 ~ fadeMceError ~ email`, email);
-		if (email.length < 4) {
-			mceError[1].classList.remove('fadeOut');
-		}
+		// console.log(`🚀 ~ file: index.svelte ~ line 33 ~ onBlurMCE ~ email`, email);
+		// if (email.length < 4) {
+		// 	mceError[1].classList.remove('fadeOut');
+		// }
 	}
-    import Icon from '@iconify/svelte';
-    const icons = {
+
+    function signupSubmit() {
+        let mceResponses = document.querySelectorAll('#mce-responses')
+        console.log(`🚀 ~ file: MCMailingList.svelte ~ line 29 ~ signupSubmit ~ mceResponses`, mceResponses)
+    }
+
+    function closeMessage(e) {
+        e.target
+        console.log(`🚀 ~ file: MCMailingList.svelte ~ line 34 ~ closeMessage ~ e.target`, e.target)
+    }
+
+	// (function ($) {
+	// 	window.fnames = new Array();
+	// 	window.ftypes = new Array();
+	// 	fnames[0] = 'EMAIL';
+	// 	ftypes[0] = 'email';
+	// 	fnames[1] = 'FNAME';
+	// 	ftypes[1] = 'text';
+	// 	fnames[2] = 'LNAME';
+	// 	ftypes[2] = 'text';
+	// 	fnames[3] = 'ADDRESS';
+	// 	ftypes[3] = 'address';
+	// 	fnames[4] = 'PHONE';
+	// 	ftypes[4] = 'phone';
+	// })(jQuery);
+	// var $mcj = jQuery.noConflict(true);
+	import Icon from '@iconify/svelte';
+	const icons = {
 		fire1: 'wi:fire',
 		fire2: 'vaadin:fire',
 		fire3: 'mdi:fire',
@@ -64,10 +102,10 @@
 						type="email"
 						bind:value={email}
 						name="EMAIL"
-						class="z-10 text-sm md:text-base xl:text-lg required email rounded bg-transparent focus:shadow-none focus:ring-0 outline-none border-none w-[26ch] -ml-4 text-gray-100 w-auto"
+						class="z-10 text-sm md:text-base xl:text-lg required email rounded-xl bg-transparent focus:shadow-none focus:ring-0 outline-none border-none w-[26ch] -ml-4 text-gray-100 w-auto"
 						id="mce-EMAIL"
 						placeholder="email address"
-						on:blur={checkMCEError}
+						on:blur={onBlurMCE}
 					/>
 					<button
 						type="submit"
@@ -75,16 +113,19 @@
 						value="Subscribe"
 						id="mc-embedded-subscribe"
 						class="button text-sm w-[9ch] md:text-base xl:text-lg h-6 w-auto ml-4 -mr-4 p-5 rounded-r-xl flex items-center justify-center text-center bg-gray-900 hover:bg-gray-800 text-winterblues-400"
+                        on:click={signupSubmit}
 						>Subscribe</button
 					>
 				</div>
-				<div id="mce-responses" class="clear foot transition absolute left-0 top-0 text-lg ">
+				<div id="mce-responses" class="clear foot transition absolute left-0 top-0 text-lg w-full ">
+					<div class="response h-8 block fadeOut" id="mce-error-response">
+						<Icon icon={icons.x} class="h-8 w-8 p-0 absolute text-white" on:click={(e) => closeMessage(e)} />
+					</div>
 					<div
-						class="response h-8 block absolute -top-6 translate-y-8 w-60 text-lg flex items-center"
-						id="mce-error-response"
-					/>
-					<div class="response h-8 relative" id="mce-success-response" style="opacity:0;">
-						<Icon icon={icons.x} class="h-8 w-8 p-0 absolute text-white" />
+						class="response h-8 relative p-1 rounded-xl bg-emerald-500 w-full fadeOut"
+						id="mce-success-response"
+					>
+						<Icon icon={icons.x} class="h-8 w-8 p-0 absolute text-white" on:click={(e) => closeMessage(e)} />
 					</div>
 				</div>
 				<div style="position: absolute; left: -5000px;" aria-hidden="true">
@@ -98,21 +139,6 @@
 				type="text/javascript"
 				src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
 			<script type="text/javascript">
-				(function ($) {
-					window.fnames = new Array();
-					window.ftypes = new Array();
-					fnames[0] = 'EMAIL';
-					ftypes[0] = 'email';
-					fnames[1] = 'FNAME';
-					ftypes[1] = 'text';
-					fnames[2] = 'LNAME';
-					ftypes[2] = 'text';
-					fnames[3] = 'ADDRESS';
-					ftypes[3] = 'address';
-					fnames[4] = 'PHONE';
-					ftypes[4] = 'phone';
-				})(jQuery);
-				var $mcj = jQuery.noConflict(true);
 			</script>
 		</div>
 	</form>
@@ -138,18 +164,29 @@
 		}
 	}
 
-    #mc_embed_signup input:-internal-autofill-selected {
+	#mc_embed_signup input:-internal-autofill-selected {
 		background: rgba(0, 0, 0, 0) !important;
 		color: var(--color-winterblues-100) !important;
 	}
-    #mce-responses {
+	#mce-responses {
 		position: absolute;
 		display: flex;
 		height: auto;
 		top: 0;
 		left: 0;
 		// width: 370px;
-        border-radius: .25rem;
+		width: 100%;
+		border-radius: 0.25rem;
+		#mce-error-response {
+			color: var(--color-white);
+			display: flex;
+			width: 100%;
+			top: 1.5rem;
+			background: var(--color-amber-500);
+			height: auto;
+			padding: 0.5rem;
+			border-radius: 0.5rem;
+		}
 	}
 	#mc_embed_signup div.mce_inline_error {
 		background-color: var(--color-rose-400) !important;
@@ -162,13 +199,13 @@
 		// color: black !important;
 		font-weight: 500 !important;
 		top: 3rem;
-        margin: 0;
+		margin: 0;
 		position: absolute;
 		left: -16px;
 		text-align: left;
 		border-radius: 0;
 		height: auto;
-		transition: all .25s;
+		transition: all 0.25s;
 	}
 	#mc_embed_signup div#mce-success-response {
 		background-color: var(--color-gray-900) !important;
@@ -180,7 +217,7 @@
 		// color: black !important;
 		font-weight: 500 !important;
 		top: 3rem;
-        margin: 0;
+		margin: 0;
 		position: absolute;
 		left: 0;
 		text-align: left;
@@ -202,7 +239,7 @@
 
 	.fadeOut {
 		opacity: 0;
-		transition: all .25s;
+		transition: all 0.25s;
 	}
 
 	input:-webkit-autofill,
@@ -213,5 +250,4 @@
 		transition: background-color 5000s ease-in-out 0.2s;
 		caret-color: var(--color-winterblues-100);
 	}
-
 </style>

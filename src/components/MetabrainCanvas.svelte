@@ -216,7 +216,7 @@
 		++frame;
 		++logCounter;
 		if (logCounter > 1000) {
-			console.log(`🚀 ~ file: sketch05.svelte ~ line 191 ~ anim ~ lines`, lines);
+			// console.log(`🚀 ~ file: sketch05.svelte ~ line 191 ~ anim ~ lines`, lines);
 			logCounter = 0;
 		}
 
