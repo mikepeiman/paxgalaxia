@@ -3,8 +3,8 @@
 	import Footer from '$components/Footer.svelte';
 </script>
 
-<div id="app-layout" class="grid w-full min-h-screen   transition">
-	<div class="layout-main  flex flex-col  items-center jutify-center">
+<div id="app-layout" class="grid w-full min-h-screen  bg-black absolute top-0 left-0 z-90 transition">
+	<div class="layout-main  flex flex-col  items-center jutify-center bg-black/40">
 		<slot />
 	</div>
 	<!-- <div class="relative z-20"> -->

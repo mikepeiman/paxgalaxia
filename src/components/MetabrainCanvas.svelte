@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import random from 'canvas-sketch-util/random.js';
-	
+	export let mounted
 	const data = {
 		TITLE: 'Sketch05',
 		fps: 60,
@@ -64,15 +64,17 @@
 	let c, ctx, w, h;
 	w = h = 1080;
 	let logCounter = 0;
-	let evenX, evenY = 50;
+	let evenX,
+		evenY = 50;
 	$: evenX = Math.floor(w / data.minDist);
-   $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ data.minDist`, data.minDist)
-   $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ data - `, data)
-    // $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ w`, w)
-    $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ evenX`, evenX)
+	$: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ data.minDist`, data.minDist);
+	$: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ data - `, data);
+	// $: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ w`, w)
+	$: console.log(`🚀 ~ file: sketch05.svelte ~ line 73 ~ evenX`, evenX);
 	$: evenY = Math.floor(h / data.minDist);
 	$: evenSpacingArrayX = Array.from(Array(evenX), (x, i) => i * data.minDist);
 	$: evenSpacingArrayY = Array.from(Array(evenY), (x, i) => i * data.minDist);
+	// let mounted = false
 	onMount(() => {
 		// let { calculatedLayoutRemaining, calculatedWindowRemaining } = getElementSizing();
 		c = document.getElementById('c');
@@ -80,25 +82,25 @@
 		let canvasContainer = document.getElementById('canvasContainer');
 		// let canvasContainer = document.getElementById('app-layout');
 		let canvasContainerWidth = canvasContainer.offsetWidth;
-		let canvasContainerHeight = canvasContainer.offsetHeight ;
+		let canvasContainerHeight = canvasContainer.offsetHeight;
 		w = c.width = canvasContainerWidth;
 		console.log(`🚀 ~ file: sketch05.svelte ~ line 92 ~ onMount ~ w`, w);
 		h = c.height = canvasContainerHeight;
-		setResponsiveParams() 
-
+		setResponsiveParams();
 
 		ctx = c.getContext('2d');
 
 		window.addEventListener('resize', function () {
 			let canvasContainerWidth = canvasContainer.offsetWidth;
-			let canvasContainerHeight = canvasContainer.offsetHeight ;
+			let canvasContainerHeight = canvasContainer.offsetHeight;
 			w = c.width = canvasContainerWidth;
 			h = c.height = canvasContainerHeight;
-			setResponsiveParams() 
+			setResponsiveParams();
 			init();
 		});
 		init();
 		anim();
+		// mounted = true;
 	});
 
 	function setResponsiveParams() {
@@ -185,7 +187,6 @@
 	}
 
 	function getColor(idx, x, y, alphaFactor) {
-
 		alphaFactor = 1;
 		const colorFunctions = [
 			`hsla( ${(x / w) * 360 + frame}, 80%, 50%, 0.5 )`,
@@ -207,7 +208,6 @@
 	}
 
 	function anim() {
-        
 		setTimeout(function () {
 			requestAnimationFrame(anim);
 		}, 1000 / data.fps);
@@ -258,12 +258,7 @@
 			lines.push(line);
 
 			// cover the middle;
-			ctx.fillStyle = ctx.shadowColor = getColor(
-				line.colorFunction.value,
-				starter.x,
-				starter.y,
-				
-			);
+			ctx.fillStyle = ctx.shadowColor = getColor(line.colorFunction.value, starter.x, starter.y);
 			ctx.beginPath();
 			// ctx.arc(starter.x, starter.y, data.minWidth / 4, 0, Math.PI * 2);
 			// ctx.fill();
@@ -391,14 +386,14 @@
 			this.y,
 			velFactor
 		);
-        // ctx.save()
+		// ctx.save()
 		ctx.beginPath();
 		ctx.lineWidth = this.width;
 		// console.log(`🚀 ~ file: sketch05.svelte ~ line 368 ~ anim ~ this.width`, this.width)
 		ctx.moveTo(this.x, this.y);
 		ctx.lineTo(prevX, prevY);
 		ctx.stroke();
-        // ctx.restore()
+		// ctx.restore()
 
 		// if (this.width < data.minWidth) {
 		// 	dead = true;
@@ -410,38 +405,38 @@
 		}
 		if (this.hexDist <= 0) {
 			dead = true;
-                    
-
 		}
 		// if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
 		// 	dead = true;
 		// }
 		if (dead) {
-            // ctx.strokeStyle = black;
-            // let reps = data.minDist / greaterOf(this.vx, this.vy)
-            // let newX = reps * this.vx;
-            // let newY = reps * this.vy;
+			// ctx.strokeStyle = black;
+			// let reps = data.minDist / greaterOf(this.vx, this.vy)
+			// let newX = reps * this.vx;
+			// let newY = reps * this.vy;
 
-            // ctx.beginPath();
-            // ctx.moveTo(newX, newY);
-            // ctx.stroke()
-            return true;
-        } 
+			// ctx.beginPath();
+			// ctx.moveTo(newX, newY);
+			// ctx.stroke()
+			return true;
+		}
 	};
 
-    function greaterOf(a, b) {
-return a > b ? a : b;
-    }
+	function greaterOf(a, b) {
+		return a > b ? a : b;
+	}
 </script>
-
+<!-- {#if mounted} -->
 <div class="relative flex -z-1 h-full w-screen sketch">
 	<div id="canvasContainer" class="relative w-full z-0">
 		<canvas id="c" class="relative -z-1" />
 	</div>
 </div>
+<!-- {/if} -->
 
 <style global lang="scss">
-
+	.sketch,
+	#canvasContainer,
 	canvas {
 		z-index: -1;
 	}

@@ -1,14 +1,15 @@
 <script>
-import MetabrainCanvas from '$components/MetabrainCanvas.svelte';
+	import MetabrainCanvas from '$components/MetabrainCanvas.svelte';
 	import { onMount } from 'svelte';
-	let mounted = false
+	let mounted = false;
 	onMount(() => {
-		mounted= true
+		mounted = true;
 	});
 	import { page } from '$app/stores';
 	$: path = $page.url.pathname;
 	import Icon from '@iconify/svelte';
-	let email = ""
+import McMailingList from '$components/MCMailingList.svelte';
+	let email = '';
 	const icons = {
 		fire1: 'wi:fire',
 		fire2: 'vaadin:fire',
@@ -26,115 +27,42 @@ import MetabrainCanvas from '$components/MetabrainCanvas.svelte';
 	};
 	// let windowInnerWidth;
 	// $: windowInnerWidth && resizeCanvases();
-	$: email.length > 3 ? fadeMceError() : ""
-    $: console.log(`🚀 ~ file: index.svelte ~ line 28 ~ email`, email)
 
-	function fadeMceError() {
-		// let mceError = document.getElementById('mce-error-response')
-		let mceError = document.querySelectorAll('.mce_inline_error')
-        console.log(`🚀 ~ file: index.svelte ~ line 30 ~ fadeMceError ~ mceError`, mceError[1])
-
-        console.log(`🚀 ~ file: index.svelte ~ line 33 ~ fadeMceError ~ email`, email)
-		if(email.length > 3){}
-		mceError[1].classList.add('fadeOut')
-	}
-	function checkMCEError() {
-		// let mceError = document.getElementById('mce-error-response')
-		let mceError = document.querySelectorAll('.mce_inline_error')
-        console.log(`🚀 ~ file: index.svelte ~ line 30 ~ fadeMceError ~ mceError`, mceError[1])
-
-        console.log(`🚀 ~ file: index.svelte ~ line 33 ~ fadeMceError ~ email`, email)
-		if(email.length < 4){
-			mceError[1].classList.remove('fadeOut')
-		}
-	}
 </script>
-{#if mounted}
+
+<!-- {#if mounted} -->
 <!-- <svelte:window bind:innerWidth={windowInnerWidth} /> -->
 
 <!-- <main
 	class="homepage bg-black mt-20 flex flex-col self-center justify-items-center items-center w-full lg:text-sm lg:px-12 xl:px-24 2xl:w-4/5 2xl:px-12 3xl:w-3/4 3xl:px-36 mt-4 md:mt-20"
 > -->
-	<div class="flex flex-col w-full h-full align-center justify-start text-center bg-black/40">
-		<h1 class="relative z-10 text-5xl mt-[12rem] md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display">MetaBrain</h1>
-		<div
-			class="flex relative z-10 flex-col relative py-8 my-4 w-auto mx-8 rounded-xl p-0 mx-6 md:p-8 md:mx-12  text-lg md:text-2xl lg:text-3xl xl:text-4xl font-montserrat"
-		>
-			<h2 class="p-2 relative z-10">One app to rule them all, one platform to unite them;</h2>
-			<h2 class="p-2 relative z-10">One knowledge graph to learn and plan and prosper for a lifetime.</h2>
-			<!-- Begin Mailchimp Signup Form -->
-			<div class="w-full flex align-center justify-center">
-				<!-- <div id="mc_embed_signup" class="w-1/2 py-6 border-t-2 border-b-2 border-sky-50"> -->
-				<div id="mc_embed_signup" class="">
-					<form
-						action="https://mikepeiman.us7.list-manage.com/subscribe/post?u=2e0789618f3335c1fdeae5f80&amp;id=4f26dc006f"
-						method="post"
-						id="mc-embedded-subscribe-form"
-						name="mc-embedded-subscribe-form"
-						class="validate bg-none bg-transparent flex items-center justify-center w-auto"
-						target="_blank"
-						novalidate
-					>
-						<div class="flex items-center m-0 flex-col absolute top-[12rem] w-auto md:w-auto mt-12">
-							<h2 class="font-display text-base mb-1 text-winterblues-200 mx-0">
-								Get on the list for updates and early access.
-							</h2>
-							<div
-								id="mc_embed_signup_scroll"
-								class="statement px-4 flex items-center justify-center relative z-10"
-							>
-								<div class="mc-field-group flex items-center justify-center relative w-auto">
-									<input
-										type="email"
-										bind:value={email}
-										name="EMAIL"
-										class="z-10 text-sm md:text-base xl:text-lg required email rounded bg-transparent focus:shadow-none focus:ring-0 outline-none border-none w-[26ch] -ml-4 text-gray-100 w-auto"
-										id="mce-EMAIL"
-										placeholder="email address"
-										on:blur={checkMCEError}
-									/>
-									<button
-										type="submit"
-										name="subscribe"
-										value="Subscribe"
-										id="mc-embedded-subscribe"
-										class="button text-sm w-[9ch] md:text-base xl:text-lg h-6 w-auto ml-4 -mr-4 p-5 rounded-r-2xl flex items-center justify-center text-center bg-gray-900 hover:bg-gray-800 text-winterblues-400"
-										>Subscribe</button
-									>
-								</div>
-								<div id="mce-responses" class="clear foot transition absolute left-0 top-0 text-lg ">
-									<div
-										class="response h-8 block absolute -top-6 translate-y-8 w-60 text-lg flex items-center"
-										id="mce-error-response"
-									/>
-									<div class="response h-8 relative" id="mce-success-response" style="opacity:0;">
-										<Icon icon={icons.x} class="h-8 w-8 p-0 absolute text-white" />
-									</div>
-								</div>
-								<div style="position: absolute; left: -5000px;" aria-hidden="true">
-									<input
-										type="text"
-										name="b_2e0789618f3335c1fdeae5f80_4f26dc006f"
-										tabindex="-1"
-										value=""
-									/>
-								</div>
-								<div class="optionalParent">
-									<div class="clear foot">
-									</div>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div class="absolute w-screen h-screen top-0 left-0 ">
-			<MetabrainCanvas />
+<div class="flex flex-col w-full h-full align-center justify-start text-center">
+	<h1
+		class="relative z-10 text-5xl mt-[12rem] md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display "
+	>
+		MetaBrain
+	</h1>
+	<div
+		class="flex relative z-10 flex-col relative py-8 my-4 w-auto mx-8 rounded-lg p-0 mx-6 md:p-8 md:mx-12  text-lg md:text-2xl lg:text-3xl xl:text-4xl font-montserrat"
+	>
+		<h2 class="p-2 relative z-10">One app to rule them all, one platform to unite them;</h2>
+		<h2 class="p-2 relative z-10">
+			One knowledge graph to learn and plan and prosper for a lifetime.
+		</h2>
+		<!-- Begin Mailchimp Signup Form -->
+		<div class="w-full flex align-center justify-center">
+			<!-- <div id="mc_embed_signup" class="w-1/2 py-6 border-t-2 border-b-2 border-sky-50"> -->
+				<McMailingList />
+
 		</div>
 	</div>
+	<div class="absolute z-0 w-screen h-screen top-0 left-0 ">
+		<MetabrainCanvas {mounted} />
+	</div>
+</div>
 <!-- </main> -->
-{/if}
+
+<!-- {/if} -->
 <style lang="scss">
 	.statement {
 		line-height: 1.25em;
@@ -155,7 +83,6 @@ import MetabrainCanvas from '$components/MetabrainCanvas.svelte';
 			color: var(--color-gray-300);
 		}
 	}
-
 
 	:root {
 		--color-1: var(--color-fuchsia-300);
