@@ -50,8 +50,10 @@
 		);
 		// let mceError = document.getElementById('mce-error-response')
 		let mceError = document.querySelectorAll('.mce_inline_error');
-        let mceSuccessResponse = document.querySelector('#mce-success-response');
-         ![...mceSuccessResponse.classList].includes('fadeOut') ? mceSuccessResponse.classList.add('fadeOut') : '';
+		let mceSuccessResponse = document.querySelector('#mce-success-response');
+		![...mceSuccessResponse.classList].includes('fadeOut')
+			? mceSuccessResponse.classList.add('fadeOut')
+			: '';
 		if (mceError.length > 1) {
 			console.log(`🚀 ~ file: index.svelte ~ line 30 ~ onBlurMCE ~ mceError`, mceError);
 			console.log(
@@ -74,24 +76,33 @@
 		let closeIcon = document.querySelector('#mce-close');
 
 		console.log(`🚀 ~ file: MCMailingList.svelte ~ line 43 ~ signupSubmit ~ closeIcon`, closeIcon);
-        console.log(`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse`, mceSuccessResponse)
-        console.log(`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse.innerText`, mceSuccessResponse.innerText)
-        console.log(`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse.innerText.length`, mceSuccessResponse.innerText.length)
+		console.log(
+			`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse`,
+			mceSuccessResponse
+		);
+		console.log(
+			`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse.innerText`,
+			mceSuccessResponse.innerText
+		);
+		console.log(
+			`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse.innerText.length`,
+			mceSuccessResponse.innerText.length
+		);
 
-        mceSuccessResponse.classList.remove('fadeOut');
-        let mceError = document.querySelectorAll('.mce_inline_error');
-        console.log(`🚀 ~ file: MCMailingList.svelte ~ line 81 ~ signupSubmit ~ mceError`, mceError)
+		mceSuccessResponse.classList.remove('fadeOut');
+		let mceError = document.querySelectorAll('.mce_inline_error');
+		console.log(`🚀 ~ file: MCMailingList.svelte ~ line 81 ~ signupSubmit ~ mceError`, mceError);
 		if (mceError.length > 1) {
 			mceError[1].classList.add('fadeOut');
 		}
 		// if (mceSuccessResponse.innerText.length > 0) {
-			mceSuccessResponse.innerText =
-				'You have successfully subscribed to our mailing list, thank you!';
-			closeIcon.classList.remove('-right-[1000px]');
-			closeIcon.classList.remove('-top-[1000px]');
-			closeIcon.style = 'top: 3rem; right: 2px;';
-			closeIcon.classList.remove('fadeOut');
-			mceSuccessResponse.appendChild(closeIcon);
+		mceSuccessResponse.innerText =
+			'You have successfully subscribed to our mailing list, thank you!';
+		closeIcon.classList.remove('-right-[1000px]');
+		closeIcon.classList.remove('-top-[1000px]');
+		closeIcon.style = 'top: 3rem; right: 2px;';
+		closeIcon.classList.remove('fadeOut');
+		mceSuccessResponse.appendChild(closeIcon);
 		// }
 
 		if (mceErrorResponse) {
@@ -140,15 +151,23 @@
 		}, 300);
 		closeIcon.classList.add('fadeOut');
 		let mceResponses = document.querySelector('#mce-responses');
+		console.log(
+			`🚀 ~ file: MCMailingList.svelte ~ line 143 ~ closeMessage ~ mceResponses`,
+			mceResponses
+		);
 		let mceErrorResponse = document.querySelector('#mce-error-response');
-        let mceError = document.querySelectorAll('.mce_inline_error');
-        setTimeout(() => {
-            
-            mceErrorResponse.classList.add('fadeOut');
-            mceError.classList.add('fadeOut');
-            mceResponses.classList.add('fadeOut');
-        }, 50);
-        email = ""
+		console.log(
+			`🚀 ~ file: MCMailingList.svelte ~ line 145 ~ closeMessage ~ mceErrorResponse`,
+			mceErrorResponse
+		);
+		let mceError = document.querySelectorAll('.mce_inline_error');
+		console.log(`🚀 ~ file: MCMailingList.svelte ~ line 147 ~ closeMessage ~ mceError`, mceError);
+		setTimeout(() => {
+			mceErrorResponse.classList.add('fadeOut');
+			mceResponses.classList.add('fadeOut');
+			mceError[1] ? mceError[1].classList.add('fadeOut') : null;
+		}, 50);
+		email = '';
 	}
 
 	// (function ($) {
@@ -253,7 +272,7 @@
 <div
 	id="mce-close"
 	on:click={(e) => closeMessage(e)}
-    disabled
+	disabled
 	class="flex items-center  bg-amber-400 hover:bg-amber-200 rounded cursor-pointer z-90 top-0 right-[3rem] fadeOut justify-center absolute transition"
 >
 	<Icon icon={icons.x} class="h-8 w-8 p-0 text-black" />
@@ -283,9 +302,9 @@
 		background: rgba(0, 0, 0, 0) !important;
 		color: var(--color-winterblues-100) !important;
 	}
-    #mce-close {
-        z-index: 99;
-    }
+	#mce-close {
+		z-index: 99;
+	}
 	#mce-responses {
 		position: absolute;
 		display: flex;
@@ -396,7 +415,7 @@
 	#mc_embed_signup div#mce-success-response {
 		// background-color: var(--color-gray-900) !important;
 		width: 100%;
-        border-radius: .5rem;
+		border-radius: 0.5rem;
 		padding: 1rem;
 		height: auto;
 		font-size: 1rem;
@@ -408,7 +427,7 @@
 		position: absolute;
 		left: 0;
 		text-align: left;
-        z-index: 90;
+		z-index: 90;
 		// &:before {
 		// 	content: 'x';
 		// 	position: absolute;
