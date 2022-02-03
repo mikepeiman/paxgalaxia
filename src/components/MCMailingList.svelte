@@ -54,14 +54,16 @@
 		![...mceSuccessResponse.classList].includes('fadeOut')
 			? mceSuccessResponse.classList.add('fadeOut')
 			: '';
-		if (mceError.length > 1) {
+		if (mceError.length > 1 && email.length > 1) {
 			console.log(`🚀 ~ file: index.svelte ~ line 30 ~ onBlurMCE ~ mceError`, mceError);
 			console.log(
 				`🚀 ~ file: index.svelte ~ line 30 ~ onBlurMCE ~ mceError length `,
 				mceError.length
 			);
 			mceError[1].classList.remove('fadeOut');
-		}
+		} else {
+            mceError[1].classList.add('fadeOut');
+        }
 
 		// console.log(`🚀 ~ file: index.svelte ~ line 33 ~ onBlurMCE ~ email`, email);
 		// if (email.length < 4) {
@@ -75,19 +77,19 @@
 		let mceSuccessResponse = document.querySelector('#mce-success-response');
 		let closeIcon = document.querySelector('#mce-close');
 
-		console.log(`🚀 ~ file: MCMailingList.svelte ~ line 43 ~ signupSubmit ~ closeIcon`, closeIcon);
-		console.log(
-			`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse`,
-			mceSuccessResponse
-		);
-		console.log(
-			`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse.innerText`,
-			mceSuccessResponse.innerText
-		);
-		console.log(
-			`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse.innerText.length`,
-			mceSuccessResponse.innerText.length
-		);
+		// console.log(`🚀 ~ file: MCMailingList.svelte ~ line 43 ~ signupSubmit ~ closeIcon`, closeIcon);
+		// console.log(
+		// 	`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse`,
+		// 	mceSuccessResponse
+		// );
+		// console.log(
+		// 	`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse.innerText`,
+		// 	mceSuccessResponse.innerText
+		// );
+		// console.log(
+		// 	`🚀 ~ file: MCMailingList.svelte ~ line 77 ~ signupSubmit ~ mceSuccessResponse.innerText.length`,
+		// 	mceSuccessResponse.innerText.length
+		// );
 
 		mceSuccessResponse.classList.remove('fadeOut');
 		let mceError = document.querySelectorAll('.mce_inline_error');
@@ -98,10 +100,11 @@
 		// if (mceSuccessResponse.innerText.length > 0) {
 		mceSuccessResponse.innerText =
 			'You have successfully subscribed to our mailing list, thank you!';
+
 		closeIcon.classList.remove('-right-[1000px]');
 		closeIcon.classList.remove('-top-[1000px]');
 		closeIcon.style = 'top: 3rem; right: 2px;';
-		closeIcon.classList.remove('fadeOut');
+		// closeIcon.classList.remove('fadeOut');
 		mceSuccessResponse.appendChild(closeIcon);
 		// }
 
@@ -226,7 +229,7 @@
 						type="email"
 						bind:value={email}
 						name="EMAIL"
-						class="z-10 text-sm md:text-base xl:text-lg required email rounded-xl bg-transparent focus:shadow-none focus:ring-0 outline-none border-none w-[26ch] -ml-4 text-gray-100 w-auto"
+						class=" z-10 text-sm md:text-base xl:text-lg required email rounded-xl bg-transparent focus:shadow-none focus:ring-0 outline-none border-none w-[26ch] -ml-4 text-gray-100 w-auto"
 						id="mce-EMAIL"
 						placeholder="email address"
 						on:blur={onBlurMCE}
@@ -244,7 +247,7 @@
 				<div id="mce-responses" class="clear foot transition relative left-0 top-0 text-lg w-full ">
 					<div class="response h-8 relative p-1 rounded-xl fadeOut" id="mce-error-response" />
 					<div
-						class="response h-8 relative p-1 rounded-xl bg-emerald-500 w-full fadeOut z-90"
+						class="response h-8 relative p-1 rounded-xl bg-emerald-600 w-full fadeOut z-90"
 						id="mce-success-response"
 					>
 						<Icon
@@ -273,7 +276,7 @@
 	id="mce-close"
 	on:click={(e) => closeMessage(e)}
 	disabled
-	class="flex items-center  bg-amber-400 hover:bg-amber-200 rounded cursor-pointer z-90 top-0 right-[3rem] fadeOut justify-center absolute transition"
+	class="flex items-center  bg-winterblues-400 hover:bg-amber-200 rounded cursor-pointer z-90 top-0 right-[3rem] fadeOut justify-center absolute transition"
 >
 	<Icon icon={icons.x} class="h-8 w-8 p-0 text-black" />
 </div>
@@ -332,7 +335,7 @@
 				left: 0;
 				width: 100%;
 				height: 100%;
-				background: var(--color-amber-500);
+				background: var(--color-winterblues-500);
 				border-radius: 0.5rem;
 				opacity: 0.25;
 				z-index: -1;
@@ -360,9 +363,9 @@
 				background: rgba(255, 255, 255, 0.25);
 				margin: 0 8px;
 				font-size: 1rem;
-				color: #222;
+				color: #eee;
 				font-weight: 500;
-				border: 2px solid var(--color-emerald-500);
+				border: 2px solid var(--color-winterblues-500);
 				// &:before {
 				// 	content: '';
 				// 	position: absolute;

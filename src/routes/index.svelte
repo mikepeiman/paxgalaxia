@@ -38,14 +38,14 @@ import McMailingList from '$components/MCMailingList.svelte';
 > -->
 <div class="flex flex-col w-full h-full align-center justify-start text-center">
 	<h1
-		class="relative z-10 text-5xl mt-[12rem] md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display "
+		class="relative z-10 text-5xl mt-[12rem] md:text-[5rem] lg:text-[7rem] xl:text-[10rem] font-display"
 	>
 		MetaBrain
 	</h1>
 	<div
 		class="flex relative z-10 flex-col relative py-8 my-4 w-auto mx-8 rounded-lg p-0 mx-6 md:p-8 md:mx-12  text-lg md:text-2xl lg:text-3xl xl:text-4xl font-montserrat"
 	>
-		<h2 class="p-2 relative z-10">One app to rule them all, one platform to unite them;</h2>
+		<h2 class="p-2 relative z-10 ">One app to rule them all, one platform to unite them;</h2>
 		<h2 class="p-2 relative z-10">
 			One knowledge graph to learn and plan and prosper for a lifetime.
 		</h2>
