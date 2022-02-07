@@ -1,23 +1,37 @@
 <script>
 	// import onMoun
 	import { onMount } from 'svelte';
-	let w, h, canvas, ctx, cx, cy, theta = 0;
+	let w,
+		h,
+		canvas,
+		ctx,
+		cx,
+		cy,
+		theta = 0,
+        frame = 0,
+        alpha = 0,
+        modAlpha = 1;
 	$: console.log(w, h);
 	$: w, h;
 	$: cx = w / 2;
 	$: cy = h / 2;
-	let mounted = false;
+	let mounted = false,
+		animating = false;
 	// initialize context 2d
 
 	let radius = Math.min(w, h) / 4;
-
+	let data = {
+		fps: 60
+	};
 	onMount(() => {
 		mounted = true;
 		init();
 	});
 	function onClick() {
 		console.log('click');
-		drawDot();
+		// drawDot();
+		animating ? (animating = false) : (animating = true);
+		animating ? animate() : null;
 	}
 
 	function init() {
@@ -37,37 +51,52 @@
 
 	function drawDot() {
 		theta = theta + Math.PI / 100;
-        console.log(`🚀 ~ file: index.svelte ~ line 40 ~ drawDot ~ Math.PI / 100`, Math.PI / 100)
-        console.log(`🚀 ~ file: index.svelte ~ line 40 ~ drawDot ~ theta`, theta)
 		let x = cx + radius * Math.cos(theta);
 		let y = cy + radius * Math.sin(theta);
+        ctx.fillStyle = '#222';
+        ctx.fillRect(0, 0, w, h);
+		ctx.save();
 		ctx.beginPath();
 		ctx.arc(x, y, 40, 0, 2 * Math.PI);
-		ctx.fillStyle = '#22f';
+		ctx.fillStyle = `hsla(${frame }, 100%, 50%, ${bounceAlpha()})`;
 		ctx.fill();
+
+		ctx.restore();
+
 	}
+
+    function bounceAlpha() {
+        alpha >= 1 ? modAlpha = -1 : null
+        alpha <= 0 ? modAlpha = 1 : null
+        let inc = .007 * modAlpha
+        // console.log(`🚀 ~ file: index.svelte ~ line 67 ~ bounceAlpha ~ inc`, inc)
+        alpha += inc; 
+
+        return alpha.toFixed(3)
+    }
 
 	function draw() {
 		ctx.strokeStyle = '#fff';
-
-		// ctx.beginPath();
-		// ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
-		// console.log(`🚀 ~ file: index.svelte ~ line 30 ~ draw ~ cx, cy, radius`, cx, cy, radius);
-		// ctx.stroke();
-		// draw a dot that orbits the center
 		ctx.beginPath();
 		ctx.arc(cx, cy, radius / 4, 0, 2 * Math.PI);
 		ctx.fillStyle = '#fff';
 		ctx.fill();
-
-		// animate()
-		// canvas;
-		// console.log(`🚀 ~ file: index.svelte ~ line 26 ~ draw ~ canvas`, canvas);
 	}
 	// animate the circle
 	function animate() {
-		requestAnimationFrame(animate);
-		drawDot();
+		if (animating) {
+			setTimeout(function () {
+				requestAnimationFrame(animate);
+                ctx.save()
+				drawDot();
+                // ctx.clearRect(0, 0, w, h);
+                ctx.restore()
+                // ctx.fillRect(0,0,w,h);
+                ++frame;
+			}, 1000 / data.fps);
+		} else {
+			init();
+		}
 	}
 </script>
 
