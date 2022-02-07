@@ -1,5 +1,5 @@
 <script context="module">
-	export async function load({ page }) {
+	export async function load({ params }) {
 		console.log(`running fetchPokemon API call`);
 		const url = 'https://pokeapi.co/api/v2/pokemon?limit=898/';
 		const res = await fetch(url);
