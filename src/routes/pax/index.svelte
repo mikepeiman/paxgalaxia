@@ -69,27 +69,16 @@
 	}
 
 	function drawShips(star) {
+        let x = 1, y = 1
         for(let i = 0; i < star.ships; i++) {
-            // let x = star.x + Math.cos(theta) * star.radius;
-            // let y = star.y + Math.sin(theta) * star.radius;
-            // ctx.beginPath();
-            // ctx.arc(x, y, star.radius / 2, 0, Math.PI * 2);
-            // ctx.fillStyle = `hsla(${star.hue}, 100%, 50%, ${alpha})`;
-            // ctx.fill();
-            theta = theta + Math.PI / 100 + i;
-            let x = star.x + (star.radius + 10) * Math.cos(theta);
-            let y = star.y + (star.radius + 10) * Math.sin(theta);
-            // ctx.fillStyle = '#222';
-            // ctx.fillRect(0, 0, w, h);
-            // ctx.save();
+            theta = theta +  i / 50000;
+            x = star.x + (star.radius + 10) * Math.cos(theta + i ); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
+            y = star.y + (star.radius + 10) * Math.sin(theta + i );
             ctx.beginPath();
             ctx.arc(x, y, 4, 0, 2 * Math.PI);
             ctx.fillStyle = `hsla(${star.hue}, 100%, 50%, 1)`;
             ctx.fill();
-            // ctx.restore();
         }
-        // star.ships
-        // console.log(`🚀 ~ file: index.svelte ~ line 73 ~ drawShips ~ star.ships`, star.ships)
 	}
 
 	function bounceAlpha() {
