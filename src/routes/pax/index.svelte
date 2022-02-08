@@ -7,6 +7,7 @@
 		ctx,
 		cx,
 		cy,
+        stars = [],
 		theta = 0,
         frame = 0,
         alpha = 0,
@@ -46,8 +47,26 @@
 		ctx = canvas.getContext('2d');
 		ctx.fillRect(0, 0, w, h);
 		canvas.addEventListener('click', onClick);
-		draw();
+        stars = setStars(10)
+        stars.forEach(star => {
+            draw(star);
+
+        })
 	}
+
+    function setStars(num) {
+        stars = [];
+        for (let i = 0; i < num; i++) {
+            stars.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                radius: Math.random() * 30,
+                hue: Math.random() * 360
+            });
+        }
+        return stars;
+
+    }
 
 	function drawDot() {
 		theta = theta + Math.PI / 100;
@@ -75,11 +94,10 @@
         return alpha.toFixed(3)
     }
 
-	function draw() {
-		ctx.strokeStyle = '#fff';
+	function draw(star) {
 		ctx.beginPath();
-		ctx.arc(cx, cy, radius / 4, 0, 2 * Math.PI);
-		ctx.fillStyle = '#fff';
+		ctx.arc(star.x, star.y, star.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = `hsla(${star.hue}, 50%, 50%, 1)`;
 		ctx.fill();
 	}
 	// animate the circle
@@ -98,6 +116,14 @@
 			init();
 		}
 	}
+
+    
+	class Vector {
+		constructor(x, y) {
+			this.x = x;
+			this.y = y;
+		}
+    }
 </script>
 
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
