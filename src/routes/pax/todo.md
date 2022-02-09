@@ -11,3 +11,5 @@
 - implement drag-and-drop star placement for map creation
 - allow to save permanent maps
 - implement drag-vector ship movement between stars
+- implement multiple player identities and zone-of-control background colors
+- implement attack dynamics between stars of opposing players
