@@ -60,6 +60,7 @@
 		"svelte-select": "^4.4.7",
 		"svelte-time": "^0.6.1",
 		"tippy.js": "^6.3.7",
-		"tweakpane": "^3.0.7"
+		"tweakpane": "^3.0.7",
+		"zimjs": "^12.0.0"
 	}
 }
