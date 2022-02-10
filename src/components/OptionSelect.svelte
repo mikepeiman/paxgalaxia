@@ -24,6 +24,9 @@
 </Param>
 
 <style>
+	.checkbox[checkbox] {
+		transition: 0.2s;
+	}
 	.themed {
 		--border: 3px solid var(--color-sky-600);
         --border-focus-color: var(--color-sky-100);
