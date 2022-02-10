@@ -3,13 +3,13 @@
 	import Checkbox from 'svelte-checkbox'
 
 	export let label = '';
-
+	export let duration = ''
 	export let checked = false;
 </script>
 
 <Param {label}>
 	<div class="py-2">
-		<Checkbox bind:checked={checked} primaryColor="#11cc55" size="2rem"/>
+		<Checkbox bind:checked={checked} duration="400" primaryColor="#11cc55" size="2rem"/>
 	</div>
 	<!-- <input type='checkbox' bind:checked={checked} /> -->
 </Param>

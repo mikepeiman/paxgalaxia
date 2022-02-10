@@ -2,7 +2,7 @@
 	// import components
 	import CanvasManager from '$components/CanvasManager.svelte';
 	import Slider from '$components/Slider.svelte';
-	import Checkbox from '$components/Checkbox.svelte';
+	import Checkbox from '$components/Checkbox-import.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
 	let w,
@@ -219,7 +219,7 @@
 			<Slider label="Orbit X mod" bind:value={data.orbitXmod} min=".1" max="5" step=".1" />
 			<Slider label="Orbit Y mod" bind:value={data.orbitYmod} min=".1" max="5" step=".1" />
 
-			<Checkbox label="Random color functions?" bind:checked={data.randomColors} />
+			<Checkbox duration=200 label="Random color functions?" bind:checked={data.randomColors} />
 			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
 		</CanvasManager>
 	</div>
