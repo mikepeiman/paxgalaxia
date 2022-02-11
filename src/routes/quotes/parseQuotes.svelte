@@ -63,7 +63,8 @@
 		const htmlDoc = parser.parseFromString(doc, 'text/html');
 		let divs = htmlDoc.getElementsByTagName('div');
 		quotesArrays = isolateQuotationBlocks(divs);
-		for (let i = 0; i < 122; i++) { 
+        console.log(`🚀 ~ file: parseQuotes.svelte ~ line 66 ~ parseFile ~ quotesArrays`, quotesArrays.length, quotesArrays)
+		for (let i = 0; i < quotesArrays.length; i++) { 
 			// 54-64 gives the meical journal quotes
 			let item = stringifyArray(quotesArrays[i]);
 			if (item.includes('\\r') || item.includes('\\n')) {

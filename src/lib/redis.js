@@ -23,3 +23,13 @@ let schema = new Schema(
     dataStructure: 'JSON'
 )
 }
+
+export async function createHero(data) {
+    await connect()
+
+    const repository = new Repository(schema, client)
+
+    const hero = repository.createEntity(data)
+
+    const id = await repository.save(hero)
+}

@@ -47,8 +47,11 @@ function getQuoteBody(workingQuoteObject) {
     return workingQuoteObject;
 }
 function authorContainsDash(author){
+    console.log(`🚀 ~ file: parseQuotes.js ~ line 50 ~ authorContainsDash ~ author`, author)
     if(author.includes("-")){
-        return author.split("-")[1].trim()
+        let res = author.split("-")[1].trim()
+        console.log(`🚀 ~ file: parseQuotes.js ~ line 53 ~ authorContainsDash ~ res`, res)
+        return res
     }
     return author.trim()
 }
@@ -58,15 +61,20 @@ function getQuoteAuthor(workingQuoteObject) {
     // console.log(remainingText)
     let textEnd = remainingText.length;
     let separatorValue = findNextSeparatingCharacter(remainingText);
-    if (separatorValue > -1 && separatorValue) {
+    console.log(`🚀 ~ file: parseQuotes.js ~ line 60 ~ getQuoteAuthor ~ author`, author)
+    console.log(`🚀 ~ file: parseQuotes.js ~ line 62 ~ getQuoteAuthor ~ remainingText`, remainingText)
+    console.log(`🚀 ~ file: parseQuotes.js ~ line 62 ~ getQuoteAuthor ~ separatorValue`, separatorValue)
+    if (separatorValue > -1 && separatorValue && author) {
+        console.log(`🚀 ~ file: parseQuotes.js ~ line 65 ~ getQuoteAuthor ~ separatorValue > -1 && separatorValue`, (separatorValue > -1 && separatorValue))
         author = authorContainsDash(author)
         author = Array.from(remainingText).splice(0, separatorValue).join(String());
 
         remainingText = Array.from(remainingText).splice(separatorValue, textEnd).join(String()).trim();
         workingQuoteObject['remainingText'] = remainingText
     } else {
-        // console.log('\x1b[41m%s\x1b[0m', 'parse.js line:45 separatorValue', separatorValue);
+        console.log('\x1b[41m%s\x1b[0m', 'parse.js line:45 separatorValue', separatorValue);
         author = authorContainsDash(workingQuoteObject['remainingText'])
+        // author = authorContainsDash(remainingText)
         workingQuoteObject['author'] = author
         workingQuoteObject['remainingText'] = false
         workingQuoteObject['parsingComplete'] = true

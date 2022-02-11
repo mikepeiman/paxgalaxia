@@ -22,7 +22,6 @@
 	$: cy = h / 2;
 	let mounted = false,
 		animating = false;
-	// initialize context 2d
 	let counter = 0;
 	let radius = Math.min(w, h) / 4;
 	let data = {
