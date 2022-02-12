@@ -5,6 +5,7 @@
 	import Checkbox from '$components/Checkbox-import.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
+	import Grid from './grid.svelte'
 	let w,
 		h,
 		canvas,
@@ -99,7 +100,7 @@
 				Math.random > 0.75 ? Math.random() + 0.25 : Math.random() - 0.25
 			})`;
 			let ship = new Ship(Math.random() * 5, color, Math.random() * 5);
-			console.log(`🚀 ~ file: index.svelte ~ line 79 ~ generateShips ~ ship`, ship);
+			// console.log(`🚀 ~ file: index.svelte ~ line 79 ~ generateShips ~ ship`, ship);
 			ships = [...ships, ship];
 		}
 		star.ships = ships;
@@ -107,11 +108,11 @@
 	}
 
 	function drawShips(star) {
-		console.log(`🚀 ~ file: index.svelte ~ line 87 ~ drawShips ~ star`, star);
+		// console.log(`🚀 ~ file: index.svelte ~ line 87 ~ drawShips ~ star`, star);
 		let x = 1,
 			y = 1;
 		let ships = star.ships;
-		console.log(`🚀 ~ file: index.svelte ~ line 86 ~ drawShips ~ ships`, ships);
+		// console.log(`🚀 ~ file: index.svelte ~ line 86 ~ drawShips ~ ships`, ships);
 		star['ships'].forEach((ship, i) => {
 			theta = theta + (i / 10000) * data.speed / 500
 			x = star.x + (star.radius + 10) * Math.cos(theta + i / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
@@ -205,6 +206,7 @@
 </script>
 
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
+<Grid />
 <div class="sketch-wrapper">
 	<canvas id="canvas" bind:this={canvas} />
 	<div class="controls flex flex-col p-5">
