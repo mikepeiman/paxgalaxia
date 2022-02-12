@@ -5,6 +5,10 @@
 	import Checkbox from '$components/Checkbox-import.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
+
+	import drawGrid from './grid.js';
+
+
 	let w,
 		h,
 		canvas,
@@ -37,6 +41,7 @@
 	};
 	onMount(() => {
 		mounted = true;
+		drawGrid()
 		init();
 	});
 	function onClick() {
@@ -99,7 +104,7 @@
 				Math.random > 0.75 ? Math.random() + 0.25 : Math.random() - 0.25
 			})`;
 			let ship = new Ship(Math.random() * 5, color, Math.random() * 5);
-			console.log(`🚀 ~ file: index.svelte ~ line 79 ~ generateShips ~ ship`, ship);
+			// console.log(`🚀 ~ file: index.svelte ~ line 79 ~ generateShips ~ ship`, ship);
 			ships = [...ships, ship];
 		}
 		star.ships = ships;

@@ -1,15 +1,21 @@
+import getAuthor from './getAuthor.js'
+
 export const parse = (workingQuoteObject) => {
+    console.log(`🚀 ~ file: parseQuotes.js ~ line 4 ~ parse ~ workingQuoteObject`, workingQuoteObject)
     // let { originalText, nextPart } = workingQuoteObject
     // console.log(`🚀 ~ file: parseQuotes.js ~ line 3 ~ parse ~ originalText`, originalText)
     if (!workingQuoteObject['quoteBody']) {
-        // workingQuoteObject['nextPart'] = 'quoteBody'
+        console.log(`🚀 ~ file: parseQuotes.js ~ line 8 ~ parse ~ need quoteBody`)
+
         workingQuoteObject = getQuoteBody(workingQuoteObject)
     }
     if (!workingQuoteObject['author']) {
-        workingQuoteObject = getQuoteAuthor(workingQuoteObject)
+        console.log(`🚀 ~ file: parseQuotes.js ~ line 8 ~ parse ~ need author`)
+        workingQuoteObject = getAuthor(workingQuoteObject)
     }
-    
+
     if (!workingQuoteObject['parsingComplete']) {  /*? nextPart */
+        console.log(`🚀 ~ file: parseQuotes.js ~ line 13 ~ parse ~ !workingQuoteObject['parsingComplete']`, workingQuoteObject['parsingComplete'])
         workingQuoteObject = parseNextDetail(workingQuoteObject)
         parse(workingQuoteObject)
     }
@@ -28,7 +34,7 @@ function getQuoteBody(workingQuoteObject) {
     remainder = splitText[2]
     let len = text.length;
     let char = `-`
- 
+
     // if(remainder.includes("-")){
     //     authorSplit = remainder.split("-")
     //     authorSplit.length
@@ -46,10 +52,19 @@ function getQuoteBody(workingQuoteObject) {
     workingQuoteObject['quoteBody'] = quote;
     return workingQuoteObject;
 }
-function authorContainsDash(author){
+function authorContainsDash(author) {
     console.log(`🚀 ~ file: parseQuotes.js ~ line 50 ~ authorContainsDash ~ author`, author)
-    if(author.includes("-")){
-        let res = author.split("-")[1].trim()
+    if (author.includes("-")) {
+        console.log(`🚀 ~ file: parseQuotes.js ~ line 53 ~ authorContainsDash ~ author.includes("-")`, true)
+        // let res = author.split("-")[1].trim()
+        let res = author.split("-")
+        console.log(`🚀 ~ file: parseQuotes.js ~ line 55 ~ authorContainsDash ~ res`, res)
+        res.shift()
+        res.join('')
+        res.toString()
+        // res.trim()
+        workingQuoteObject['author'] = res
+        // let res = author.split("-").trim()
         console.log(`🚀 ~ file: parseQuotes.js ~ line 53 ~ authorContainsDash ~ res`, res)
         return res
     }
@@ -66,18 +81,19 @@ function getQuoteAuthor(workingQuoteObject) {
     console.log(`🚀 ~ file: parseQuotes.js ~ line 62 ~ getQuoteAuthor ~ separatorValue`, separatorValue)
     if (separatorValue > -1 && separatorValue && author) {
         console.log(`🚀 ~ file: parseQuotes.js ~ line 65 ~ getQuoteAuthor ~ separatorValue > -1 && separatorValue`, (separatorValue > -1 && separatorValue))
-        author = authorContainsDash(author)
-        author = Array.from(remainingText).splice(0, separatorValue).join(String());
+        // author = authorContainsDash(author)
+        // author = Array.from(remainingText).splice(0, separatorValue).join(String());
 
         remainingText = Array.from(remainingText).splice(separatorValue, textEnd).join(String()).trim();
+        console.log(`🚀 ~ file: parseQuotes.js ~ line 79 ~ getQuoteAuthor ~ remainingText`, remainingText)
         workingQuoteObject['remainingText'] = remainingText
     } else {
-        console.log('\x1b[41m%s\x1b[0m', 'parse.js line:45 separatorValue', separatorValue);
-        author = authorContainsDash(workingQuoteObject['remainingText'])
+        console.log('parse.js line:45 separatorValue', separatorValue);
+        // author = authorContainsDash(workingQuoteObject['remainingText'])
         // author = authorContainsDash(remainingText)
         workingQuoteObject['author'] = author
-        workingQuoteObject['remainingText'] = false
-        workingQuoteObject['parsingComplete'] = true
+        // workingQuoteObject['remainingText'] = false
+        // workingQuoteObject['parsingComplete'] = true
     }
     workingQuoteObject['author'] = author;
     // console.log(`🚀 ~ file: parseQuotes.svelte ~ line 53 ~ parseQuoteAuthorName ~ author`, author)
@@ -95,6 +111,9 @@ function parseNextDetail(workingQuoteObject) {
     // console.log(`🚀 ~ file: parse.js ~ line 61 ~ parseNextDetail ~ remainingText`, remainingText)
     let separatorValue = findNextSeparatingCharacter(remainingText);
     nextPart = nameNextPartOfQuote(remainingText, separatorValue)
+    console.log(`🚀 ~ file: parseQuotes.js ~ line 97 ~ parseNextDetail ~ remainingText`, remainingText)
+    console.log(`🚀 ~ file: parseQuotes.js ~ line 97 ~ parseNextDetail ~ separatorValue`, separatorValue)
+    console.log(`🚀 ~ file: parseQuotes.js ~ line 99 ~ parseNextDetail ~ nextPart`, nextPart)
 
     workingQuoteObject = parseNextPartOfQuote(workingQuoteObject, nextPart, separatorValue)
     // workingQuoteObject['parsingComplete'] = true
@@ -190,7 +209,7 @@ function parseQuoteContext(workingQuoteObject, separatorValue) {
     let newPart = text.split('(')[1] ? text.split('(')[1] : text
     let context = newPart.split(')')[0] ? newPart.split(')')[0] : newPart
     let remainder = newPart.split(')')[1] ? newPart.split(')')[1].trim() : false
-    if(!remainder){
+    if (!remainder) {
         workingQuoteObject['parsingComplete'] = true
     }
     workingQuoteObject['remainingText'] = remainder
@@ -240,17 +259,18 @@ function parseQuoteTags(workingQuoteObject, separatorValue) {
 
 function findNextSeparatingCharacter(remainingText) {
     let separators = [
-        {"name": "author", "openingChar": "-", "closingChar": "", "value": false},
-        {"name": "title", "openingChar": ",", "closingChar": ",", "value": false},
-        {"name": "source", "openingChar": "[", "closingChar": "]", "value": false},
-        {"name": "axiom", "openingChar": ":", "closingChar": "", "value": false},
-        {"name": "year", "openingChar": "(", "closingChar": ")", "value": false},
-        {"name": "context", "openingChar": "@", "closingChar": ")", "value": false},
-        {"name": "tags", "openingChar": "#", "closingChar": "", "value": false},
+        { "name": "author", "openingChar": "-", "closingChar": "", "value": false },
+        { "name": "title", "openingChar": ",", "closingChar": ",", "value": false },
+        { "name": "source", "openingChar": "[", "closingChar": "]", "value": false },
+        { "name": "axiom", "openingChar": ":", "closingChar": "", "value": false },
+        { "name": "year", "openingChar": "(", "closingChar": ")", "value": false },
+        { "name": "context", "openingChar": "@", "closingChar": ")", "value": false },
+        { "name": "tags", "openingChar": "#", "closingChar": "", "value": false },
     ]
     separators.forEach(separator => {
         separator.value = remainingText.indexOf(separator.openingChar)
     })
+    console.log(separators)
     return getMinNotFalse(separators);
 }
 
@@ -305,7 +325,7 @@ function parseNextPartOfQuote(workingQuoteObject, nextPart, separatorValue) {
     // console.log('\x1b[31m%s\x1b[0m', 'parseQuotes.svelte line:191 nextPart', nextPart);
     switch (nextPart) {
         case 'authorName':
-            return parseQuoteAuthor(workingQuoteObject, separatorValue);
+            return getAuthor(workingQuoteObject, separatorValue);
             break;
 
         case 'authorTitle':
@@ -351,39 +371,15 @@ function getNextCharacterValue(text, char, first) {
 }
 
 function getMinNotFalse(separators) {
-    separators
-    let current = -1;
-    let minValid = -1;
     const charsFound = separators.filter(sep => sep.value > -1)
-    if(!charsFound.length) {
+    if (!charsFound.length) {
         return false
     }
-    const minSeparator = charsFound.reduce((min, item) => {return min > item.value ? item.value : min}, charsFound[0].value)
-    minSeparator
-    // for (let i = 0; i < separators.length; i++) {
-    //     if (separators[i].value > -1) {
-    //         current = separators[i].value
-    //         // console.log(`🚀 ~ file: parse.js ~ line 229 ~ getMinNotFalse ~ FOUND VALUE *** ${current} ***`,)
-    //         if (minValid > -1) {
-    //             // console.log(`🚀 ~ file: parse.js ~ line 231 ~ getMinNotFalse ~ minValid before checking current: : : `, minValid)
-    //             if (minValid > current) {
-    //                 // console.log(`🚀 ~ file: parse.js ~ line 233 ~ getMinNotFalse ~ current < minValid`, current < minValid)
-    //                 minValid = current
-    //             }
-    //         } else {
-    //             minValid = current
-    //         }
-    //         // console.log(`🚀 ~ file: parse.js ~ line 240 ~ getMinNotFalse ~ minValid`, minValid)
-    //     }
-    //     // console.log(`🚀 ~ file: parseQuotes.svelte ~ line 231 ~ getMinNotFalse ~ \nseparators[i]`, separators[i])
-    //     // console.log(`🚀 ~ file: parseQuotes.svelte ~ line 232 ~ getMinNotFalse ~ \ncurrent`, current)
-    //     // console.log(`🚀 ~ file: parseQuotes.svelte ~ line 233 ~ getMinNotFalse ~ \nminValid`, minValid)
-    // }
-    // console.log(`\n\ngetMinNotFalse BREAK**********************************\n\n`)
+    const minSeparator = charsFound.reduce((min, item) => { return min > item.value ? item.value : min }, charsFound[0].value)
     return minSeparator;
 }
 
-let workingQuoteObject = {};
+// let workingQuoteObject = {};
 
 let test1 = `""Fortunately, some are born with spiritual immune systems that sooner or later give rejection to the illusory  worldview grafted upon them from birth through social conditioning. They begin sensing that something is amiss, and  start looking for answers. Inner knowledge and anomalous outer experiences show them a side of reality others are  oblivious to, and so begins their journey of awakening. Each step of the journey is made by following the heart  instead of following the crowd and by choosing knowledge over the veils of ignorance." - Henri Bergson"`;
 let test2 = `"XML is like violence: If it isn’t working, you aren’t using enough of it." - unknown, #humor #software-development #coding`
@@ -406,11 +402,11 @@ let test9 = `"The only way to eat an elephant is one bite at a time." - anonymou
 let test10 = `"Antifa: because nothing says &ldquo;I hate fascism&rdquo; like attacking anyone who has an independent
 thought." -
 @yeebingeebin [YouTube]`
-workingQuoteObject['originalText'] = workingQuoteObject['remainingText'] = test10
+// workingQuoteObject['originalText'] = workingQuoteObject['remainingText'] = test10
 
-workingQuoteObject['originalText'] = workingQuoteObject['remainingText'] = test5
-let result = parse(workingQuoteObject)
-result
+// workingQuoteObject['originalText'] = workingQuoteObject['remainingText'] = test5
+// let result = parse(workingQuoteObject)
+// result
 
 // let testArray = [test1, test2, test3, test4, test5, test6]
 // let processedArray = []
