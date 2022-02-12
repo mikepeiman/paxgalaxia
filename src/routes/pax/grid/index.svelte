@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	// import Grid from '../grid.svelte';
 	import { defineGrid, extendHex } from 'honeycomb-grid';
+	import Button from '$components/Button.svelte';
 
 	let w,
 		h,
@@ -37,53 +38,128 @@
 		orbitYmod: 1,
 		speed: 10
 	};
-	onMount(() => {
+	onMount(async () => {
 		mounted = true;
 		init();
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
 		// drawHexGrid(w, h, 36);
-		generateHexGrid(w, h, 25);
-		drawOnHexCoords(true,true);
+		generateHexGrid(w, h, 25, 0);
+		getVertexCoords()
+		drawOnHexCoords(true, true, true);
+		console.log(`🚀 ~ file: index.svelte ~ line 62 ~ drawHex ~ hexVertexCoords`, hexVertexCoords);
+		// let unique = await new UniqueArray(hexVertexCoords)
+		// let u = uniqueArray(hexVertexCoords);
+		let u2 = removeDuplicates(hexVertexCoords);
+		console.log(`🚀 ~ file: index.svelte ~ line 53 ~ onMount ~ u2`, u2);
+		// console.log(`🚀 ~ file: index.svelte ~ line 52 ~ onMount ~  u`,  u)
+		// console.log(`🚀 ~ file: index.svelte ~ line 51 ~ onMount ~ unique`, await unique)
 	});
 
-	let hexCoords = [];
+	function getVertexCoords() {
+		hexCenterCoords.forEach((coord) => {
+			const a = (2 * Math.PI) / 6;
+			for (let i = 0; i <= 6; i++) {
+				const x = roundNum(coord.x + coord.r * Math.cos(a * i), 3);
+				const y = roundNum(coord.y + coord.r * Math.sin(a * i), 3);
+				hexVertexCoords = [...hexVertexCoords, { x, y}];
+			}
+		});
+	}
+
+	let hexCenterCoords = [];
+	let hexVertexCoords = [];
+
+
 	function drawHex(cx, cy, r) {
 		const a = (2 * Math.PI) / 6;
 		ctx.beginPath();
 		ctx.strokeStyle = `hsla(${cx - cy}, 100%, 50%, 1)`;
+
 		for (let i = 0; i <= 6; i++) {
-			const x = cx + r * Math.cos(a * i);
-			const y = cy + r * Math.sin(a * i);
+			const x = roundNum(cx + r * Math.cos(a * i), 3);
+			const y = roundNum(cy + r * Math.sin(a * i), 3);
 			ctx.lineTo(x, y);
 		}
 		ctx.stroke();
 	}
 
-	function generateHexGrid(width, height, r) {
+	function uniqueArray(arr) {
+		return arr.filter((item, index) => {
+			return (
+				arr.filter((item2, index2) => {
+					return item.x === item2.x && item.y === item2.y;
+				}).length === 1
+			);
+		});
+	}
+
+	const removeDuplicates = (objArray) => {
+		const flag = {};
+		const unique = [];
+		objArray.forEach((obj) => {
+			if (!obj.flag) {
+				obj.flag = true;
+				unique.push(obj);
+			}
+			// if (!flag[obj.x] || !flag[obj.y]) {
+			// 	unique.push(obj)
+			// 	flag[obj.x] = true
+			// 	flag[obj.y] = true
+			// }
+		});
+		console.log(`🚀 ~ file: index.svelte ~ line 82 ~ removeDuplicates ~ flag`, flag);
+		return unique;
+	};
+
+	class UniqueArray extends Array {
+		constructor(array) {
+			super();
+			array.forEach((item) => {
+				// remove duplicates
+				if (!this.includes(item)) {
+					this.push(item);
+				} else {
+					console.log(`🚀 ~ file: index.svelte ~ line 51 ~ UniqueArray ~ NOT UNIQUE item`, item);
+				}
+
+				// console.log(`🚀 ~ file: index.svelte ~ line 72 ~ UniqueArray ~ array.forEach ~ item`, item)
+				// if (!this.find((v) => _.isEqual(v, a))) this.push(a);
+			});
+		}
+	}
+
+	function roundNum(num, places) {
+		const x = Math.pow(10, places);
+		return Math.round(num * x) / x;
+	}
+
+	function generateHexGrid(width, height, r, offset = 0) {
 		const a = (2 * Math.PI) / 6;
 		let max = 0;
 		let evenTest = 1;
 		let even = false;
-		for (let y = r; y + r * Math.sin(a) < height; y += evenTest * (r * Math.sin(a))) {
+		for (let y = r; y + r * Math.sin(a) < height; y += offset + evenTest * (r * Math.sin(a))) {
 			for (
 				let x = r, j = 0;
 				x + r * (1 + Math.cos(a)) < width;
-				x += r * (1 + Math.cos(a)), y += (-1) ** j++ * r * Math.sin(a)
+				x += offset + r * (1 + Math.cos(a)), y += (-1) ** j++ * r * Math.sin(a)
 			) {
 				j >= max ? (max = j + 1) : (max = max);
-				hexCoords = [...hexCoords, { x, y, r }];
+				x = roundNum(x, 3);
+				y = parseFloat(y.toFixed(3));
+				hexCenterCoords = [...hexCenterCoords, { x, y, r }];
 				// drawHex(x, y, r);
 			}
 			max % 2 === 0 ? (even = true) : (even = false);
 			even ? (evenTest = 2) : (evenTest = 1);
 		}
-		console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCoords);
+		console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCenterCoords);
 	}
 
-	function drawOnHexCoords(center, outline) {
+	function drawOnHexCoords(center, outline, vertexes) {
 		let i = 0;
-		hexCoords.forEach((hex) => {
+		hexCenterCoords.forEach((hex) => {
 			if (center) {
 				ctx.beginPath();
 				ctx.fillStyle = `hsla(${i++}, 100%, 50%, 1)`;
@@ -94,6 +170,14 @@
 				drawHex(hex.x, hex.y, hex.r);
 			}
 		});
+		if (vertexes) {
+			hexVertexCoords.forEach((vertex, i) => {
+				// console.log(`🚀 ~ file: index.svelte ~ line 159 ~ hexCenterCoords.forEach ~ vertex`, vertex)
+				drawHex(vertex.x, vertex.y, 5);
+				// ctx.fillstyle = '#33f';
+				// ctx.arc(vertex.x, vertex.y, 5, 0, 2 * Math.PI);
+			});
+		}
 	}
 
 	function onClick() {
@@ -137,14 +221,6 @@
 			);
 			star['ships'] = await generateShips(star);
 			stars = [...stars, star];
-			// stars.push(star);
-			// stars.push({
-			// 	x: Math.random() * w,
-			// 	y: Math.random() * h,
-			// 	radius: Math.random() * 30 + 10,
-			// 	hue: Math.random() * 360,
-			// 	ships: Math.ceil(Math.random() * 30)
-			// });
 		}
 		return stars;
 	}
@@ -164,40 +240,6 @@
 		}
 		star.ships = ships;
 		return ships;
-	}
-
-	function drawGrid2() {
-		let size = 30;
-		let num = 20;
-		const dirs = [
-			{ x: 1, y: 0, angle: 0 },
-			{ x: 0.5, y: 0.866, angle: 60 },
-			{ x: -0.5, y: 0.866, angle: 120 },
-			{ x: -1, y: 0, angle: 180 },
-			{ x: -0.5, y: -0.866, angle: 240 },
-			{ x: 0.5, y: -0.866, angle: 300 }
-		];
-		// draw a hex grid
-		for (let x = 0; x <= num; x++) {
-			for (let y = 0; y <= num; y++) {
-				let hex = { x: x * size, y: y * size, r: size };
-				ctx.save();
-				ctx.beginPath();
-				ctx.moveTo(hex.x, hex.y);
-				for (let i = 0; i < 6; i++) {
-					let dir = dirs[i];
-					let next = dirs[(i + 1) % 6];
-					ctx.strokeStyle = '#f00';
-					ctx.strokewidth = 1;
-					ctx.lineTo(hex.x + dir.x * hex.r, hex.y + dir.y * hex.r);
-					ctx.lineTo(hex.x + next.x * hex.r, hex.y + next.y * hex.r);
-				}
-				ctx.stroke();
-				ctx.restore();
-				// ctx.fillStyle = '#f00';
-				// ctx.fill();
-			}
-		}
 	}
 
 	function drawShips(star) {
@@ -261,7 +303,7 @@
 					draw(star);
 					drawShips(star);
 				});
-				drawGrid();
+				// drawGrid();
 				// ctx.clearRect(0, 0, w, h);
 				ctx.restore();
 				// ctx.fillRect(0,0,w,h);
@@ -311,7 +353,9 @@
 			<Slider label="FPS" bind:value={data.fps} min="1" max="60" step="1" />
 			<Slider label="Orbit X mod" bind:value={data.orbitXmod} min=".1" max="5" step=".1" />
 			<Slider label="Orbit Y mod" bind:value={data.orbitYmod} min=".1" max="5" step=".1" />
-
+			<button label="Start" class="p-3 bg-sky-600 hover:bg-sky-500 rounded" on:click={onClick}
+				>Animate</button
+			>
 			<Checkbox duration="200" label="Random color functions?" bind:checked={data.randomColors} />
 			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
 		</CanvasManager>
