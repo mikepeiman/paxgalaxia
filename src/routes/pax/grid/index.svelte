@@ -5,7 +5,7 @@
 	import Checkbox from '$components/Checkbox-import.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
-	import Grid from './grid.svelte';
+	import Grid from '../grid.svelte';
 	import { defineGrid, extendHex } from 'honeycomb-grid';
 
 	let w,
@@ -40,7 +40,32 @@
 	onMount(() => {
 		mounted = true;
 		init();
+		drawHex(30,30)
 	});
+
+	function drawGrid() {
+		const hex = extendHex({ size: 50 });
+		const Grid = defineGrid(hex);
+		Grid.rectangle({ width: 12, height: 12 }).forEach((hex) => {
+			console.log(`🚀 ~ file: index.svelte ~ line 120 ~ Grid.rectangle ~ hex`, hex);
+
+		});
+	}
+	function drawHex(cx, cy) {
+		const a = 2 * Math.PI / 6
+		const r = 30
+		ctx.beginPath();
+		for(let i =0; i <= 6; i++) {
+			const x = cx + r * Math.cos(a * i);
+			const y = cy + r * Math.sin(a * i);
+			ctx.lineTo(x, y);
+		}
+		ctx.stroke()
+	}
+
+	function drawHexGrid() {
+
+	}
 	function onClick() {
 		console.log('click');
 		// drawDot();
@@ -66,9 +91,8 @@
 		canvas.addEventListener('click', onClick);
 		stars = await generateStars(data.numStars);
 		stars.forEach((star) => {
-			draw(star);
+			// draw(star);
 		});
-
 	}
 
 	async function generateStars(num) {
@@ -112,14 +136,45 @@
 		return ships;
 	}
 
-	function drawGrid() {
-		const hex = extendHex({ size: 50 });
-		const Grid = defineGrid(hex);
-		Grid.rectangle({ width: 12, height: 12 }).forEach((hex) => {
-			ctx.fillStyle = '#f00';
-			ctx.fillRect(hex.x, hex.y, hex.width, hex.height);
-			ctx.fill()
-		});
+
+	function drawGrid2() {
+		let size = 30
+		let num = 20
+		const dirs = [
+		{ x: 1, y: 0, angle: 0 },
+		{ x: 0.5, y: 0.866, angle: 60 },
+		{ x: -0.5, y: 0.866, angle: 120 },
+		{ x: -1, y: 0, angle: 180 },
+		{ x: -0.5, y: -0.866, angle: 240 },
+		{ x: 0.5, y: -0.866, angle: 300 }
+	];
+	// draw a hex grid
+	for (let x = 0; x <= num; x++) {
+		for (let y = 0; y <= num; y++) {
+			let hex = { x: x * size, y: y * size, r: size };
+			ctx.save()
+			ctx.beginPath();
+			ctx.moveTo(hex.x, hex.y);
+			for (let i = 0; i < 6; i++) {
+				let dir = dirs[i];
+				let next = dirs[(i + 1) % 6];
+				ctx.strokeStyle = '#f00';
+				ctx.strokewidth = 1;
+				ctx.lineTo(
+					hex.x + dir.x * hex.r,
+					hex.y + dir.y * hex.r
+				);
+				ctx.lineTo(
+					hex.x + next.x * hex.r,
+					hex.y + next.y * hex.r
+				);
+			}
+			ctx.stroke()
+			ctx.restore()
+			// ctx.fillStyle = '#f00';
+			// ctx.fill();
+		}
+	}
 
 	}
 
@@ -184,7 +239,7 @@
 					draw(star);
 					drawShips(star);
 				});
-				drawGrid()
+				drawGrid();
 				// ctx.clearRect(0, 0, w, h);
 				ctx.restore();
 				// ctx.fillRect(0,0,w,h);
