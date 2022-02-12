@@ -5,7 +5,7 @@
 	import Checkbox from '$components/Checkbox-import.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
-	import Grid from '../grid.svelte';
+	// import Grid from '../grid.svelte';
 	import { defineGrid, extendHex } from 'honeycomb-grid';
 
 	let w,
@@ -40,32 +40,72 @@
 	onMount(() => {
 		mounted = true;
 		init();
-		drawHex(30,30)
+		w = canvas.width = window.innerWidth * 0.8;
+		h = canvas.height = window.innerHeight;
+		// drawHexGrid(w, h, 36);
+		testMath(w, h, 105);
 	});
 
-	function drawGrid() {
-		const hex = extendHex({ size: 50 });
-		const Grid = defineGrid(hex);
-		Grid.rectangle({ width: 12, height: 12 }).forEach((hex) => {
-			console.log(`🚀 ~ file: index.svelte ~ line 120 ~ Grid.rectangle ~ hex`, hex);
-
-		});
-	}
-	function drawHex(cx, cy) {
-		const a = 2 * Math.PI / 6
-		const r = 30
+	let hexCoords = [];
+	function drawHex(cx, cy, r) {
+		const a = (2 * Math.PI) / 6;
 		ctx.beginPath();
-		for(let i =0; i <= 6; i++) {
+		ctx.strokeStyle = `hsla(${cx - cy}, 100%, 50%, 1)`;
+		for (let i = 0; i <= 6; i++) {
 			const x = cx + r * Math.cos(a * i);
 			const y = cy + r * Math.sin(a * i);
 			ctx.lineTo(x, y);
 		}
-		ctx.stroke()
+		hexCoords = [...hexCoords, { x: cx, y: cy }];
+		ctx.stroke();
 	}
 
-	function drawHexGrid() {
-
+	function drawHexGrid(width, height, r) {
+		const a = (2 * Math.PI) / 6;
+		for (let y = r; y + r * Math.sin(a) < height; y += r * Math.sin(a)) {
+			for (
+				let x = r, j = 0;
+				x + r * (1 + Math.cos(a)) < width;
+				x += r * (1 + Math.cos(a)), y += (-1) ** j++ * r * Math.sin(a)
+			) {
+				console.log(`🚀 ~ file: index.svelte ~ line 71 ~ drawHexGrid ~ (-1) ** j++)`, j);
+				drawHex(x, y, r);
+			}
+		}
 	}
+
+	function testMath(width, height, r) {
+		const a = (2 * Math.PI) / 6;
+		let max = 0
+		let even = false
+		for (
+			let y = r; 
+			y  + r * Math.sin(a) < height; 
+			y += r * Math.sin(a)
+			) {
+			console.log(`🚀 ~ file: index.svelte ~ line 92 ~ testMath ~ y`, y)
+            console.log(`🚀 ~ file: index.svelte ~ line 80 ~ testMath ~ y + r * Math.sin(a)`, y + r * Math.sin(a))
+            // console.log(`🚀 ~ file: index.svelte ~ line 80 ~ testMath ~ r * Math.sin(a)`, r * Math.sin(a))
+			for (
+				let x = r, j = 0;
+				x + r * (1 + Math.cos(a)) < width;
+				x += r * (1 + Math.cos(a)), y += (-1) ** j++ * r * Math.sin(a)
+				) {
+					// console.log(`🚀 ~ file: index.svelte ~ line 92 ~ testMath ~ x`, x)
+					// console.log(`🚀 ~ file: index.svelte ~ line 90 ~ testMath ~ x + r * (1 + Math.cos(a))`, x + r * (1 + Math.cos(a)))
+				console.log(`🚀 ~ file: index.svelte ~ line 71 ~ drawHexGrid ~ j: `, j);
+				j > max ? max = j : max = max;
+				
+                console.log(`🚀 ~ file: index.svelte ~ line 97 ~ testMath ~ max`, max)
+				// console.log(`🚀 ~ file: index.svelte ~ line 71 ~ drawHexGrid ~ (-1) ** j++)`, ((-1) ** j));
+				drawHex(x, y, r);
+			}
+			max % 2 === 0 ? even = true : even = false;
+            console.log(`🚀 ~ file: index.svelte ~ line 104 ~ testMath ~ even`, even)
+		}
+		console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCoords);
+	}
+
 	function onClick() {
 		console.log('click');
 		// drawDot();
@@ -120,7 +160,7 @@
 	}
 
 	function generateShips(star) {
-		console.log(`🚀 ~ file: index.svelte ~ line 76 ~ generateShips ~ star`, star);
+		// console.log(`🚀 ~ file: index.svelte ~ line 76 ~ generateShips ~ star`, star);
 		let ships = [];
 		for (let i = 0; i < star.numShips; i++) {
 			let color = `hsla(${star.hue + Math.random() * i}, ${
@@ -136,46 +176,38 @@
 		return ships;
 	}
 
-
 	function drawGrid2() {
-		let size = 30
-		let num = 20
+		let size = 30;
+		let num = 20;
 		const dirs = [
-		{ x: 1, y: 0, angle: 0 },
-		{ x: 0.5, y: 0.866, angle: 60 },
-		{ x: -0.5, y: 0.866, angle: 120 },
-		{ x: -1, y: 0, angle: 180 },
-		{ x: -0.5, y: -0.866, angle: 240 },
-		{ x: 0.5, y: -0.866, angle: 300 }
-	];
-	// draw a hex grid
-	for (let x = 0; x <= num; x++) {
-		for (let y = 0; y <= num; y++) {
-			let hex = { x: x * size, y: y * size, r: size };
-			ctx.save()
-			ctx.beginPath();
-			ctx.moveTo(hex.x, hex.y);
-			for (let i = 0; i < 6; i++) {
-				let dir = dirs[i];
-				let next = dirs[(i + 1) % 6];
-				ctx.strokeStyle = '#f00';
-				ctx.strokewidth = 1;
-				ctx.lineTo(
-					hex.x + dir.x * hex.r,
-					hex.y + dir.y * hex.r
-				);
-				ctx.lineTo(
-					hex.x + next.x * hex.r,
-					hex.y + next.y * hex.r
-				);
+			{ x: 1, y: 0, angle: 0 },
+			{ x: 0.5, y: 0.866, angle: 60 },
+			{ x: -0.5, y: 0.866, angle: 120 },
+			{ x: -1, y: 0, angle: 180 },
+			{ x: -0.5, y: -0.866, angle: 240 },
+			{ x: 0.5, y: -0.866, angle: 300 }
+		];
+		// draw a hex grid
+		for (let x = 0; x <= num; x++) {
+			for (let y = 0; y <= num; y++) {
+				let hex = { x: x * size, y: y * size, r: size };
+				ctx.save();
+				ctx.beginPath();
+				ctx.moveTo(hex.x, hex.y);
+				for (let i = 0; i < 6; i++) {
+					let dir = dirs[i];
+					let next = dirs[(i + 1) % 6];
+					ctx.strokeStyle = '#f00';
+					ctx.strokewidth = 1;
+					ctx.lineTo(hex.x + dir.x * hex.r, hex.y + dir.y * hex.r);
+					ctx.lineTo(hex.x + next.x * hex.r, hex.y + next.y * hex.r);
+				}
+				ctx.stroke();
+				ctx.restore();
+				// ctx.fillStyle = '#f00';
+				// ctx.fill();
 			}
-			ctx.stroke()
-			ctx.restore()
-			// ctx.fillStyle = '#f00';
-			// ctx.fill();
 		}
-	}
-
 	}
 
 	function drawShips(star) {
@@ -277,7 +309,7 @@
 </script>
 
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
-<Grid />
+<!-- <Grid /> -->
 <div class="sketch-wrapper">
 	<canvas id="canvas" bind:this={canvas} />
 	<div class="controls flex flex-col p-5">
