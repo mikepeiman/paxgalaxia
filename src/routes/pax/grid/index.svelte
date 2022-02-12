@@ -43,7 +43,8 @@
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
 		// drawHexGrid(w, h, 36);
-		drawHexGrid(w, h, 105);
+		generateHexGrid(w, h, 25);
+		drawOnHexCoords(true,true);
 	});
 
 	let hexCoords = [];
@@ -56,32 +57,43 @@
 			const y = cy + r * Math.sin(a * i);
 			ctx.lineTo(x, y);
 		}
-		hexCoords = [...hexCoords, { x: cx, y: cy }];
 		ctx.stroke();
 	}
 
-	function drawHexGrid(width, height, r) {
+	function generateHexGrid(width, height, r) {
 		const a = (2 * Math.PI) / 6;
-		let max = 0
-		let evenTest = 1
-		let even = false
-		for (
-			let y = r; 
-			y  + r * Math.sin(a) < height; 
-			y += evenTest * (r * Math.sin(a))
-			) {
+		let max = 0;
+		let evenTest = 1;
+		let even = false;
+		for (let y = r; y + r * Math.sin(a) < height; y += evenTest * (r * Math.sin(a))) {
 			for (
 				let x = r, j = 0;
 				x + r * (1 + Math.cos(a)) < width;
 				x += r * (1 + Math.cos(a)), y += (-1) ** j++ * r * Math.sin(a)
-				) {
-				j >= max ? max = j + 1 : max = max;
-				drawHex(x, y, r);
+			) {
+				j >= max ? (max = j + 1) : (max = max);
+				hexCoords = [...hexCoords, { x, y, r }];
+				// drawHex(x, y, r);
 			}
-			max % 2 === 0 ? even = true : even = false;
-			even ? evenTest = 2 : evenTest = 1
+			max % 2 === 0 ? (even = true) : (even = false);
+			even ? (evenTest = 2) : (evenTest = 1);
 		}
 		console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCoords);
+	}
+
+	function drawOnHexCoords(center, outline) {
+		let i = 0;
+		hexCoords.forEach((hex) => {
+			if (center) {
+				ctx.beginPath();
+				ctx.fillStyle = `hsla(${i++}, 100%, 50%, 1)`;
+				ctx.arc(hex.x, hex.y, 5, 0, 2 * Math.PI);
+				ctx.fill();
+			}
+			if (outline) {
+				drawHex(hex.x, hex.y, hex.r);
+			}
+		});
 	}
 
 	function onClick() {
