@@ -43,7 +43,7 @@
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
 		// drawHexGrid(w, h, 36);
-		testMath(w, h, 105);
+		drawHexGrid(w, h, 105);
 	});
 
 	let hexCoords = [];
@@ -62,46 +62,24 @@
 
 	function drawHexGrid(width, height, r) {
 		const a = (2 * Math.PI) / 6;
-		for (let y = r; y + r * Math.sin(a) < height; y += r * Math.sin(a)) {
-			for (
-				let x = r, j = 0;
-				x + r * (1 + Math.cos(a)) < width;
-				x += r * (1 + Math.cos(a)), y += (-1) ** j++ * r * Math.sin(a)
-			) {
-				console.log(`🚀 ~ file: index.svelte ~ line 71 ~ drawHexGrid ~ (-1) ** j++)`, j);
-				drawHex(x, y, r);
-			}
-		}
-	}
-
-	function testMath(width, height, r) {
-		const a = (2 * Math.PI) / 6;
 		let max = 0
+		let evenTest = 1
 		let even = false
 		for (
 			let y = r; 
 			y  + r * Math.sin(a) < height; 
-			y += r * Math.sin(a)
+			y += evenTest * (r * Math.sin(a))
 			) {
-			console.log(`🚀 ~ file: index.svelte ~ line 92 ~ testMath ~ y`, y)
-            console.log(`🚀 ~ file: index.svelte ~ line 80 ~ testMath ~ y + r * Math.sin(a)`, y + r * Math.sin(a))
-            // console.log(`🚀 ~ file: index.svelte ~ line 80 ~ testMath ~ r * Math.sin(a)`, r * Math.sin(a))
 			for (
 				let x = r, j = 0;
 				x + r * (1 + Math.cos(a)) < width;
 				x += r * (1 + Math.cos(a)), y += (-1) ** j++ * r * Math.sin(a)
 				) {
-					// console.log(`🚀 ~ file: index.svelte ~ line 92 ~ testMath ~ x`, x)
-					// console.log(`🚀 ~ file: index.svelte ~ line 90 ~ testMath ~ x + r * (1 + Math.cos(a))`, x + r * (1 + Math.cos(a)))
-				console.log(`🚀 ~ file: index.svelte ~ line 71 ~ drawHexGrid ~ j: `, j);
-				j > max ? max = j : max = max;
-				
-                console.log(`🚀 ~ file: index.svelte ~ line 97 ~ testMath ~ max`, max)
-				// console.log(`🚀 ~ file: index.svelte ~ line 71 ~ drawHexGrid ~ (-1) ** j++)`, ((-1) ** j));
+				j >= max ? max = j + 1 : max = max;
 				drawHex(x, y, r);
 			}
 			max % 2 === 0 ? even = true : even = false;
-            console.log(`🚀 ~ file: index.svelte ~ line 104 ~ testMath ~ even`, even)
+			even ? evenTest = 2 : evenTest = 1
 		}
 		console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCoords);
 	}
