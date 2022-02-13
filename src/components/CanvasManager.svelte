@@ -25,6 +25,14 @@
 	function saveData(settings, data) {
 		if (localStorageSupported && settings.localStorage !== false) {
 			window.localStorage.setItem(`${data.TITLE}`, JSON.stringify(data));
+			if(data.clearLS){
+				console.log(`🚀 ~ file: CanvasManager.svelte ~ line 29 ~ saveData ~ data.clearLS`, data.clearLS)
+                console.log(`🚀 ~ file: CanvasManager.svelte ~ line 29 ~ saveData ~ data`, data)
+				window.localStorage.setItem(`${data.TITLE}`, JSON.stringify({}));
+				data.clearLS = false;
+				readData(settings, data)
+				saveData(settings, data)
+			}
 		}
 	}
 

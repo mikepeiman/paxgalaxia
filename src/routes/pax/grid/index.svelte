@@ -32,11 +32,20 @@
 		TITLE: 'Pax01-vanilla',
 		fps: 60,
 		numStars: 60,
+		numTypes: 5,
 		shipsMin: 1,
 		shipsMax: 50,
+		starRadius: 20,
+		gridRadius: 55,
+		gridOffset: 0,
 		orbitXmod: 1,
 		orbitYmod: 1,
-		speed: 10
+		speed: 10,
+		clearLS: false,
+		drawCenters: true,
+		drawHexes: true,
+		drawVerticies: false,
+		buildVertexes: false
 	};
 	let hexCenterCoords = [];
 	let hexVertexCoords = [];
@@ -46,14 +55,37 @@
 		mounted = true;
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
-		init();
-		// drawHexGrid(w, h, 36);
-		stars;
+		canvasInit();
+		mapInit(data.drawCenters, data.drawHexes, data.buildVertexes);
 		console.log(`🚀 ~ file: index.svelte ~ line 52 ~ onMount ~ stars`, stars);
-		// generateStars(data.numStars)
-		// console.log(`🚀 ~ file: index.svelte ~ line 62 ~ drawHex ~ hexVertexCoords`, hexVertexCoords);
-		// console.log(`🚀 ~ file: index.svelte ~ line 57 ~ onMount ~ uniqueVertexCoords`, uniqueVertexCoords)
 	});
+
+	function canvasInit() {
+		canvas = document.getElementById('canvas');
+		w = canvas.width = window.innerWidth * 0.8;
+		h = canvas.height = window.innerHeight;
+		canvas.style.backgroundColor = '#222';
+		canvas.style.cursor = 'pointer';
+		ctx = canvas.getContext('2d');
+		ctx.fillStyle = '#222';
+		ctx.fillRect(0, 0, w, h);
+		canvas.addEventListener('click', onClick);
+	}
+
+	async function mapInit(center, outline, vertexes) {
+		generateHexGrid(w, h, data.gridRadius, data.gridOffset);
+		if (vertexes) {
+			getVertexCoords();
+			uniqueVertexCoords = removeDuplicates(hexVertexCoords);
+		}
+		// drawOnHexCoords(true, true, true);
+		// drawOnHexCoords(true, false, true);
+		drawOnHexCoords(center, outline, vertexes);
+		stars = generateStars(data.numStars);
+		stars.forEach((star) => {
+			draw(star);
+		});
+	}
 
 	function getVertexCoords() {
 		hexCenterCoords.forEach((coord) => {
@@ -77,16 +109,6 @@
 			ctx.lineTo(x, y);
 		}
 		ctx.stroke();
-	}
-
-	function uniqueArray(arr) {
-		return arr.filter((item, index) => {
-			return (
-				arr.filter((item2, index2) => {
-					return item.x === item2.x && item.y === item2.y;
-				}).length === 1
-			);
-		});
 	}
 
 	const removeDuplicates = (objArray) => {
@@ -123,7 +145,6 @@
 				x = roundNum(x, 3);
 				y = parseFloat(y.toFixed(3));
 				hexCenterCoords = [...hexCenterCoords, { x, y, r }];
-				// drawHex(x, y, r);
 			}
 			max % 2 === 0 ? (even = true) : (even = false);
 			even ? (evenTest = 2) : (evenTest = 1);
@@ -158,43 +179,15 @@
 		animating ? animate() : null;
 	}
 
-	async function init() {
-		canvas = document.getElementById('canvas');
-		// let grid = Grid.rectangle({ width: 4, height: 4 });
-		// console.log(`🚀 ~ file: index.svelte ~ line 56 ~ init ~ grid`, grid);
-
-		w = canvas.width = window.innerWidth * 0.8;
-		h = canvas.height = window.innerHeight;
-		cx = w / 2;
-		cy = h / 2;
-		radius = Math.min(w, h) / 4;
-		canvas.style.backgroundColor = '#222';
-		canvas.style.cursor = 'pointer';
-		ctx = canvas.getContext('2d');
-		ctx.fillStyle = '#222';
-		ctx.fillRect(0, 0, w, h);
-		canvas.addEventListener('click', onClick);
-		generateHexGrid(w, h, 25, 0);
-		getVertexCoords();
-		uniqueVertexCoords = removeDuplicates(hexVertexCoords);
-		drawOnHexCoords(true, true, true);
-		stars = await generateStars(data.numStars);
-		stars.forEach((star) => {
-			draw(star);
-		});
+	function reset() {
+		// data.clearLS = true
+		init();
 	}
 
 	// write a function that generates stars using random coordinates from hexCenterCoords
 	function generateStars(num) {
 		stars = [];
-		let randomIndexes = [];
 		const flag = {};
-		let shuffled = shuffle(hexCenterCoords);
-		console.log(`🚀 ~ file: index.svelte ~ line 193 ~ generateStars ~ shuffled`, shuffled);
-		// for (let i = 0; i < num; i++) {
-		// 	let rand = Math.floor(Math.random() * hexCenterCoords.length);
-		// 	randomIndexes.push(rand);
-		// }
 		for (let i = 0; i < num; i++) {
 			let coords = hexCenterCoords[Math.floor(Math.random() * hexCenterCoords.length)];
 			if (!flag[coords.x + ':' + coords.y]) {
@@ -202,14 +195,14 @@
 				let star = new Star(
 					coords.x,
 					coords.y,
-					Math.random() * 30 + 10,
-					Math.random() * 360,
-					Math.random() * 50
+					Math.random() * 5 + data.starRadius,
+					Math.floor(Math.random() * data.numTypes) * (360 / data.numTypes),
+					Math.random() * data.shipsMax
 				);
 				star['ships'] = generateShips(star);
 				stars = [...stars, star];
 			} else {
-				console.log(`🚀 ~ file: index.svelte ~ line 214 ~ generateStars ~ else`)
+				console.log(`🚀 ~ file: index.svelte ~ line 214 ~ generateStars ~ else`);
 				i--;
 			}
 		}
@@ -258,16 +251,6 @@
 			ctx.fillStyle = ship.color;
 			ctx.fill();
 		});
-		// for(let i = 0; i < star.numShips; i++) {
-
-		//     theta = theta +  i / 50000;
-		//     x = star.x + (star.radius + 10) * Math.cos(theta + i /2 ); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
-		//     y = star.y + (star.radius + 10) * Math.sin(theta + i * 2);
-		//     ctx.beginPath();
-		//     ctx.arc(x, y, 4, 0, 2 * Math.PI);
-		//     ctx.fillStyle = `hsla(${star.hue}, 100%, 50%, 1)`;
-		//     ctx.fill();
-		// }
 	}
 
 	function bounceAlpha() {
@@ -357,7 +340,13 @@
 			<button label="Start" class="p-3 bg-sky-600 hover:bg-sky-500 rounded" on:click={onClick}
 				>Animate</button
 			>
+			<button label="Start" class="p-3 bg-sky-600 hover:bg-sky-500 rounded" on:click={mapInit}
+				>Clear localStorage</button
+			>
 			<Checkbox duration="200" label="Random color functions?" bind:checked={data.randomColors} />
+			<Checkbox duration="200" label="Draw Centers" bind:checked={data.drawCenters} />
+			<Checkbox duration="200" label="Draw Hexes" bind:checked={data.drawHexes} />
+			<Checkbox duration="200" label="Draw Vertices" bind:checked={data.drawVertices} />
 			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
 		</CanvasManager>
 	</div>
