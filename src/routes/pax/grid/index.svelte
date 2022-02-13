@@ -226,6 +226,7 @@
 			if (!flag[coords.x + ':' + coords.y]) {
 				flag[coords.x + ':' + coords.y] = true;
 				let star = new Star(
+					`star-${i}`,
 					coords.x,
 					coords.y,
 					Math.random() * 5 + data.starRadius,
@@ -343,13 +344,13 @@
 		}
 	}
 	class Star {
-		constructor(x, y, radius, hue, numShips, node) {
+		constructor(id, x, y, radius, hue, numShips) {
+			this.id = id;
 			this.x = x;
 			this.y = y;
 			this.radius = radius;
 			this.hue = hue;
 			this.numShips = numShips;
-			this.node = node;
 			this.xMin = x - radius;
 			this.xMax = x + radius;
 			this.yMin = y - radius;
@@ -359,10 +360,14 @@
 		}
 
 		draw(ctx) {
+			let star = new Path2D()
 			ctx.beginPath();
-			ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+			star.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 			ctx.fillStyle = `hsla(${this.hue}, 50%, 50%, 1)`;
-			ctx.fill();
+			ctx.fill(star);
+			if(data.drawStarNumber){
+				ctx.fillText(this.id, this.x, this.y)
+			}
 		}
 
 		highlight(ctx) {
