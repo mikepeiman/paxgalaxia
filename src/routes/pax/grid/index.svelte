@@ -63,7 +63,13 @@
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
 		canvasInit();
-		mapInit(data.drawStars, data.drawCenters, data.drawHexes, data.buildVertices, data.drawVertices);
+		mapInit(
+			data.drawStars,
+			data.drawCenters,
+			data.drawHexes,
+			data.buildVertices,
+			data.drawVertices
+		);
 		console.log(`🚀 ~ file: index.svelte ~ line 52 ~ onMount ~ stars`, stars);
 	});
 
@@ -85,7 +91,14 @@
 	}
 
 	async function mapInit(stars, center, outline, buildVertices, drawVertices) {
-        console.log(`🚀 ~ file: index.svelte ~ line 88 ~ mapInit ~ stars, center, outline, buildVertices, drawVertices`, stars, center, outline, buildVertices, drawVertices)
+		console.log(
+			`🚀 ~ file: index.svelte ~ line 88 ~ mapInit ~ stars, center, outline, buildVertices, drawVertices`,
+			stars,
+			center,
+			outline,
+			buildVertices,
+			drawVertices
+		);
 		// hexCenterCoords = [];
 		generateHexGrid(w, h, data.gridRadius, data.gridOffset);
 		if (buildVertices) {
@@ -105,7 +118,7 @@
 		stars.length < data.numStars ? (stars = generateStars(data.numStars - stars.length)) : null;
 		stars.length > data.numStars ? stars.splice(data.numStars) : null;
 		stars.forEach((star) => {
-			draw(star);
+			star.draw(ctx);
 		});
 	}
 
@@ -123,7 +136,7 @@
 	function drawHex(cx, cy, r) {
 		const a = (2 * Math.PI) / 6;
 		ctx.beginPath();
-		ctx.strokeStyle = `hsla(${Math.random() * (cx + cy)}, 100%, 50%, 1)`;
+		ctx.strokeStyle = `hsla(${cx + cy}, 100%, 50%, 1)`;
 
 		for (let i = 0; i <= 6; i++) {
 			const x = roundNum(cx + r * Math.cos(a * i), 3);
@@ -234,7 +247,13 @@
 		console.log('change');
 		console.log(`🚀 ~ file: index.svelte ~ line 194 ~ onChange ~ e`, e.detail);
 		canvasRedraw();
-		mapInit(data.drawStars, data.drawCenters, data.drawHexes, data.buildVertices, data.drawVertices);
+		mapInit(
+			data.drawStars,
+			data.drawCenters,
+			data.drawHexes,
+			data.buildVertices,
+			data.drawVertices
+		);
 		// animating ? (animating = false) : (animating = true);
 		// animating ? animate() : null;
 	}
@@ -330,10 +349,10 @@
 	// animate the circle
 	function animate() {
 		counter++;
-
-		if (stars.length < data.numStars) {
-			stars = [...stars, ...generateStars(data.numStars - stars.length)];
-		}
+		// drawStars()
+		// if (stars.length < data.numStars) {
+		// 	stars = [...stars, ...generateStars(data.numStars - stars.length)];
+		// }
 		if (animating) {
 			//  && counter < 10
 			setTimeout(function () {
@@ -343,12 +362,15 @@
 				ctx.save();
 				stars.forEach((star) => {
 					// draw(star);
-					star.draw(ctx);
+					data.drawStars ? star.draw(ctx) : null;
 					drawShips(star);
 					// this.addEventListener('mouseover', star);
 					// this.addEventListener('mouseout', (event) => star.onEvent(event));
 					// this.addEventListener('click', (event) => star.onEvent(event));
 				});
+				ctx.restore();
+				ctx.save();
+				drawOnHexCoords(data.drawStars, data.drawCenters, data.drawHexes, data.drawVertices);
 				// drawGrid();
 				// ctx.clearRect(0, 0, w, h);
 				ctx.restore();
@@ -373,7 +395,8 @@
 			this.x = x;
 			this.y = y;
 			this.radius = radius;
-			(this.type = type), (this.hue = hue);
+			this.type = type;
+			this.hue = hue;
 			this.numShips = numShips;
 			this.xMin = x - radius;
 			this.xMax = x + radius;
@@ -391,6 +414,9 @@
 			ctx.fill(star);
 			if (data.drawStarNumber) {
 				ctx.fillText(this.id, this.x, this.y);
+			}
+			if (this.highlighted) {
+				this.highlight(ctx);
 			}
 		}
 
