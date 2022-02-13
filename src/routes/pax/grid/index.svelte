@@ -31,29 +31,28 @@
 	let data = {
 		TITLE: 'Pax01-vanilla',
 		fps: 60,
-		numStars: 20,
+		numStars: 60,
 		shipsMin: 1,
 		shipsMax: 50,
 		orbitXmod: 1,
 		orbitYmod: 1,
 		speed: 10
 	};
+	let hexCenterCoords = [];
+	let hexVertexCoords = [];
+	let uniqueVertexCoords = [];
+
 	onMount(async () => {
 		mounted = true;
-		init();
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
+		init();
 		// drawHexGrid(w, h, 36);
-		generateHexGrid(w, h, 25, 0);
-		getVertexCoords()
-		drawOnHexCoords(true, true, true);
-		console.log(`🚀 ~ file: index.svelte ~ line 62 ~ drawHex ~ hexVertexCoords`, hexVertexCoords);
-		// let unique = await new UniqueArray(hexVertexCoords)
-		// let u = uniqueArray(hexVertexCoords);
-		let u2 = removeDuplicates(hexVertexCoords);
-		console.log(`🚀 ~ file: index.svelte ~ line 53 ~ onMount ~ u2`, u2);
-		// console.log(`🚀 ~ file: index.svelte ~ line 52 ~ onMount ~  u`,  u)
-		// console.log(`🚀 ~ file: index.svelte ~ line 51 ~ onMount ~ unique`, await unique)
+		stars;
+		console.log(`🚀 ~ file: index.svelte ~ line 52 ~ onMount ~ stars`, stars);
+		// generateStars(data.numStars)
+		// console.log(`🚀 ~ file: index.svelte ~ line 62 ~ drawHex ~ hexVertexCoords`, hexVertexCoords);
+		// console.log(`🚀 ~ file: index.svelte ~ line 57 ~ onMount ~ uniqueVertexCoords`, uniqueVertexCoords)
 	});
 
 	function getVertexCoords() {
@@ -62,19 +61,15 @@
 			for (let i = 0; i <= 6; i++) {
 				const x = roundNum(coord.x + coord.r * Math.cos(a * i), 3);
 				const y = roundNum(coord.y + coord.r * Math.sin(a * i), 3);
-				hexVertexCoords = [...hexVertexCoords, { x, y}];
+				hexVertexCoords = [...hexVertexCoords, { x, y }];
 			}
 		});
 	}
 
-	let hexCenterCoords = [];
-	let hexVertexCoords = [];
-
-
 	function drawHex(cx, cy, r) {
 		const a = (2 * Math.PI) / 6;
 		ctx.beginPath();
-		ctx.strokeStyle = `hsla(${cx - cy}, 100%, 50%, 1)`;
+		ctx.strokeStyle = `hsla(${Math.random() * (cx + cy)}, 100%, 50%, 1)`;
 
 		for (let i = 0; i <= 6; i++) {
 			const x = roundNum(cx + r * Math.cos(a * i), 3);
@@ -98,36 +93,15 @@
 		const flag = {};
 		const unique = [];
 		objArray.forEach((obj) => {
-			if (!obj.flag) {
-				obj.flag = true;
+			if (!flag[obj.x + ':' + obj.y]) {
+				flag[obj.x + ':' + obj.y] = true;
 				unique.push(obj);
 			}
-			// if (!flag[obj.x] || !flag[obj.y]) {
-			// 	unique.push(obj)
-			// 	flag[obj.x] = true
-			// 	flag[obj.y] = true
-			// }
 		});
+		console.log(`🚀 ~ file: index.svelte ~ line 105 ~ objArray.forEach ~ unique`, unique);
 		console.log(`🚀 ~ file: index.svelte ~ line 82 ~ removeDuplicates ~ flag`, flag);
 		return unique;
 	};
-
-	class UniqueArray extends Array {
-		constructor(array) {
-			super();
-			array.forEach((item) => {
-				// remove duplicates
-				if (!this.includes(item)) {
-					this.push(item);
-				} else {
-					console.log(`🚀 ~ file: index.svelte ~ line 51 ~ UniqueArray ~ NOT UNIQUE item`, item);
-				}
-
-				// console.log(`🚀 ~ file: index.svelte ~ line 72 ~ UniqueArray ~ array.forEach ~ item`, item)
-				// if (!this.find((v) => _.isEqual(v, a))) this.push(a);
-			});
-		}
-	}
 
 	function roundNum(num, places) {
 		const x = Math.pow(10, places);
@@ -171,11 +145,8 @@
 			}
 		});
 		if (vertexes) {
-			hexVertexCoords.forEach((vertex, i) => {
-				// console.log(`🚀 ~ file: index.svelte ~ line 159 ~ hexCenterCoords.forEach ~ vertex`, vertex)
+			uniqueVertexCoords.forEach((vertex, i) => {
 				drawHex(vertex.x, vertex.y, 5);
-				// ctx.fillstyle = '#33f';
-				// ctx.arc(vertex.x, vertex.y, 5, 0, 2 * Math.PI);
 			});
 		}
 	}
@@ -203,26 +174,56 @@
 		ctx.fillStyle = '#222';
 		ctx.fillRect(0, 0, w, h);
 		canvas.addEventListener('click', onClick);
+		generateHexGrid(w, h, 25, 0);
+		getVertexCoords();
+		uniqueVertexCoords = removeDuplicates(hexVertexCoords);
+		drawOnHexCoords(true, true, true);
 		stars = await generateStars(data.numStars);
 		stars.forEach((star) => {
-			// draw(star);
+			draw(star);
 		});
 	}
 
-	async function generateStars(num) {
+	// write a function that generates stars using random coordinates from hexCenterCoords
+	function generateStars(num) {
 		stars = [];
+		let randomIndexes = [];
+		const flag = {};
+		let shuffled = shuffle(hexCenterCoords);
+		console.log(`🚀 ~ file: index.svelte ~ line 193 ~ generateStars ~ shuffled`, shuffled);
+		// for (let i = 0; i < num; i++) {
+		// 	let rand = Math.floor(Math.random() * hexCenterCoords.length);
+		// 	randomIndexes.push(rand);
+		// }
 		for (let i = 0; i < num; i++) {
-			let star = new Star(
-				Math.random() * w,
-				Math.random() * h,
-				Math.random() * 30 + 10,
-				Math.random() * 360,
-				Math.random() * 50
-			);
-			star['ships'] = await generateShips(star);
-			stars = [...stars, star];
+			let coords = hexCenterCoords[Math.floor(Math.random() * hexCenterCoords.length)];
+			if (!flag[coords.x + ':' + coords.y]) {
+				flag[coords.x + ':' + coords.y] = true;
+				let star = new Star(
+					coords.x,
+					coords.y,
+					Math.random() * 30 + 10,
+					Math.random() * 360,
+					Math.random() * 50
+				);
+				star['ships'] = generateShips(star);
+				stars = [...stars, star];
+			} else {
+				console.log(`🚀 ~ file: index.svelte ~ line 214 ~ generateStars ~ else`)
+				i--;
+			}
 		}
 		return stars;
+	}
+
+	function shuffle(o) {
+		//try this shuffle function
+		for (
+			var j, g, t = o.length;
+			t;
+			j = Math.floor(Math.random() * t), g = o[--t], o[t] = o[j], o[j] = g
+		);
+		return o;
 	}
 
 	function generateShips(star) {
