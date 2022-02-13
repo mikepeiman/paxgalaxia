@@ -193,7 +193,12 @@
 				console.log(
 					`🚀 ~ file: index.svelte ~ line 197 ~ onClick ~ X range: ${star.xMin}-${star.xMax} || Y range: ${star.yMin}-${star.yMax}`
 				);
-				star.highlight(ctx)
+				if (star.highlighted) {
+					star.unhighlight(ctx)
+				} else {
+					star.highlight(ctx);
+				}
+				star.highlighted = !star.highlighted;
 				// console.log(`🚀 ~ file: index.svelte ~ line 188 ~ onClick ~ star HITTTT!!!!`, star);
 			}
 		});
@@ -360,24 +365,38 @@
 		}
 
 		draw(ctx) {
-			let star = new Path2D()
+			let star = new Path2D();
 			ctx.beginPath();
 			star.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 			ctx.fillStyle = `hsla(${this.hue}, 50%, 50%, 1)`;
 			ctx.fill(star);
-			if(data.drawStarNumber){
-				ctx.fillText(this.id, this.x, this.y)
+			if (data.drawStarNumber) {
+				ctx.fillText(this.id, this.x, this.y);
 			}
 		}
 
 		highlight(ctx) {
-			ctx.save()
+			ctx.save();
 			ctx.beginPath();
 			ctx.arc(this.x, this.y, this.radius * 1.2, 0, 2 * Math.PI);
 			ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
 			ctx.fill();
-			ctx.restore()
-		}	
+			ctx.restore();
+		}
+
+		unhighlight(ctx) {
+			ctx.save();
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.radius * 1.3, 0, 2 * Math.PI);
+			ctx.fillStyle = '#222';
+			ctx.fill()
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+			ctx.fillStyle = `hsla(${this.hue + 20}, 50%, 50%, 1)`;
+			ctx.fill();
+			ctx.restore();
+		}
+
 		handleEvent(e) {
 			console.log(`🚀 ~ file: index.svelte ~ line 334 ~ Star ~ onEvent ~ e.type: `, e.type);
 			console.log(`🚀 ~ file: index.svelte ~ line 334 ~ Star ~ onEvent ~ e`, e);
@@ -405,6 +424,7 @@
 		}
 	}
 </script>
+
 <svelte:head>
 	<script src="https://zimjs.org/cdn/nft/01/zim.js"></script>
 </svelte:head>
@@ -464,11 +484,15 @@
 				max="5"
 				step=".1"
 			/>
-			<button label="Start" class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded" on:click={toggleAnimate}
-				>Animate</button
+			<button
+				label="Start"
+				class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded"
+				on:click={toggleAnimate}>Animate</button
 			>
-			<button label="Start" class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded" on:click={drawOnHexCoords}
-				>Redraw grid</button
+			<button
+				label="Start"
+				class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded"
+				on:click={drawOnHexCoords}>Redraw grid</button
 			>
 			<button label="Start" class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded" on:click={mapInit}
 				>Clear localStorage</button
