@@ -1,15 +1,20 @@
 <script>
 	import Param from './Param.svelte';
 	import Checkbox from 'svelte-checkbox'
-
+    import { createEventDispatcher } from "svelte";
+	const dispatch = createEventDispatcher();
 	export let label = '';
 	export let duration = ''
 	export let checked = false;
+
+	function handleChange() {
+		dispatch("change", checked);
+	}
 </script>
 
 <Param {label}>
 	<div class="py-2">
-		<Checkbox bind:checked={checked} duration="400" primaryColor="#11cc55" size="2rem"/>
+		<Checkbox bind:checked={checked} on:change={handleChange} duration="400" primaryColor="#11cc55" size="2rem"/>
 	</div>
 	<!-- <input type='checkbox' bind:checked={checked} /> -->
 </Param>

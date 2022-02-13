@@ -48,10 +48,11 @@
 		orbitYmod: 1,
 		speed: 10,
 		clearLS: false,
+		drawStars: true,
 		drawCenters: true,
 		drawHexes: true,
 		drawVerticies: false,
-		buildVertexes: false
+		buildVertices: true
 	};
 	let hexCenterCoords = [];
 	let hexVertexCoords = [];
@@ -62,7 +63,7 @@
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
 		canvasInit();
-		mapInit(data.drawCenters, data.drawHexes, data.buildVertexes);
+		mapInit(data.drawStars, data.drawCenters, data.drawHexes, data.buildVertices, data.drawVertices);
 		console.log(`🚀 ~ file: index.svelte ~ line 52 ~ onMount ~ stars`, stars);
 	});
 
@@ -78,16 +79,31 @@
 		canvas.addEventListener('click', onClick);
 	}
 
-	async function mapInit(center, outline, vertexes) {
+	function canvasRedraw() {
+		ctx.fillStyle = '#222';
+		ctx.fillRect(0, 0, w, h);
+	}
+
+	async function mapInit(stars, center, outline, buildVertices, drawVertices) {
+        console.log(`🚀 ~ file: index.svelte ~ line 88 ~ mapInit ~ stars, center, outline, buildVertices, drawVertices`, stars, center, outline, buildVertices, drawVertices)
+		// hexCenterCoords = [];
 		generateHexGrid(w, h, data.gridRadius, data.gridOffset);
-		if (vertexes) {
+		if (buildVertices) {
+			console.log(`🚀 ~ file: index.svelte ~ line 90 ~ mapInit ~ buildVertices`, buildVertices);
+			// hexVertexCoords = [];
+			data.buildVertices = false;
 			getVertexCoords();
 			uniqueVertexCoords = removeDuplicates(hexVertexCoords);
 		}
 		// drawOnHexCoords(true, true, true);
 		// drawOnHexCoords(true, false, true);
-		drawOnHexCoords(center, outline, vertexes);
-		stars = generateStars(data.numStars);
+		drawOnHexCoords(stars, center, outline, drawVertices);
+		stars ? drawStars() : null;
+	}
+
+	function drawStars() {
+		stars.length < data.numStars ? (stars = generateStars(data.numStars - stars.length)) : null;
+		stars.length > data.numStars ? stars.splice(data.numStars) : null;
 		stars.forEach((star) => {
 			draw(star);
 		});
@@ -158,8 +174,11 @@
 		console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCenterCoords);
 	}
 
-	function drawOnHexCoords(center, outline, vertexes) {
+	function drawOnHexCoords(stars, center, outline, vertices) {
 		let i = 0;
+		if (stars) {
+			drawStars();
+		}
 		hexCenterCoords.forEach((hex) => {
 			if (center) {
 				ctx.beginPath();
@@ -171,7 +190,7 @@
 				drawHex(hex.x, hex.y, hex.r);
 			}
 		});
-		if (vertexes) {
+		if (vertices) {
 			uniqueVertexCoords.forEach((vertex, i) => {
 				drawHex(vertex.x, vertex.y, 5);
 			});
@@ -189,12 +208,9 @@
 			// 	console.log(`🚀 ~ file: index.svelte ~ line 203 ~ onClick ~ e.y <= star.yMax`, e.y <= star.yMax)
 			// }
 			if (e.x >= star.xMin && e.x <= star.xMax && e.y >= star.yMin && e.y <= star.yMax) {
-				console.log('click HIT!!!! ', e.x, ':', e.y);
-				console.log(
-					`🚀 ~ file: index.svelte ~ line 197 ~ onClick ~ X range: ${star.xMin}-${star.xMax} || Y range: ${star.yMin}-${star.yMax}`
-				);
+				console.log('click HIT!!!! ', e.x, ':', e.y, star);
 				if (star.highlighted) {
-					star.unhighlight(ctx)
+					star.unhighlight(ctx);
 				} else {
 					star.highlight(ctx);
 				}
@@ -216,8 +232,9 @@
 
 	function onChange(e) {
 		console.log('change');
-		console.log(`🚀 ~ file: index.svelte ~ line 194 ~ onChange ~ e`, e.detail.value);
-		// drawDot();
+		console.log(`🚀 ~ file: index.svelte ~ line 194 ~ onChange ~ e`, e.detail);
+		canvasRedraw();
+		mapInit(data.drawStars, data.drawCenters, data.drawHexes, data.buildVertices, data.drawVertices);
 		// animating ? (animating = false) : (animating = true);
 		// animating ? animate() : null;
 	}
@@ -230,11 +247,13 @@
 			let coords = hexCenterCoords[Math.floor(Math.random() * hexCenterCoords.length)];
 			if (!flag[coords.x + ':' + coords.y]) {
 				flag[coords.x + ':' + coords.y] = true;
+				let starType = Math.floor(Math.random() * data.numTypes);
 				let star = new Star(
 					`star-${i}`,
 					coords.x,
 					coords.y,
-					Math.random() * 5 + data.starRadius,
+					starType + data.starRadius,
+					starType,
 					Math.floor(Math.random() * data.numTypes) * (360 / data.numTypes),
 					Math.random() * data.shipsMax
 				);
@@ -349,12 +368,12 @@
 		}
 	}
 	class Star {
-		constructor(id, x, y, radius, hue, numShips) {
+		constructor(id, x, y, radius, type, hue, numShips) {
 			this.id = id;
 			this.x = x;
 			this.y = y;
 			this.radius = radius;
-			this.hue = hue;
+			(this.type = type), (this.hue = hue);
 			this.numShips = numShips;
 			this.xMin = x - radius;
 			this.xMax = x + radius;
@@ -389,7 +408,7 @@
 			ctx.beginPath();
 			ctx.arc(this.x, this.y, this.radius * 1.3, 0, 2 * Math.PI);
 			ctx.fillStyle = '#222';
-			ctx.fill()
+			ctx.fill();
 			ctx.beginPath();
 			ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 			ctx.fillStyle = `hsla(${this.hue + 20}, 50%, 50%, 1)`;
@@ -499,9 +518,9 @@
 			>
 			<Checkbox
 				duration="200"
-				label="Random color functions?"
+				label="Draw stars"
 				on:change={onChange}
-				bind:checked={data.randomColors}
+				bind:checked={data.drawStars}
 			/>
 			<Checkbox
 				duration="200"
@@ -518,7 +537,7 @@
 			<Checkbox
 				duration="200"
 				label="Draw Vertices"
-				on:change={onChange}
+				on:change={(e) => onChange(e)}
 				bind:checked={data.drawVertices}
 			/>
 			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
