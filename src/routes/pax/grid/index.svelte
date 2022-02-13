@@ -5,10 +5,16 @@
 	import Checkbox from '$components/Checkbox-import.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
+	import { storedSettingsChange } from '$stores/stores.js';
 	// import Grid from '../grid.svelte';
 	import { defineGrid, extendHex } from 'honeycomb-grid';
 	import Button from '$components/Button.svelte';
 
+	// $: $storedSettingsChange
+	$: console.log(
+		`🚀 ~ file: index.svelte ~ line 15 ~ $storedSettingsChange`,
+		$storedSettingsChange
+	);
 	let w,
 		h,
 		canvas,
@@ -172,9 +178,28 @@
 		}
 	}
 
-	function onClick() {
-		console.log('click');
+	function onClick(e) {
+		console.log('click', e.x, ':', e.y);
 		// drawDot();
+		stars.forEach((star) => {
+			// if(e.x >= star.xMin && e.x <= star.xMax){
+			// 	console.log(`🚀 ~ file: index.svelte ~ line 193 ~ onClick ~ e.x <= star.xMax`, e.x <= star.xMax)
+			// }
+			// if(e.y >= star.yMin && e.y <= star.yMax){
+			// 	console.log(`🚀 ~ file: index.svelte ~ line 203 ~ onClick ~ e.y <= star.yMax`, e.y <= star.yMax)
+			// }
+			if (e.x >= star.xMin && e.x <= star.xMax && e.y >= star.yMin && e.y <= star.yMax) {
+				console.log('click HIT!!!! ', e.x, ':', e.y);
+				console.log(
+					`🚀 ~ file: index.svelte ~ line 197 ~ onClick ~ X range: ${star.xMin}-${star.xMax} || Y range: ${star.yMin}-${star.yMax}`
+				);
+				star.highlight(ctx)
+				// console.log(`🚀 ~ file: index.svelte ~ line 188 ~ onClick ~ star HITTTT!!!!`, star);
+			}
+		});
+	}
+
+	function toggleAnimate() {
 		animating ? (animating = false) : (animating = true);
 		animating ? animate() : null;
 	}
@@ -182,6 +207,14 @@
 	function reset() {
 		// data.clearLS = true
 		init();
+	}
+
+	function onChange(e) {
+		console.log('change');
+		console.log(`🚀 ~ file: index.svelte ~ line 194 ~ onChange ~ e`, e.detail.value);
+		// drawDot();
+		// animating ? (animating = false) : (animating = true);
+		// animating ? animate() : null;
 	}
 
 	// write a function that generates stars using random coordinates from hexCenterCoords
@@ -284,8 +317,12 @@
 				ctx.fillRect(0, 0, w, h);
 				ctx.save();
 				stars.forEach((star) => {
-					draw(star);
+					// draw(star);
+					star.draw(ctx);
 					drawShips(star);
+					// this.addEventListener('mouseover', star);
+					// this.addEventListener('mouseout', (event) => star.onEvent(event));
+					// this.addEventListener('click', (event) => star.onEvent(event));
 				});
 				// drawGrid();
 				// ctx.clearRect(0, 0, w, h);
@@ -306,12 +343,52 @@
 		}
 	}
 	class Star {
-		constructor(x, y, radius, hue, numShips) {
+		constructor(x, y, radius, hue, numShips, node) {
 			this.x = x;
 			this.y = y;
 			this.radius = radius;
 			this.hue = hue;
 			this.numShips = numShips;
+			this.node = node;
+			this.xMin = x - radius;
+			this.xMax = x + radius;
+			this.yMin = y - radius;
+			this.yMax = y + radius;
+			// addEventListener('click', this.handleEvent);
+			// addEventListener('mouseover', this.handleEvent);
+		}
+
+		draw(ctx) {
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+			ctx.fillStyle = `hsla(${this.hue}, 50%, 50%, 1)`;
+			ctx.fill();
+		}
+
+		highlight(ctx) {
+			ctx.save()
+			ctx.beginPath();
+			ctx.arc(this.x, this.y, this.radius * 1.2, 0, 2 * Math.PI);
+			ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
+			ctx.fill();
+			ctx.restore()
+		}	
+		handleEvent(e) {
+			console.log(`🚀 ~ file: index.svelte ~ line 334 ~ Star ~ onEvent ~ e.type: `, e.type);
+			console.log(`🚀 ~ file: index.svelte ~ line 334 ~ Star ~ onEvent ~ e`, e);
+			console.log(`🚀 ~ file: index.svelte ~ line 214 ~ onEvent ~ this`, this.x);
+			console.log(`🚀 ~ file: index.svelte ~ line 214 ~ onEvent ~ this`, this.y);
+			if (e.type === 'mouseover') {
+				console.log(` e.type: mouseover `);
+				this.hue = 0;
+			}
+		}
+	}
+
+	class Handler extends Star {
+		constructor(currentTarget) {
+			super();
+			currentTarget.addEventListener('click', this);
 		}
 	}
 
@@ -323,30 +400,98 @@
 		}
 	}
 </script>
+<svelte:head>
+	<script src="https://zimjs.org/cdn/nft/01/zim.js"></script>
+</svelte:head>
 
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
 <!-- <Grid /> -->
 <div class="sketch-wrapper">
 	<canvas id="canvas" bind:this={canvas} />
 	<div class="controls flex flex-col p-5">
-		<CanvasManager {data}>
-			<Slider label="Number of stars" bind:value={data.numStars} min="1" max="50" step="1" />
-			<Slider label="Ships min" bind:value={data.shipsMin} min="1" max="50" step="1" />
-			<Slider label="Ships max" bind:value={data.shipsMax} min="5" max="250" step="5" />
-			<Slider label="Speed" bind:value={data.speed} min="5" max="100" step="5" />
-			<Slider label="FPS" bind:value={data.fps} min="1" max="60" step="1" />
-			<Slider label="Orbit X mod" bind:value={data.orbitXmod} min=".1" max="5" step=".1" />
-			<Slider label="Orbit Y mod" bind:value={data.orbitYmod} min=".1" max="5" step=".1" />
-			<button label="Start" class="p-3 bg-sky-600 hover:bg-sky-500 rounded" on:click={onClick}
+		<CanvasManager {data} on:change={onChange}>
+			<Slider
+				label="Number of stars"
+				on:message={(e) => onChange(e)}
+				bind:value={data.numStars}
+				min="1"
+				max="50"
+				step="1"
+			/>
+			<Slider
+				label="Ships min"
+				on:message={onChange}
+				bind:value={data.shipsMin}
+				min="1"
+				max="50"
+				step="1"
+			/>
+			<Slider
+				label="Ships max"
+				on:message={onChange}
+				bind:value={data.shipsMax}
+				min="5"
+				max="250"
+				step="5"
+			/>
+			<Slider
+				label="Speed"
+				on:message={onChange}
+				bind:value={data.speed}
+				min="5"
+				max="100"
+				step="5"
+			/>
+			<Slider label="FPS" on:message={onChange} bind:value={data.fps} min="1" max="60" step="1" />
+			<Slider
+				label="Orbit X mod"
+				on:message={onChange}
+				bind:value={data.orbitXmod}
+				min=".1"
+				max="5"
+				step=".1"
+			/>
+			<Slider
+				label="Orbit Y mod"
+				on:message={onChange}
+				bind:value={data.orbitYmod}
+				min=".1"
+				max="5"
+				step=".1"
+			/>
+			<button label="Start" class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded" on:click={toggleAnimate}
 				>Animate</button
 			>
-			<button label="Start" class="p-3 bg-sky-600 hover:bg-sky-500 rounded" on:click={mapInit}
+			<button label="Start" class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded" on:click={drawOnHexCoords}
+				>Redraw grid</button
+			>
+			<button label="Start" class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded" on:click={mapInit}
 				>Clear localStorage</button
 			>
-			<Checkbox duration="200" label="Random color functions?" bind:checked={data.randomColors} />
-			<Checkbox duration="200" label="Draw Centers" bind:checked={data.drawCenters} />
-			<Checkbox duration="200" label="Draw Hexes" bind:checked={data.drawHexes} />
-			<Checkbox duration="200" label="Draw Vertices" bind:checked={data.drawVertices} />
+			<Checkbox
+				duration="200"
+				label="Random color functions?"
+				on:change={onChange}
+				bind:checked={data.randomColors}
+			/>
+			<Checkbox
+				duration="200"
+				label="Draw Centers"
+				on:change={onChange}
+				bind:checked={data.drawCenters}
+			/>
+			<Checkbox
+				duration="200"
+				label="Draw Hexes"
+				on:change={onChange}
+				bind:checked={data.drawHexes}
+			/>
+			<Checkbox
+				duration="200"
+				label="Draw Vertices"
+				on:change={onChange}
+				bind:checked={data.drawVertices}
+			/>
 			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
 		</CanvasManager>
 	</div>
