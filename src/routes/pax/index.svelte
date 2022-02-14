@@ -5,14 +5,8 @@
 	import Checkbox from '$components/Checkbox-import.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
-<<<<<<< HEAD
-
-	import drawGrid from './grid.js';
-
-=======
 	import Grid from './grid.svelte';
 	import { defineGrid, extendHex } from 'honeycomb-grid';
->>>>>>> pax
 
 	let w,
 		h,

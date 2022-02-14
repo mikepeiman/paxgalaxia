@@ -23,7 +23,6 @@
 		cy,
 		stars = [],
 		theta = 0,
-		frame = 0,
 		alpha = 0,
 		modAlpha = 1,
 		timestamp = 0,
@@ -35,7 +34,9 @@
 	$: stars = [];
 	let mounted = false,
 		animating = false;
-	let counter = 0;
+	let counter = 0,
+		frame = 0,
+		tick = 0;
 	let radius = Math.min(w, h) / 4;
 	let data = {
 		TITLE: 'Pax01-vanilla',
@@ -133,7 +134,7 @@
 		stars.forEach((star) => {
 			starsToggle ? star.draw(ctx) : null;
 			shipsToggle ? drawShips(star) : null;
-			console.log(`🚀 ~ file: index.svelte ~ line 127 ~ stars.forEach ~ animating`, animating);
+			// console.log(`🚀 ~ file: index.svelte ~ line 127 ~ stars.forEach ~ animating`, animating);
 		});
 	}
 
@@ -311,20 +312,41 @@
 	}
 
 	function generateShips(star) {
-		// console.log(`🚀 ~ file: index.svelte ~ line 76 ~ generateShips ~ star`, star);
-		let ships = [];
+		let ships = star.ships || [];
 		for (let i = 0; i < star.numShips; i++) {
-			let color = `hsla(${star.hue + Math.random() * i}, ${
-				Math.random > 0.5 ? 50 + Math.random() * i * 5 : 50 - Math.random() * i
-			}%, ${Math.random > 0.5 ? 75 + Math.random() * i * 5 : 50 - Math.random() * i}%, ${
-				Math.random > 0.75 ? Math.random() + 0.25 : Math.random() - 0.25
-			})`;
-			let ship = new Ship(Math.random() * 5, color, Math.random() * 5);
 			// console.log(`🚀 ~ file: index.svelte ~ line 79 ~ generateShips ~ ship`, ship);
+			let ship = addShipToStar(star, i);
 			ships = [...ships, ship];
+		}
+		return ships;
+	}
+
+	function adjustShipNumber(star) {
+		star.ships.length > star.numShips
+			? destroyShips(star, star.ships.length - star.numShips)
+			: null;
+		star.ships.length < star.numShips
+			? (star.ships = [...star.ships, generateShips(star, star.numShips - star.ships.length)])
+			: null;
+	}
+
+	function destroyShips(star, num) {
+		let ships = star.ships;
+		for (let i = 0; i < num; i++) {
+			ships.pop();
 		}
 		star.ships = ships;
 		return ships;
+	}
+
+	function addShipToStar(star, i) {
+		let color = `hsla(${star.hue + Math.random() * i}, ${
+			Math.random > 0.5 ? 50 + Math.random() * i * 5 : 50 - Math.random() * i
+		}%, ${Math.random > 0.5 ? 75 + Math.random() * i * 5 : 50 - Math.random() * i}%, ${
+			Math.random > 0.75 ? Math.random() + 0.25 : Math.random() - 0.25
+		})`;
+		let ship = new Ship(Math.random() * 5, color, Math.random() * 5);
+		return ship;
 	}
 
 	function drawShips(star) {
@@ -356,6 +378,12 @@
 
 	function animate() {
 		counter++;
+		if (frame % data.fps === 0) {
+			tick++;
+			tickUpdateShips();
+			console.log(`🚀 ~ file: index.svelte ~ line 392 ~ animate ~ tick`, tick);
+		}
+		tick;
 		if (animating) {
 			setTimeout(function () {
 				requestAnimationFrame(animate);
@@ -382,6 +410,13 @@
 		} else {
 			return;
 		}
+	}
+
+	function tickUpdateShips() {
+		stars.forEach((star) => {
+			star.update();
+			adjustShipNumber(star);
+		});
 	}
 
 	function gameLoop(timestamp) {
@@ -455,6 +490,10 @@
 			}
 		}
 
+		update() {
+			this.type < 3 && tick % 5 == 0 ? this.numShips++ : null;
+		}
+
 		highlight(ctx) {
 			ctx.save();
 			ctx.beginPath();
@@ -505,9 +544,10 @@
 	}
 </script>
 
+<!-- 
 <svelte:head>
 	<script src="https://zimjs.org/cdn/nft/01/zim.js"></script>
-</svelte:head>
+</svelte:head> -->
 
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
 <!-- <Grid /> -->
