@@ -5,9 +5,14 @@
 	import Checkbox from '$components/Checkbox-import.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
+<<<<<<< HEAD
 
 	import drawGrid from './grid.js';
 
+=======
+	import Grid from './grid.svelte';
+	import { defineGrid, extendHex } from 'honeycomb-grid';
+>>>>>>> pax
 
 	let w,
 		h,
@@ -29,15 +34,14 @@
 	let counter = 0;
 	let radius = Math.min(w, h) / 4;
 	let data = {
-        TITLE: 'Pax01-vanilla',
+		TITLE: 'Pax01-vanilla',
 		fps: 60,
-        numStars: 20,
-        shipsMin: 1,
-        shipsMax: 50,
-        orbitXmod: 1,
-        orbitYmod: 1,
-        speed: 10
-
+		numStars: 20,
+		shipsMin: 1,
+		shipsMax: 50,
+		orbitXmod: 1,
+		orbitYmod: 1,
+		speed: 10
 	};
 	onMount(() => {
 		mounted = true;
@@ -53,7 +57,10 @@
 
 	async function init() {
 		canvas = document.getElementById('canvas');
-		w = canvas.width = window.innerWidth * .8;
+		// let grid = Grid.rectangle({ width: 4, height: 4 });
+		// console.log(`🚀 ~ file: index.svelte ~ line 56 ~ init ~ grid`, grid);
+
+		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
 		cx = w / 2;
 		cy = h / 2;
@@ -68,6 +75,7 @@
 		stars.forEach((star) => {
 			draw(star);
 		});
+
 	}
 
 	async function generateStars(num) {
@@ -111,14 +119,25 @@
 		return ships;
 	}
 
+	function drawGrid() {
+		const hex = extendHex({ size: 50 });
+		const Grid = defineGrid(hex);
+		Grid.rectangle({ width: 12, height: 12 }).forEach((hex) => {
+			ctx.fillStyle = '#f00';
+			ctx.fillRect(hex.x, hex.y, hex.width, hex.height);
+			ctx.fill()
+		});
+
+	}
+
 	function drawShips(star) {
-		console.log(`🚀 ~ file: index.svelte ~ line 87 ~ drawShips ~ star`, star);
+		// console.log(`🚀 ~ file: index.svelte ~ line 87 ~ drawShips ~ star`, star);
 		let x = 1,
 			y = 1;
 		let ships = star.ships;
-		console.log(`🚀 ~ file: index.svelte ~ line 86 ~ drawShips ~ ships`, ships);
+		// console.log(`🚀 ~ file: index.svelte ~ line 86 ~ drawShips ~ ships`, ships);
 		star['ships'].forEach((ship, i) => {
-			theta = theta + (i / 10000) * data.speed / 500
+			theta = theta + ((i / 10000) * data.speed) / 500;
 			x = star.x + (star.radius + 10) * Math.cos(theta + i / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
 			y = star.y + (star.radius + 10) * Math.sin(theta + i / data.orbitYmod);
 			ctx.beginPath();
@@ -158,9 +177,9 @@
 	function animate() {
 		counter++;
 
-        if(stars.length < data.numStars){
-            stars = [...stars, ...generateStars(data.numStars - stars.length)];
-        }
+		if (stars.length < data.numStars) {
+			stars = [...stars, ...generateStars(data.numStars - stars.length)];
+		}
 		if (animating) {
 			//  && counter < 10
 			setTimeout(function () {
@@ -172,7 +191,7 @@
 					draw(star);
 					drawShips(star);
 				});
-
+				drawGrid()
 				// ctx.clearRect(0, 0, w, h);
 				ctx.restore();
 				// ctx.fillRect(0,0,w,h);
@@ -210,11 +229,11 @@
 </script>
 
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
+<Grid />
 <div class="sketch-wrapper">
 	<canvas id="canvas" bind:this={canvas} />
 	<div class="controls flex flex-col p-5">
 		<CanvasManager {data}>
-
 			<Slider label="Number of stars" bind:value={data.numStars} min="1" max="50" step="1" />
 			<Slider label="Ships min" bind:value={data.shipsMin} min="1" max="50" step="1" />
 			<Slider label="Ships max" bind:value={data.shipsMax} min="5" max="250" step="5" />
@@ -223,7 +242,7 @@
 			<Slider label="Orbit X mod" bind:value={data.orbitXmod} min=".1" max="5" step=".1" />
 			<Slider label="Orbit Y mod" bind:value={data.orbitYmod} min=".1" max="5" step=".1" />
 
-			<Checkbox duration=200 label="Random color functions?" bind:checked={data.randomColors} />
+			<Checkbox duration="200" label="Random color functions?" bind:checked={data.randomColors} />
 			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
 		</CanvasManager>
 	</div>
