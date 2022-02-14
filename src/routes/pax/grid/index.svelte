@@ -25,7 +25,9 @@
 		theta = 0,
 		frame = 0,
 		alpha = 0,
-		modAlpha = 1;
+		modAlpha = 1,
+		timestamp = 0,
+		lastRender = 0;
 	$: console.log(w, h);
 	$: w, h;
 	$: cx = w / 2;
@@ -56,7 +58,7 @@
 		drawHexes: true,
 		drawVerticies: false,
 		buildVertices: true,
-		drawStarNumber: true,
+		drawStarNumber: true
 	};
 	let hexCenterCoords = [];
 	let hexVertexCoords = [];
@@ -64,6 +66,7 @@
 
 	onMount(async () => {
 		mounted = true;
+		timestamp = performance.now();
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
 		canvasInit();
@@ -246,6 +249,7 @@
 	function toggleAnimate() {
 		animating ? (animating = false) : (animating = true);
 		animating ? animate() : null;
+		// animating ? gameLoop(timestamp) : null;
 	}
 
 	function reset() {
@@ -350,7 +354,6 @@
 		return alpha.toFixed(3);
 	}
 
-
 	function animate() {
 		counter++;
 		if (animating) {
@@ -374,25 +377,41 @@
 				);
 				ctx.restore();
 				++frame;
-			// }, 1000 / data.tickRate);
+				// }, 1000 / data.tickRate);
 			}, 1000 / data.fps);
 		} else {
 			return;
 		}
 	}
-	
-function gameLoop(timestamp) {
-	let progress = timestamp - lastRender;
-	lastRender = timestamp;
-	update(progress)
-		.then(() => {
-			requestAnimationFrame(gameLoop);
-		})
-		.catch((err) => {
-			console.error(err);
+
+	function gameLoop(timestamp) {
+		counter++;
+		let progress = timestamp - lastRender;
+		lastRender = timestamp;
+		animating ? update(progress) : null;
+		requestAnimationFrame(gameLoop);
+	}
+
+	function update(progress) {
+		ctx.fillStyle = '#222';
+		ctx.fillRect(0, 0, w, h);
+		ctx.save();
+		stars.forEach((star) => {
+			data.drawStars ? star.draw(ctx) : null;
+			data.drawShips ? drawShips(star) : null;
 		});
-	requestAnimationFrame(gameLoop);
-}
+		ctx.restore();
+		ctx.save();
+		drawOnHexCoords(
+			data.drawStars,
+			data.drawShips,
+			data.drawCenters,
+			data.drawHexes,
+			data.drawVertices
+		);
+		ctx.restore();
+		++frame;
+	}
 
 	class Vector {
 		constructor(x, y) {
@@ -425,9 +444,9 @@ function gameLoop(timestamp) {
 			ctx.fill(star);
 			let fontSize = 18;
 			if (data.drawStarNumber) {
-				ctx.fillStyle = "#000"
+				ctx.fillStyle = '#000';
 				ctx.font = `bold ${fontSize}px sans-serif`;
-				ctx.textAlign = "center"
+				ctx.textAlign = 'center';
 				// ctx.fillText(this.ships.length, this.x - this.radius / 3, this.y + fontSize / 3);
 				ctx.fillText(this.ships.length, this.x, this.y + fontSize / 3);
 			}
