@@ -30,6 +30,7 @@
 	$: w, h;
 	$: cx = w / 2;
 	$: cy = h / 2;
+	$: stars = [];
 	let mounted = false,
 		animating = false;
 	let counter = 0;
@@ -37,7 +38,7 @@
 	let data = {
 		TITLE: 'Pax01-vanilla',
 		fps: 60,
-		numStars: 60,
+		numStars: 10,
 		numTypes: 5,
 		shipsMin: 1,
 		shipsMax: 50,
@@ -49,6 +50,7 @@
 		speed: 10,
 		clearLS: false,
 		drawStars: true,
+		drawShips: true,
 		drawCenters: true,
 		drawHexes: true,
 		drawVerticies: false,
@@ -65,6 +67,7 @@
 		canvasInit();
 		mapInit(
 			data.drawStars,
+			data.drawShips,
 			data.drawCenters,
 			data.drawHexes,
 			data.buildVertices,
@@ -90,15 +93,17 @@
 		ctx.fillRect(0, 0, w, h);
 	}
 
-	async function mapInit(stars, center, outline, buildVertices, drawVertices) {
+	async function mapInit(starsToggle, shipsToggle, center, outline, buildVertices, drawVertices) {
 		console.log(
-			`🚀 ~ file: index.svelte ~ line 88 ~ mapInit ~ stars, center, outline, buildVertices, drawVertices`,
-			stars,
+			`🚀 ~ file: index.svelte ~ line 96 ~ mapInit ~ starsToggle, shipsToggle, center, outline, buildVertices, drawVertices`,
+			starsToggle,
+			shipsToggle,
 			center,
 			outline,
 			buildVertices,
 			drawVertices
 		);
+
 		// hexCenterCoords = [];
 		generateHexGrid(w, h, data.gridRadius, data.gridOffset);
 		if (buildVertices) {
@@ -110,15 +115,20 @@
 		}
 		// drawOnHexCoords(true, true, true);
 		// drawOnHexCoords(true, false, true);
-		drawOnHexCoords(stars, center, outline, drawVertices);
-		stars ? drawStars() : null;
+		drawOnHexCoords(starsToggle, center, outline, drawVertices);
+		drawStars(starsToggle, shipsToggle);
 	}
 
-	function drawStars() {
+	function drawStars(starsToggle = true, shipsToggle = true) {
+		// console.log(`🚀 ~ file: index.svelte ~ line 119 ~ drawStars ~ stars.length`, stars.length)
+		// console.log(`🚀 ~ file: index.svelte ~ line 122 ~ drawStars ~ data.numStars`, data.numStars)
+		// console.log(`🚀 ~ file: index.svelte ~ line 120 ~ drawStars ~ stars`, stars)
 		stars.length < data.numStars ? (stars = generateStars(data.numStars - stars.length)) : null;
-		stars.length > data.numStars ? stars.splice(data.numStars) : null;
+		stars.length > data.numStars ? stars.splice(data.numStars, stars.length) : null;
 		stars.forEach((star) => {
-			star.draw(ctx);
+			starsToggle ? star.draw(ctx) : null;
+			shipsToggle ? drawShips(star) : null;
+			console.log(`🚀 ~ file: index.svelte ~ line 127 ~ stars.forEach ~ animating`, animating);
 		});
 	}
 
@@ -187,11 +197,9 @@
 		console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCenterCoords);
 	}
 
-	function drawOnHexCoords(stars, center, outline, vertices) {
+	function drawOnHexCoords(starsToggle, shipsToggle, center, outline, vertices) {
 		let i = 0;
-		if (stars) {
-			drawStars();
-		}
+		drawStars(starsToggle, shipsToggle);
 		hexCenterCoords.forEach((hex) => {
 			if (center) {
 				ctx.beginPath();
@@ -247,11 +255,11 @@
 		console.log('change');
 		console.log(`🚀 ~ file: index.svelte ~ line 194 ~ onChange ~ e`, e.detail);
 		canvasRedraw();
-		mapInit(
+		drawOnHexCoords(
 			data.drawStars,
+			data.drawShips,
 			data.drawCenters,
 			data.drawHexes,
-			data.buildVertices,
 			data.drawVertices
 		);
 		// animating ? (animating = false) : (animating = true);
@@ -260,7 +268,7 @@
 
 	// write a function that generates stars using random coordinates from hexCenterCoords
 	function generateStars(num) {
-		stars = [];
+		// stars = [];
 		const flag = {};
 		for (let i = 0; i < num; i++) {
 			let coords = hexCenterCoords[Math.floor(Math.random() * hexCenterCoords.length)];
@@ -340,46 +348,32 @@
 		return alpha.toFixed(3);
 	}
 
-	function draw(star) {
-		ctx.beginPath();
-		ctx.arc(star.x, star.y, star.radius, 0, 2 * Math.PI);
-		ctx.fillStyle = `hsla(${star.hue}, 50%, 50%, 1)`;
-		ctx.fill();
-	}
-	// animate the circle
 	function animate() {
 		counter++;
-		// drawStars()
-		// if (stars.length < data.numStars) {
-		// 	stars = [...stars, ...generateStars(data.numStars - stars.length)];
-		// }
 		if (animating) {
-			//  && counter < 10
 			setTimeout(function () {
 				requestAnimationFrame(animate);
 				ctx.fillStyle = '#222';
 				ctx.fillRect(0, 0, w, h);
 				ctx.save();
 				stars.forEach((star) => {
-					// draw(star);
 					data.drawStars ? star.draw(ctx) : null;
-					drawShips(star);
-					// this.addEventListener('mouseover', star);
-					// this.addEventListener('mouseout', (event) => star.onEvent(event));
-					// this.addEventListener('click', (event) => star.onEvent(event));
+					data.drawShips ? drawShips(star) : null;
 				});
 				ctx.restore();
 				ctx.save();
-				drawOnHexCoords(data.drawStars, data.drawCenters, data.drawHexes, data.drawVertices);
-				// drawGrid();
-				// ctx.clearRect(0, 0, w, h);
+				drawOnHexCoords(
+					data.drawStars,
+					data.drawShips,
+					data.drawCenters,
+					data.drawHexes,
+					data.drawVertices
+				);
 				ctx.restore();
-				// ctx.fillRect(0,0,w,h);
 				++frame;
 			}, 1000 / data.fps);
 		} else {
 			return;
-			// init();
 		}
 	}
 
@@ -547,6 +541,12 @@
 				label="Draw stars"
 				on:change={onChange}
 				bind:checked={data.drawStars}
+			/>
+			<Checkbox
+				duration="200"
+				label="Draw ships"
+				on:change={onChange}
+				bind:checked={data.drawShips}
 			/>
 			<Checkbox
 				duration="200"

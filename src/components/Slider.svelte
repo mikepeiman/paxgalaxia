@@ -28,6 +28,7 @@
 			{min}
 			{max}
 			{step}
+			on:change={dispatchMessage}
 		/>
 	</div>
 </Param>
