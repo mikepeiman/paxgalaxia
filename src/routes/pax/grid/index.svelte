@@ -38,6 +38,7 @@
 	let data = {
 		TITLE: 'Pax01-vanilla',
 		fps: 60,
+		tickRate: 10,
 		numStars: 10,
 		numTypes: 5,
 		shipsMin: 1,
@@ -45,7 +46,7 @@
 		starRadius: 20,
 		gridRadius: 55,
 		gridOffset: 0,
-		orbitXmod: 1.1,
+		orbitXmod: 1,
 		orbitYmod: 1,
 		speed: 10,
 		clearLS: false,
@@ -349,6 +350,7 @@
 		return alpha.toFixed(3);
 	}
 
+
 	function animate() {
 		counter++;
 		if (animating) {
@@ -372,11 +374,25 @@
 				);
 				ctx.restore();
 				++frame;
+			// }, 1000 / data.tickRate);
 			}, 1000 / data.fps);
 		} else {
 			return;
 		}
 	}
+	
+function gameLoop(timestamp) {
+	let progress = timestamp - lastRender;
+	lastRender = timestamp;
+	update(progress)
+		.then(() => {
+			requestAnimationFrame(gameLoop);
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+	requestAnimationFrame(gameLoop);
+}
 
 	class Vector {
 		constructor(x, y) {
