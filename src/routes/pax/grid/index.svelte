@@ -45,16 +45,17 @@
 		starRadius: 20,
 		gridRadius: 55,
 		gridOffset: 0,
-		orbitXmod: 1,
+		orbitXmod: 1.1,
 		orbitYmod: 1,
 		speed: 10,
 		clearLS: false,
 		drawStars: true,
 		drawShips: true,
-		drawCenters: true,
+		drawCenters: false,
 		drawHexes: true,
 		drawVerticies: false,
-		buildVertices: true
+		buildVertices: true,
+		drawStarNumber: true,
 	};
 	let hexCenterCoords = [];
 	let hexVertexCoords = [];
@@ -406,8 +407,11 @@
 			star.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
 			ctx.fillStyle = `hsla(${this.hue}, 50%, 50%, 1)`;
 			ctx.fill(star);
+			let fontSize = 18;
 			if (data.drawStarNumber) {
-				ctx.fillText(this.id, this.x, this.y);
+				ctx.fillStyle = "#000"
+				ctx.font = `bold ${fontSize}px sans-serif`;
+				ctx.fillText(this.ships.length, this.x - this.radius / 3, this.y + fontSize / 3);
 			}
 			if (this.highlighted) {
 				this.highlight(ctx);
