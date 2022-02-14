@@ -411,7 +411,9 @@
 			if (data.drawStarNumber) {
 				ctx.fillStyle = "#000"
 				ctx.font = `bold ${fontSize}px sans-serif`;
-				ctx.fillText(this.ships.length, this.x - this.radius / 3, this.y + fontSize / 3);
+				ctx.textAlign = "center"
+				// ctx.fillText(this.ships.length, this.x - this.radius / 3, this.y + fontSize / 3);
+				ctx.fillText(this.ships.length, this.x, this.y + fontSize / 3);
 			}
 			if (this.highlighted) {
 				this.highlight(ctx);
