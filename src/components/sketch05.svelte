@@ -3,7 +3,7 @@
 	import CanvasSketchEditor from '$components/CanvasSketchEditor.svelte';
 	import Slider from '$components/Slider.svelte';
 	import ColorInput from '$components/ColorInput.svelte';
-	import Checkbox from '$components/Checkbox.svelte';
+	import Checkbox from '$components/Checkbox-import.svelte';
 	import { onMount } from 'svelte';
 	import random from 'canvas-sketch-util/random.js';
 	const data = {

@@ -66,7 +66,7 @@
       }
       canChange = false;
       checked = !checked;
-      dispatch("change", checked);
+      dispatch("message", {value: checked});
     };
   
     const setProp = (prop, val) => self.style.setProperty(prop, val);

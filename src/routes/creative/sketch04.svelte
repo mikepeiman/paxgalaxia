@@ -8,7 +8,7 @@ Leaving his example as the first sketch here in honor of his work and amazing co
 	import Slider from '$components/Slider.svelte';
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import ColorInput from '$components/ColorInput.svelte';
-	import Checkbox from '$components/Checkbox.svelte';
+	import Checkbox from '$components/Checkbox-import.svelte';
 	import random from 'canvas-sketch-util/random.js';
 	import math from 'canvas-sketch-util/math.js';
 	import Color from 'canvas-sketch-util/color.js';

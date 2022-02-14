@@ -8,7 +8,7 @@ Leaving his example as the first sketch here in honor of his work and amazing co
 	import CanvasSketchEditor from '$components/CanvasSketchEditor.svelte';
 	import Slider from '$components/Slider.svelte';
 	import ColorInput from '$components/ColorInput.svelte';
-	import Checkbox from '$components/Checkbox.svelte';
+	import Checkbox from '$components/Checkbox-import.svelte';
 
 	const data = {
 		TITLE: "Sketch01",
