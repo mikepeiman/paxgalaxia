@@ -23,7 +23,11 @@
 		alpha = 0,
 		modAlpha = 1,
 		timestamp = 0,
-		lastRender = 0;
+		lastRender = 0,
+		originStar,
+		destinationStar;
+		$: console.log(`🚀 ~ file: index.svelte ~ line 28 ~ originStar,	destinationStar`, originStar, destinationStar)
+
 	$: console.log(w, h);
 	$: w, h;
 	$: cx = w / 2;
@@ -79,8 +83,8 @@
 	);
 
 	$: data.stars = stars;
-	$: console.log(`🚀 ~ file: index.svelte ~ line 80 ~ data.stars`, data.stars);
-	$: console.log(`🚀 ~ file: index.svelte ~ line 78 ~ stars`, stars);
+	// $: console.log(`🚀 ~ file: index.svelte ~ line 80 ~ data.stars`, data.stars);
+	// $: console.log(`🚀 ~ file: index.svelte ~ line 78 ~ stars`, stars);
 
 	function readData(data) {
 		if (localStorageSupported) {
@@ -95,7 +99,7 @@
 				data['stars']?.length > 1
 					? ((previousData = true), (stars = data.stars))
 					: (previousData = false);
-				console.log(`🚀 ~ file: index.svelte ~ line 85 ~ readData ~ stars`, stars);
+				// console.log(`🚀 ~ file: index.svelte ~ line 85 ~ readData ~ stars`, stars);
 				return true;
 			} catch (err) {
 				console.warn(err);
@@ -138,7 +142,7 @@
 			data.buildVertices,
 			data.drawVertices
 		);
-		console.log(`🚀 ~ file: index.svelte ~ line 52 ~ onMount ~ stars`, stars);
+		// console.log(`🚀 ~ file: index.svelte ~ line 52 ~ onMount ~ stars`, stars);
 	});
 
 	function canvasInit() {
@@ -152,6 +156,9 @@
 		ctx.fillRect(0, 0, w, h);
 		canvas.addEventListener('mousedown', onClick);
 		canvas.addEventListener('mouseup', onClick);
+		canvas.addEventListener('mouseenter', onClick);
+		canvas.addEventListener('mouseleave', onClick);
+		canvas.addEventListener('mousemouse', onClick);
 	}
 
 	function canvasRedraw() {
@@ -277,7 +284,7 @@
 			max % 2 === 0 ? (even = true) : (even = false);
 			even ? (evenTest = 2) : (evenTest = 1);
 		}
-		console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCenterCoords);
+		// console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCenterCoords);
 	}
 
 	function drawOnHexCoords(starsToggle, shipsToggle, center, outline, vertices) {
@@ -302,6 +309,7 @@
 	}
 
 	function onClick(e) {
+		let noHit = false
         console.log(`🚀 ~ file: index.svelte ~ line 305 ~ onClick ~ e`, e.type)
 		console.log('click', e.x, ':', e.y);
 		// drawDot();
@@ -313,16 +321,39 @@
 			// 	console.log(`🚀 ~ file: index.svelte ~ line 203 ~ onClick ~ e.y <= star.yMax`, e.y <= star.yMax)
 			// }
 			if (e.x >= star.xMin && e.x <= star.xMax && e.y >= star.yMin && e.y <= star.yMax) {
-				console.log('click HIT!!!! ', e.x, ':', e.y, star);
-				if (star.highlighted) {
+				// console.log('click HIT!!!! ', e.x, ':', e.y, star);
+				e.type === "mousedown" ? originStar = star : originStar;
+				e.type === "mouseup" ? destinationStar = star : destinationStar;
+				if (star.highlighted ) {
 					star.unhighlight(ctx);
-				} else {
+				} else if(!star.highlighted ) {
 					star.highlight(ctx);
 				}
 				star.highlighted = !star.highlighted;
 				// console.log(`🚀 ~ file: index.svelte ~ line 188 ~ onClick ~ star HITTTT!!!!`, star);
+			} else {
+				noHit = true
 			}
 		});
+		// noHit ? originStar = destinationStar = null : null;
+		if(originStar && destinationStar && originStar !== destinationStar){
+            console.log(`!!!!!!!!!!!! 🚀 ~ file: index.svelte ~ line 336 ~ onClick ~ originStar && destinationStar`, originStar, destinationStar)
+			createVector(originStar, destinationStar)
+			ctx.beginPath()
+			ctx.moveTo(originStar.x, originStar.y);
+			ctx.lineTo(destinationStar.x, destinationStar.y);
+			ctx.lineWidth = 5;
+			ctx.lineCap = "round"
+			let color = `hsla(${originStar.hue}, 50%, 50%, .75)`;
+            console.log(`🚀 ~ file: index.svelte ~ line 343 ~ onClick ~ color`, color)
+			ctx.strokeStyle = color
+			ctx.stroke();
+		}
+	}
+
+	function createVector(originStar, destinationStar) {
+        console.log(`🚀 ~ file: index.svelte ~ line 342 ~ createVector ~ originStar, destinationStar`, originStar, destinationStar)
+		
 	}
 
 	function toggleAnimate() {
@@ -372,7 +403,7 @@
 				star.ships = generateShips(star)
 				stars = [...stars, star];
 			} else {
-				console.log(`🚀 ~ file: index.svelte ~ line 214 ~ generateStars ~ else`);
+				// console.log(`🚀 ~ file: index.svelte ~ line 214 ~ generateStars ~ else`);
 				i--;
 			}
 		}
@@ -390,7 +421,7 @@
 	}
 
 	function generateShips(star) {
-		console.log(`🚀 ~ file: index.svelte ~ line 393 ~ generateShips ~ star.numShips`, star.numShips)
+		// console.log(`🚀 ~ file: index.svelte ~ line 393 ~ generateShips ~ star.numShips`, star.numShips)
         // console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
 		let ships = star.ships
         // console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
