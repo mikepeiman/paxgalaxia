@@ -11,6 +11,7 @@
 		`🚀 ~ file: index.svelte ~ line 15 ~ $storedSettingsChange`,
 		$storedSettingsChange
 	);
+	let settings = {};
 	let w,
 		h,
 		canvas,
@@ -27,14 +28,15 @@
 	$: w, h;
 	$: cx = w / 2;
 	$: cy = h / 2;
-	$: stars = [];
+	// $: stars = [];
 	let mounted = false,
 		animating = false;
 	let counter = 0,
 		frame = 0,
 		tick = 0;
 	let radius = Math.min(w, h) / 4;
-	let data = {
+	let data;
+	data = {
 		TITLE: 'Pax01-vanilla',
 		fps: 60,
 		tickRate: 10,
@@ -55,11 +57,52 @@
 		drawHexes: true,
 		drawVerticies: false,
 		buildVertices: true,
-		drawNumShips: true
+		drawNumShips: true,
+		stars: []
 	};
 	let hexCenterCoords = [];
 	let hexVertexCoords = [];
 	let uniqueVertexCoords = [];
+	let previousData = false;
+	$: console.log(`🚀 ~ file: index.svelte ~ line 67 ~ previousData`, previousData);
+
+	let localStorageSupported = (() => {
+		try {
+			return typeof window.localStorage !== 'undefined';
+		} catch (err) {
+			return false;
+		}
+	})();
+	$: console.log(
+		`🚀 ~ file: index.svelte ~ line 71 ~ localStorageSupported ~ localStorageSupported`,
+		localStorageSupported
+	);
+
+	$: data.stars = stars;
+	$: console.log(`🚀 ~ file: index.svelte ~ line 80 ~ data.stars`, data.stars);
+	$: console.log(`🚀 ~ file: index.svelte ~ line 78 ~ stars`, stars);
+
+	function readData(data) {
+		if (localStorageSupported) {
+			try {
+				const prev = window.localStorage.getItem(`${data.TITLE}`);
+				if (!prev) return;
+				// const newData = JSON.parse(prev);
+				// Object.assign(data, newData);
+				data = prev;
+				// console.log(`🚀 ~ file: index.svelte ~ line 93 ~ readData ~ data`, data)
+				// stars = data.stars;
+				data['stars']?.length > 1
+					? ((previousData = true), (stars = data.stars))
+					: (previousData = false);
+				console.log(`🚀 ~ file: index.svelte ~ line 85 ~ readData ~ stars`, stars);
+				return true;
+			} catch (err) {
+				console.warn(err);
+				return false;
+			}
+		}
+	}
 
 	onMount(async () => {
 		mounted = true;
@@ -67,6 +110,26 @@
 		w = canvas.width = window.innerWidth * 0.8;
 		h = canvas.height = window.innerHeight;
 		canvasInit();
+		let dataFound = readData(data);
+		console.log(`🚀 ~ file: index.svelte ~ line 114 ~ onMount ~ dataFound`, dataFound);
+		console.log(`🚀 ~ file: index.svelte ~ line 114 ~ onMount ~ readData(data)		`, readData(data));
+		// dataFound
+		// 	? drawLayers(
+		// 			data.drawStars,
+		// 			data.drawShips,
+		// 			data.drawCenters,
+		// 			data.drawHexes,
+		// 			data.buildVertices,
+		// 			data.drawVertices
+		// 	  )
+		// 	: mapInit(
+		// 			data.drawStars,
+		// 			data.drawShips,
+		// 			data.drawCenters,
+		// 			data.drawHexes,
+		// 			data.buildVertices,
+		// 			data.drawVertices
+		// 	  );
 		mapInit(
 			data.drawStars,
 			data.drawShips,
@@ -87,7 +150,8 @@
 		ctx = canvas.getContext('2d');
 		ctx.fillStyle = '#222';
 		ctx.fillRect(0, 0, w, h);
-		canvas.addEventListener('click', onClick);
+		canvas.addEventListener('mousedown', onClick);
+		canvas.addEventListener('mouseup', onClick);
 	}
 
 	function canvasRedraw() {
@@ -121,10 +185,25 @@
 		drawStars(starsToggle, shipsToggle);
 	}
 
+	function drawLayers(starsToggle, shipsToggle, center, outline, buildVertices, drawVertices) {
+		console.log(
+			`🚀 ~ file: index.svelte ~ line 174 ~ drawLayers ~ starsToggle, shipsToggle, center, outline, buildVertices, drawVertices`,
+			starsToggle,
+			shipsToggle,
+			center,
+			outline,
+			buildVertices,
+			drawVertices
+		);
+
+		drawOnHexCoords(starsToggle, shipsToggle, center, outline, drawVertices);
+		drawStars(starsToggle, shipsToggle);
+	}
+
 	function drawStars(starsToggle = true, shipsToggle = true) {
 		// console.log(`🚀 ~ file: index.svelte ~ line 119 ~ drawStars ~ stars.length`, stars.length)
 		// console.log(`🚀 ~ file: index.svelte ~ line 122 ~ drawStars ~ data.numStars`, data.numStars)
-		// console.log(`🚀 ~ file: index.svelte ~ line 120 ~ drawStars ~ stars`, stars)
+		// console.log(`🚀 ~ file: index.svelte ~ line 120 ~ drawStars ~ stars`, stars);
 		stars.length < data.numStars ? (stars = generateStars(data.numStars - stars.length)) : null;
 		stars.length > data.numStars ? stars.splice(data.numStars, stars.length) : null;
 		stars.forEach((star) => {
@@ -149,15 +228,17 @@
 		const a = (2 * Math.PI) / 6;
 		ctx.beginPath();
 		ctx.strokeStyle = `hsla(${cx + cy}, 100%, 50%, 1)`;
-
+		// let hex = new Shape().addTo().s("ff0").ss(4).mt(cx, cy).lt(cx + r, cy);
 		for (let i = 0; i <= 6; i++) {
 			const x = roundNum(cx + r * Math.cos(a * i), 3);
 			const y = roundNum(cy + r * Math.sin(a * i), 3);
-			ctx.lineTo(x, y);
+			ctx.lineTo(x, y)
 		}
 		ctx.stroke();
 	}
-
+	
+	// let hex = new Path2D();
+	// i < 6 ? ctx.lineTo(x, y) : ctx.closePath()
 	const removeDuplicates = (objArray) => {
 		const flag = {};
 		const unique = [];
@@ -221,6 +302,7 @@
 	}
 
 	function onClick(e) {
+        console.log(`🚀 ~ file: index.svelte ~ line 305 ~ onClick ~ e`, e.type)
 		console.log('click', e.x, ':', e.y);
 		// drawDot();
 		stars.forEach((star) => {
@@ -285,9 +367,9 @@
 					starType + data.starRadius,
 					starType,
 					Math.floor(Math.random() * data.numTypes) * (360 / data.numTypes),
-					Math.random() * data.shipsMax
+					Math.floor(Math.random() * data.shipsMax)
 				);
-				star['ships'] = generateShips(star);
+				star.ships = generateShips(star)
 				stars = [...stars, star];
 			} else {
 				console.log(`🚀 ~ file: index.svelte ~ line 214 ~ generateStars ~ else`);
@@ -308,12 +390,16 @@
 	}
 
 	function generateShips(star) {
-		let ships = star.ships || [];
+		console.log(`🚀 ~ file: index.svelte ~ line 393 ~ generateShips ~ star.numShips`, star.numShips)
+        // console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
+		let ships = star.ships
+        // console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
 		for (let i = 0; i < star.numShips; i++) {
 			// console.log(`🚀 ~ file: index.svelte ~ line 79 ~ generateShips ~ ship`, ship);
 			let ship = addShipToStar(star, i);
-			ships = [...ships, ship];
+			ships.push(ship)
 		}
+		// console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
 		return ships;
 	}
 
@@ -339,9 +425,13 @@
 		let color = `hsla(${star.hue + Math.random() * i}, ${
 			Math.random > 0.5 ? 50 + Math.random() * i * 5 : 50 - Math.random() * i
 		}%, ${Math.random > 0.5 ? 75 + Math.random() * i * 5 : 50 - Math.random() * i}%, ${
-			Math.random > 0.75 ? Math.random() + 0.25 : Math.random() - 0.25
+			Math.random > 0.5 ? Math.random() + 0.25 : Math.random() - 0.25
 		})`;
-		let ship = new Ship(Math.random() * 5, color, Math.random() * 5);
+		// console.log(`🚀 ~ file: index.svelte ~ line 418 ~ color ~ star.hue`, star.hue)
+		let radius = Math.random() * 5
+		let orbit = star.radius + Math.random() * (i / 2 - i / 3) + 10
+		let ship = new Ship(radius, color, orbit);
+        // console.log(`🚀 ~ file: index.svelte ~ line 426 ~ addShipToStar ~ ship`, ship)
 		return ship;
 	}
 
@@ -352,9 +442,9 @@
 		let ships = star.ships;
 		// console.log(`🚀 ~ file: index.svelte ~ line 86 ~ drawShips ~ ships`, ships);
 		star['ships'].forEach((ship, i) => {
-			theta = theta + ((i / 10000) * data.speed) / 500;
-			x = star.x + (star.radius + 10) * Math.cos(theta + i / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
-			y = star.y + (star.radius + 10) * Math.sin(theta + i / data.orbitYmod);
+			theta = theta + ((i / 10000) * data.speed) / 50000;
+			x = star.x + ship.orbit * Math.cos((theta + i) / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
+			y = star.y + ship.orbit * Math.sin(theta + i / data.orbitYmod);
 			ctx.beginPath();
 			ctx.arc(x, y, 4, 0, 2 * Math.PI);
 			ctx.fillStyle = ship.color;
@@ -463,6 +553,7 @@
 			this.xMax = x + radius;
 			this.yMin = y - radius;
 			this.yMax = y + radius;
+			this.ships = []
 			// addEventListener('click', this.handleEvent);
 			// addEventListener('mouseover', this.handleEvent);
 		}
@@ -540,10 +631,11 @@
 	}
 </script>
 
-<!-- 
+
 <svelte:head>
-	<script src="https://zimjs.org/cdn/nft/01/zim.js"></script>
-</svelte:head> -->
+	<!-- <script src="https://zimjs.org/cdn/nft/01/zim.js"></script> -->
+	<script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
+</svelte:head>
 
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
 <!-- <Grid /> -->
