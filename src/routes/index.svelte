@@ -374,8 +374,8 @@
 						destinationStarId = originStarId;
 						let origin = getStarById(previousOriginStarId);
 						origin.destinationStarId = mouseupStarId;
-					} else {
 					}
+					previousOriginStarId = originStarId;
 				}
 			}
 		});
@@ -391,7 +391,7 @@
 				);
 			stars.forEach((star) => {
 				// console.log(`🚀 ~ file: index.svelte ~ line 474 ~ onClick ~ star.destinationStarId 🎯🎯🎯`, star.destinationStarId)
-				if (star.id && star.destinationStarId) {
+				if (star.id && star.destinationStarId && star.destinationStarId !== star.id) {
 					let origin = getStarById(star.id);
 					console.log(`🚀 ~ file: index.svelte ~ line 468 ~ onClick ~ origin`, origin);
 					let destination = getStarById(star.destinationStarId);
@@ -431,57 +431,57 @@
 		return { x, y };
 	}
 
-	function canvas_arrow(context, origin, destination) {
+	function canvas_arrow(context, destination, origin) {
 		console.log(
-			`🚀 ~ file: index.svelte ~ line 376 ~ canvas_arrow 🎯🎯🎯🏹🏹🏹▶▶▶🎯🎯🎯~ origin`,
-			origin,
-			`\ndestination:`,
-			destination
+			`🚀 ~ file: index.svelte ~ line 376 ~ canvas_arrow 🎯🎯🎯🏹🏹🏹▶▶▶🎯🎯🎯~ destination`,
+			destination,
+			`\norigin:`,
+			origin
 		);
-		const dx = origin.x - destination.x;
-		const dy = origin.y - destination.y;
+		const dx = destination.x - origin.x;
+		const dy = destination.y - origin.y;
 		// const headlen = Math.sqrt( dx * dx + dy * dy ) * 0.3; // length of head in pixels, scaled by length of line
 		const headlen = 30; // length of head in pixels absolute
 		const angle = Math.atan2(dy, dx);
 		const lineWidth = 10;
-		let destinationOffsetByDistance = getPointOnVectorByDistance(
-			origin.x,
-			origin.y,
-			destination.x,
-			destination.y,
-			origin.radius + lineWidth * 2
-		);
 		let originOffsetByDistance = getPointOnVectorByDistance(
 			destination.x,
 			destination.y,
 			origin.x,
 			origin.y,
-			origin.radius + lineWidth * 2
+			destination.radius + lineWidth * 2
+		);
+		let destinationOffsetByDistance = getPointOnVectorByDistance(
+			origin.x,
+			origin.y,
+			destination.x,
+			destination.y,
+			destination.radius + lineWidth * 2
 		);
 
 		context.beginPath();
-		let grd = ctx.createLinearGradient(origin.x, origin.y, destination.x, destination.y);
-		grd.addColorStop(0, `hsla(${origin.hue}, 50%, 50%, .75)`);
-		grd.addColorStop(1, `hsla(${destination.hue}, 50%, 50%, .1)`);
+		let grd = ctx.createLinearGradient(destination.x, destination.y, origin.x, origin.y);
+		grd.addColorStop(0, `hsla(${destination.hue}, 50%, 50%, .75)`);
+		grd.addColorStop(1, `hsla(${origin.hue}, 50%, 50%, .1)`);
 		ctx.strokeStyle = grd;
 		ctx.lineWidth = lineWidth;
 		ctx.lineCap = 'round';
-		context.moveTo(originOffsetByDistance.x, originOffsetByDistance.y);
-		context.lineTo(destinationOffsetByDistance.x, destinationOffsetByDistance.y);
+		context.moveTo(destinationOffsetByDistance.x, destinationOffsetByDistance.y);
+		context.lineTo(originOffsetByDistance.x, originOffsetByDistance.y);
 		context.stroke();
 		context.beginPath();
 		ctx.lineCap = 'round';
 		context.moveTo(
-			destinationOffsetByDistance.x - headlen * Math.cos(angle - Math.PI / 6),
-			destinationOffsetByDistance.y - headlen * Math.sin(angle - Math.PI / 6)
+			originOffsetByDistance.x - headlen * Math.cos(angle - Math.PI / 6),
+			originOffsetByDistance.y - headlen * Math.sin(angle - Math.PI / 6)
 		);
-		context.lineTo(destinationOffsetByDistance.x, destinationOffsetByDistance.y);
+		context.lineTo(originOffsetByDistance.x, originOffsetByDistance.y);
 		context.lineTo(
-			destinationOffsetByDistance.x - headlen * Math.cos(angle + Math.PI / 6),
-			destinationOffsetByDistance.y - headlen * Math.sin(angle + Math.PI / 6)
+			originOffsetByDistance.x - headlen * Math.cos(angle + Math.PI / 6),
+			originOffsetByDistance.y - headlen * Math.sin(angle + Math.PI / 6)
 		);
 		context.closePath();
-		context.fillStyle = `hsla(${destination.hue}, 50%, 50%, .75)`;
+		context.fillStyle = `hsla(${origin.hue}, 50%, 50%, .75)`;
 		context.fill();
 		context.stroke();
 	}
@@ -750,10 +750,7 @@
 			// ctx.save();
 			this.highlighted = true;
 			ctx.beginPath();
-			console.log(
-				`🚀 ~ file: index.svelte ~ line 788 ~ Star ~ highlight ~ this.highlighted`,
-				this.highlighted
-			);
+
 			// ctx.lineWidth = 1;
 			ctx.arc(this.x, this.y, this.radius * 1.2, 0, 2 * Math.PI);
 			ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
@@ -764,10 +761,7 @@
 		unhighlight(ctx) {
 			this.highlighted = false;
 			// ctx.save();
-			console.log(
-				`🚀 ~ file: index.svelte ~ line 798 ~ Star ~ highlight ~ this.highlighted`,
-				this.highlighted
-			);
+
 			ctx.beginPath();
 			// ctx.lineWidth = 1;
 			ctx.arc(this.x, this.y, this.radius * 2, 0, 2 * Math.PI);
