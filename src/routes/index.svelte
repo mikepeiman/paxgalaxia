@@ -333,11 +333,15 @@
 		console.log(`🚀 ~ file: index.svelte ~ line 305 ~ onClick ~ e ✅✅✅🔥🔥🔥  `, e.type),
 			`  ✅✅✅🔥🔥🔥`;
 		console.log('click', e.x, ':', e.y);
-		let hit = false
+		let hit = false;
 		stars.forEach((star) => {
 			// if we get a pixel hit
 			if (e.x >= star.xMin && e.x <= star.xMax && e.y >= star.yMin && e.y <= star.yMax) {
-				hit = true
+				hit = true;
+				if (e.type === 'contextmenu' || e.button === 2) {
+					e.preventDefault();
+					star.destinationStarId = null
+				}
 				e.type === 'mousedown' ? (mousedownStarId = star.id) : null;
 				e.type === 'mouseup' ? (mouseupStarId = star.id) : null;
 				e.type === 'mousedown' ? console.log(`getStarById: `, getStarById(star.id)) : null;
@@ -351,10 +355,10 @@
 					}
 					star.draw(ctx);
 				}
-			} 
-			if (hit && e.type === 'mouseup') {
+			}
+			if (hit && e.type === 'mouseup' && e.button !== 2) {
 				if (mousedownStarId !== mouseupStarId) {
-					originStarId =  mousedownStarId;
+					originStarId = mousedownStarId;
 					destinationStarId = previousOriginStarId = mouseupStarId;
 					let origin = getStarById(originStarId);
 					origin.destinationStarId = destinationStarId;
@@ -374,7 +378,10 @@
 					previousOriginStarId = originStarId;
 				}
 			} else if (!hit && e.type === 'mouseup') {
-                console.log(`🚀 ~ file: index.svelte ~ line 381 ~ stars.forEach ~ !hit && e.type === 'mouseup'`, !hit && e.type === 'mouseup')
+				console.log(
+					`🚀 ~ file: index.svelte ~ line 381 ~ stars.forEach ~ !hit && e.type === 'mouseup'`,
+					!hit && e.type === 'mouseup'
+				);
 				// originStarId = null
 				// destinationStarId = null
 				// previousOriginStarId = null
@@ -383,26 +390,25 @@
 			}
 		});
 
-		if (e.type === 'mouseup' && e.type !== "contextmenu") {
+		if (e.type === 'mouseup' && e.type !== 'contextmenu') {
 			canvasRedraw();
 			drawOnHexCoords(
-					data.drawStars,
-					data.drawShips,
-					data.drawCenters,
-					data.drawHexes,
-					data.drawVertices
-				);
+				data.drawStars,
+				data.drawShips,
+				data.drawCenters,
+				data.drawHexes,
+				data.drawVertices
+			);
 			stars.forEach((star) => {
 				if (star.id && star.destinationStarId && star.destinationStarId !== star.id) {
 					let origin = getStarById(star.id);
 					let destination = getStarById(star.destinationStarId);
 					canvas_arrow(ctx, destination, origin);
-
 				}
 			});
 		}
-		if(e.type === "contextmenu" || e.button === 2){
-			e.preventDefault()
+		if (e.type === 'contextmenu' || e.button === 2) {
+			e.preventDefault();
 			// return false
 		}
 	}
@@ -425,7 +431,6 @@
 		let y = y1 + Math.sin(angle) * distance;
 		return { x, y };
 	}
-
 
 	function toggleAnimate() {
 		animating ? (animating = false) : (animating = true);
@@ -684,7 +689,7 @@
 			if (this.destinationStarId) {
 				let destination = getStarById(this.destinationStarId);
 				let origin = getStarById(this.id);
-				canvas_arrow(ctx, destination, origin)
+				canvas_arrow(ctx, destination, origin);
 			}
 		}
 
