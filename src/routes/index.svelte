@@ -348,9 +348,11 @@
 				e.type === 'mouseup' ? (mouseupStarId = star.id) : null;
 				e.type === 'mousedown' ? console.log(`getStarById: `, getStarById(star.id)) : null;
 
-				if (e.type === 'mouseup') {
+				if (e.type === 'mouseup' && e.button !== 2) {
 					console.log(`🚀 ~ file: index.svelte ~ line 422 ~ stars.forEach ~ star`, star);
+					activeStar ? activeStar.active = false : null;
 					activeStar = star
+					star.active = true
 					if (star.highlighted) {
 						star.unhighlight(ctx);
 					} else {
@@ -391,7 +393,12 @@
 				// previousOriginStarId = null
 				// mousedownStarId = null
 				// mouseupStarId = null
+
 			}
+			// if (activeStar && activeStar.id !== star.id) {
+			// 			star.active = false;
+			// 			// star.draw(ctx);
+			// 		}
 		});
 
 		if (e.type === 'mouseup' && e.type !== 'contextmenu') {
@@ -404,6 +411,10 @@
 				data.drawVertices
 			);
 			stars.forEach((star) => {
+				// if (activeStar.id !== star.id) {
+				// 	star.active = false;
+				// 	star.draw(ctx);
+				// }
 				if (star.id && star.destinationStarId && star.destinationStarId !== star.id) {
 					let origin = getStarById(star.id);
 					let destination = getStarById(star.destinationStarId);
@@ -413,7 +424,15 @@
 		}
 		if (e.type === 'contextmenu' || e.button === 2) {
 			e.preventDefault();
-			// return false
+			if (activeStar) {
+				activeStar.active = false;
+				activeStar.draw(ctx);
+			}
+			activeStar = null
+			originStarId = null
+			destinationStarId = null
+			previousOriginStarId = null
+			return false
 		}
 	}
 
@@ -666,6 +685,7 @@
 			this.yMax = y + radius;
 			this.ships = [];
 			this.highlighted = false;
+			this.active = false;
 			this.destinationStarId = null;
 			// addEventListener('click', this.handleEvent);
 			// addEventListener('mouseover', this.handleEvent);
@@ -680,6 +700,9 @@
 			let fontSize = 18;
 			if (this.highlighted) {
 				this.highlight(ctx);
+			}
+			if (this.active) {
+				this.activeHighlight(ctx)
 			}
 			if (data.drawNumShips) {
 				ctx.font = `bold ${fontSize}px sans-serif`;
@@ -708,6 +731,17 @@
 
 			// ctx.lineWidth = 1;
 			ctx.arc(this.x, this.y, this.radius * 1.2, 0, 2 * Math.PI);
+			ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
+			ctx.fill();
+			// ctx.restore();
+		}
+		activeHighlight(ctx) {
+			// ctx.save();
+			this.highlighted = true;
+			ctx.beginPath();
+
+			// ctx.lineWidth = 1;
+			ctx.arc(this.x, this.y, this.radius * 2.2, 0, 2 * Math.PI);
 			ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
 			ctx.fill();
 			// ctx.restore();
