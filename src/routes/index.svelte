@@ -392,28 +392,43 @@
 		// const headlen = Math.sqrt( dx * dx + dy * dy ) * 0.3; // length of head in pixels
 		const headlen = 30; // length of head in pixels
 		const angle = Math.atan2(dy, dx);
+		const lineWidth = 10
 		let offsetByPercent = getPositionAlongTheLine(originX, originY, destinationX, destinationY, 0.2);
         console.log(`🚀 ~ file: index.svelte ~ line 396 ~ canvas_arrow ~ offsetByPercent`, offsetByPercent)
-		let offsetByDistance = getPointOnVectorByDistance(originX, originY, destinationX, destinationY, 40);
-        console.log(`🚀 ~ file: index.svelte ~ line 398 ~ canvas_arrow ~ offsetByDistance`, offsetByDistance)
+		let destinationOffsetByDistance = getPointOnVectorByDistance(originX, originY, destinationX, destinationY, originStar.radius + (lineWidth * 2));
+		let originOffsetByDistance = getPointOnVectorByDistance( destinationX, destinationY, originX, originY, originStar.radius + (lineWidth * 2));
+        console.log(`🚀 ~ file: index.svelte ~ line 399 ~ canvas_arrow ~ originOffsetByDistance`, originOffsetByDistance)
+        console.log(`🚀 ~ file: index.svelte ~ line 398 ~ canvas_arrow ~ destinationOffsetByDistance`, destinationOffsetByDistance)
 		console.log(`🚀 ~ file: index.svelte ~ line 376 ~ canvas_arrow ~ angle`, angle);
 		context.beginPath();
-		ctx.lineWidth = 5;
+		let grd = ctx.createLinearGradient(originX, originY, destinationX, destinationY);
+		grd.addColorStop(0, `hsla(${originStar.hue}, 50%, 50%, .75)`);
+		grd.addColorStop(1, `hsla(${destinationStar.hue}, 50%, 50%, .1)`);
+		ctx.strokeStyle = grd
+		ctx.lineWidth = lineWidth;
 		ctx.lineCap = 'round';
-		context.moveTo(destinationX, destinationY);
-		context.lineTo(offsetByDistance.x, offsetByDistance.y);
+		context.moveTo(originOffsetByDistance.x, originOffsetByDistance.y);
+		context.lineTo(destinationOffsetByDistance.x, destinationOffsetByDistance.y);
 		context.stroke();
 		context.beginPath();
+		ctx.lineCap = 'round';
 		context.moveTo(
-			offsetByDistance.x - headlen * Math.cos(angle - Math.PI / 6),
-			offsetByDistance.y - headlen * Math.sin(angle - Math.PI / 6)
+			destinationOffsetByDistance.x - headlen * Math.cos(angle - Math.PI / 6),
+			destinationOffsetByDistance.y - headlen * Math.sin(angle - Math.PI / 6)
 		);
-		context.lineTo(offsetByDistance.x, offsetByDistance.y);
-		context.moveTo(
-			offsetByDistance.x - headlen * Math.cos(angle + Math.PI / 6),
-			offsetByDistance.y - headlen * Math.sin(angle + Math.PI / 6)
+		context.lineTo(destinationOffsetByDistance.x, destinationOffsetByDistance.y);
+		context.lineTo(
+			destinationOffsetByDistance.x - headlen * Math.cos(angle + Math.PI / 6),
+			destinationOffsetByDistance.y - headlen * Math.sin(angle + Math.PI / 6)
 		);
-		context.lineTo(offsetByDistance.x, offsetByDistance.y);
+		context.closePath()
+		// context.lineTo(
+		// 	destinationOffsetByDistance.x - headlen * Math.cos(angle - Math.PI / 6),
+		// 	destinationOffsetByDistance.y - headlen * Math.sin(angle - Math.PI / 6)
+		// );
+		context.fillStyle = `hsla(${destinationStar.hue}, 50%, 50%, .75)`
+		context.fill()
+		// context.lineTo(destinationOffsetByDistance.x, destinationOffsetByDistance.y);
 		context.stroke();
 	}
 
