@@ -25,6 +25,7 @@
 		modAlpha = 1,
 		timestamp = 0,
 		lastRender = 0,
+		activeStar = null,
 		originStarId,
 		previousOriginStarId,
 		destinationStarId,
@@ -43,7 +44,9 @@
 		`\ndestinationStarId`,
 		destinationStarId,
 		`\npreviousOriginStarId`,
-		previousOriginStarId
+		previousOriginStarId,
+		`\activeStar`,
+		activeStar
 	);
 
 	$: console.log(w, h);
@@ -329,7 +332,6 @@
 	}
 
 	function onClick(e) {
-		let noHit = false;
 		console.log(`🚀 ~ file: index.svelte ~ line 305 ~ onClick ~ e ✅✅✅🔥🔥🔥  `, e.type),
 			`  ✅✅✅🔥🔥🔥`;
 		console.log('click', e.x, ':', e.y);
@@ -348,6 +350,7 @@
 
 				if (e.type === 'mouseup') {
 					console.log(`🚀 ~ file: index.svelte ~ line 422 ~ stars.forEach ~ star`, star);
+					activeStar = star
 					if (star.highlighted) {
 						star.unhighlight(ctx);
 					} else {
@@ -360,6 +363,7 @@
 				if (mousedownStarId !== mouseupStarId) {
 					originStarId = mousedownStarId;
 					destinationStarId = previousOriginStarId = mouseupStarId;
+					// activeStar = getStarById(mouseupStarId)
 					let origin = getStarById(originStarId);
 					origin.destinationStarId = destinationStarId;
 				}
@@ -372,7 +376,7 @@
 							previousOriginStarId !== originStarId && previousOriginStarId
 						);
 						destinationStarId = originStarId;
-						let origin = getStarById(previousOriginStarId);
+						let origin  = getStarById(previousOriginStarId);
 						origin.destinationStarId = mouseupStarId;
 					}
 					previousOriginStarId = originStarId;
