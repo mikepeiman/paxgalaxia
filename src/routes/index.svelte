@@ -239,7 +239,7 @@
 		const a = (2 * Math.PI) / 6;
 		ctx.save()
 		ctx.beginPath();
-		ctx.strokeStyle = `hsla(${cx + cy}, 100%, 50%, 1)`;
+		ctx.strokeStyle = color;
 		ctx.lineWidth = lineWidth;
 		// let hex = new Shape().addTo().s("ff0").ss(4).mt(cx, cy).lt(cx + r, cy);
 		for (let i = 0; i <= 6; i++) {
@@ -294,6 +294,7 @@
 	}
 
 	function drawOnHexCoords(starsToggle, shipsToggle, center, outline, vertices) {
+        console.log(`🚀 ~ file: index.svelte ~ line 297 ~ drawOnHexCoords ~ starsToggle, shipsToggle, center, outline, vertices`, starsToggle, shipsToggle, center, outline, vertices)
 		let i = 0;
 		drawStars(starsToggle, shipsToggle);
 		hexCenterCoords.forEach((hex) => {
@@ -310,6 +311,9 @@
 			}
 		});
 		if (vertices) {
+			// getVertexCoords();
+			// uniqueVertexCoords = removeDuplicates(hexVertexCoords);
+			console.log(`🚀 ~ file: index.svelte ~ line 318 ~ uniqueVertexCoords.forEach ~ uniqueVertexCoords`, uniqueVertexCoords)
 			uniqueVertexCoords.forEach((vertex, i) => {
 				let color =  `hsla(${i}, 50%, 50%, 1)`
 				let lineWidth = 1;
@@ -556,7 +560,7 @@
 		let ships = star.ships;
 		// console.log(`🚀 ~ file: index.svelte ~ line 86 ~ drawShips ~ ships`, ships);
 		star['ships'].forEach((ship, i) => {
-			theta = theta + ((i / 10000) * data.speed) / 50000;
+			theta = theta + ((i / 10000) * data.speed) / 5000;
 			x = star.x + ship.orbit * Math.cos((theta + i) / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
 			y = star.y + ship.orbit * Math.sin(theta + i / data.orbitYmod);
 			ctx.beginPath();
@@ -723,7 +727,8 @@
 			// ctx.save();
 			this.highlighted = true;
 			let lineWidth = 3
-			drawHex(this.x, this.y, this.radius * 2, lineWidth) 
+			let color = `hsla(${this.hue}, 100%, 50%, 1)`;
+			drawHex(this.x, this.y, this.radius * 2, lineWidth, color) 
 			// ctx.lineWidth = 1;
 			// ctx.arc(this.x, this.y, this.radius * 2.2, 0, 2 * Math.PI);
 			// ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
