@@ -358,8 +358,8 @@
 			} 
 			if (hit && e.type === 'mouseup') {
 				if (mousedownStarId !== mouseupStarId) {
-					originStarId = previousOriginStarId = mousedownStarId;
-					destinationStarId = mouseupStarId;
+					originStarId =  mousedownStarId;
+					destinationStarId = previousOriginStarId = mouseupStarId;
 					let origin = getStarById(originStarId);
 					origin.destinationStarId = destinationStarId;
 				}
@@ -377,6 +377,13 @@
 					}
 					previousOriginStarId = originStarId;
 				}
+			} else if (!hit && e.type === 'mouseup') {
+                console.log(`🚀 ~ file: index.svelte ~ line 381 ~ stars.forEach ~ !hit && e.type === 'mouseup'`, !hit && e.type === 'mouseup')
+				// originStarId = null
+				// destinationStarId = null
+				// previousOriginStarId = null
+				// mousedownStarId = null
+				// mouseupStarId = null
 			}
 		});
 
@@ -443,13 +450,20 @@
 		// const headlen = Math.sqrt( dx * dx + dy * dy ) * 0.3; // length of head in pixels, scaled by length of line
 		const headlen = 30; // length of head in pixels absolute
 		const angle = Math.atan2(dy, dx);
-		const lineWidth = 10;
+		const lineWidth = 12;
 		let originOffsetByDistance = getPointOnVectorByDistance(
 			destination.x,
 			destination.y,
 			origin.x,
 			origin.y,
 			destination.radius + lineWidth * 2
+		);
+		let originOffsetByDistanceArrowhead = getPointOnVectorByDistance(
+			destination.x,
+			destination.y,
+			origin.x,
+			origin.y,
+			destination.radius + lineWidth
 		);
 		let destinationOffsetByDistance = getPointOnVectorByDistance(
 			origin.x,
@@ -461,8 +475,8 @@
 
 		context.beginPath();
 		let grd = ctx.createLinearGradient(destination.x, destination.y, origin.x, origin.y);
-		grd.addColorStop(0, `hsla(${destination.hue}, 50%, 50%, .75)`);
-		grd.addColorStop(1, `hsla(${origin.hue}, 50%, 50%, .1)`);
+		grd.addColorStop(0, `hsla(${origin.hue}, 50%, 50%, .75)`);
+		grd.addColorStop(1, `hsla(${destination.hue}, 50%, 50%, .1)`);
 		ctx.strokeStyle = grd;
 		ctx.lineWidth = lineWidth;
 		ctx.lineCap = 'round';
@@ -472,18 +486,18 @@
 		context.beginPath();
 		ctx.lineCap = 'round';
 		context.moveTo(
-			originOffsetByDistance.x - headlen * Math.cos(angle - Math.PI / 6),
-			originOffsetByDistance.y - headlen * Math.sin(angle - Math.PI / 6)
+			originOffsetByDistanceArrowhead.x - headlen * Math.cos(angle - Math.PI / 6),
+			originOffsetByDistanceArrowhead.y - headlen * Math.sin(angle - Math.PI / 6)
 		);
-		context.lineTo(originOffsetByDistance.x, originOffsetByDistance.y);
+		context.lineTo(originOffsetByDistanceArrowhead.x, originOffsetByDistanceArrowhead.y);
 		context.lineTo(
-			originOffsetByDistance.x - headlen * Math.cos(angle + Math.PI / 6),
-			originOffsetByDistance.y - headlen * Math.sin(angle + Math.PI / 6)
+			originOffsetByDistanceArrowhead.x - headlen * Math.cos(angle + Math.PI / 6),
+			originOffsetByDistanceArrowhead.y - headlen * Math.sin(angle + Math.PI / 6)
 		);
 		context.closePath();
-		context.fillStyle = `hsla(${origin.hue}, 50%, 50%, .75)`;
+		context.fillStyle = `hsla(${origin.hue}, 50%, 50%, 1)`;
 		context.fill();
-		context.stroke();
+		// context.stroke();
 	}
 
 	function toggleAnimate() {
