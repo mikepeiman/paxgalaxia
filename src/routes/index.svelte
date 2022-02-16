@@ -24,23 +24,27 @@
 		modAlpha = 1,
 		timestamp = 0,
 		lastRender = 0,
-		originStar,
-		destinationStar,
-		mousedownStar,
-		mouseupStar;
+		originStarId,
+		previousOriginStarId,
+		destinationStarId,
+		mousedownStarId,
+		mouseupStarId;
 	$: console.log(
-		`🚀 ~ file: index.svelte ~ line 30 ~ \n\nmousedownStar`,
-		mousedownStar,
-		`\n\nmouseupStar`,
-		mouseupStar
+		`🚀 ~ file: index.svelte ~ line 30 ~ \n\nmousedownStarId`,
+		mousedownStarId,
+		`\nmouseupStarId`,
+		mouseupStarId
 	);
 
 	$: console.log(
-		`🚀 ~ file: index.svelte ~ line 28 ~ \n\noriginStar`,
-		originStar,
-		`\n\ndestinationStar`,
-		destinationStar
+		`🚀 ~ file: index.svelte ~ line 28 ~ \n\noriginStarId`,
+		originStarId,
+		`\ndestinationStarId`,
+		destinationStarId,
+		`\npreviousOriginStarId`,
+		previousOriginStarId
 	);
+
 
 	$: console.log(w, h);
 	$: w, h;
@@ -332,87 +336,87 @@
 		stars.forEach((star) => {
 			// if we get a pixel hit
 			if (e.x >= star.xMin && e.x <= star.xMax && e.y >= star.yMin && e.y <= star.yMax) {
-				// 1. assign mousedownStar and mouseupStar
+				// 1. assign mousedownStarId and mouseupStarId
 				// 2. process logic after looping through all stars
-				// 3. if mousedownStar === mouseupStar, set originStar to mousedownStar
-				// 4. if mousedownStar !== mouseupStar, set destinationStar to mouseupStar
-				// 5. if previousOriginStar !== originStar, set previousOriginStar.destinationStarId to currentStar.id, then set previousOriginStar to currentStar
+				// 3. if mousedownStarId === mouseupStarId, set originStarId to mousedownStarId
+				// 4. if mousedownStarId !== mouseupStarId, set destinationStarId to mouseupStarId
+				// 5. if previousOriginStarId !== originStarId, set previousOriginStarId.destinationStarId to currentStar.id, then set previousOriginStarId to currentStar
 
-				e.type === 'mousedown' ? (mousedownStar = star) : null;
-				e.type === 'mouseup' ? (mouseupStar = star) : null;
-
-				// if (mouseupStar === star && e.type === 'mouseup') {
+				e.type === 'mousedown' ? (mousedownStarId = star.id) : null;
+				e.type === 'mouseup' ? (mouseupStarId = star.id) : null;
+				e.type === 'mousedown' ? console.log(`getStarById: `, getStarById(star.id)) : null;
+				// if (mouseupStarId === star && e.type === 'mouseup') {
 				// }
-				// if (mouseupStar !== star && e.type === 'mouseup') {
+				// if (mouseupStarId !== star && e.type === 'mouseup') {
 				// }
-				// if (mousedownStar === star && e.type === 'mousedown') {
+				// if (mousedownStarId === star && e.type === 'mousedown') {
 				// }
-				// if (mousedownStar !== star && e.type === 'mousedown') {
+				// if (mousedownStarId !== star && e.type === 'mousedown') {
 				// }
-				// if (mousedownStar === mouseupStar && e.type === 'mouseup') {
+				// if (mousedownStarId === mouseupStarId && e.type === 'mouseup') {
 				// 	console.log(
-				// 		`🚀 ~ file: index.svelte ~ line 349 ~ stars.forEach ~ mousedownStar`,
-				// 		mousedownStar
+				// 		`🚀 ~ file: index.svelte ~ line 349 ~ stars.forEach ~ mousedownStarId`,
+				// 		mousedownStarId
 				// 	);
 				// 	console.log(`clicked different star ♻♻♻✨✨✨🚩🚩🚩 set ORIGIN STAR ID to ${star.id}`);
-				// 	destinationStar = star;
-				// 	originStar = star;
+				// 	destinationStarId = star;
+				// 	originStarId = star;
 				// }
-				// if (mousedownStar !== mouseupStar && e.type === 'mouseup') {
+				// if (mousedownStarId !== mouseupStarId && e.type === 'mouseup') {
 				// 	console.log(
-				// 		`🚀 ~ file: index.svelte ~ line 349 ~ stars.forEach ~ mousedownStar`,
-				// 		mousedownStar
+				// 		`🚀 ~ file: index.svelte ~ line 349 ~ stars.forEach ~ mousedownStarId`,
+				// 		mousedownStarId
 				// 	);
 				// 	console.log(`clicked different star ♻♻♻✨✨✨🚩🚩🚩 set ORIGIN STAR ID to ${star.id}`);
-				// 	destinationStar = star;
-				// 	originStar = star;
+				// 	destinationStarId = star;
+				// 	originStarId = star;
 				// }
 
 				// if (e.type === 'mousedown') {
-				// 	if (mousedownStar === star) {
+				// 	if (mousedownStarId === star) {
 				// 		console.log(
-				// 			`🚀 ~ file: index.svelte ~ line 344 ~ stars.forEach ~ mousedownStar`,
-				// 			mousedownStar
+				// 			`🚀 ~ file: index.svelte ~ line 344 ~ stars.forEach ~ mousedownStarId`,
+				// 			mousedownStarId
 				// 		);
 				// 		console.log(`clicked same star ✅✅✅`);
 				// 		star.destinationStarId = star.id;
-				// 		originStar = star;
-				// 		destinationStar = star
+				// 		originStarId = star;
+				// 		destinationStarId = star
 				// 	}
-				// 	if (mousedownStar !== star) {
+				// 	if (mousedownStarId !== star) {
 				// 		console.log(
-				// 			`🚀 ~ file: index.svelte ~ line 349 ~ stars.forEach ~ mousedownStar`,
-				// 			mousedownStar
+				// 			`🚀 ~ file: index.svelte ~ line 349 ~ stars.forEach ~ mousedownStarId`,
+				// 			mousedownStarId
 				// 		);
 				// 		console.log(`clicked different star ❌❌❌ set ORIGIN STAR ID to ${star.id}`);
-				// 		destinationStar = null
-				// 		originStar = star;
+				// 		destinationStarId = null
+				// 		originStarId = star;
 				// 	}
 				// }
 				// if (e.type === 'mouseup') {
-				// 	if (mouseupStar === star) {
+				// 	if (mouseupStarId === star) {
 				// 		console.log(
-				// 			`🚀 ~ file: index.svelte ~ line 335 ~ stars.forEach ~ mouseupStar`,
-				// 			mouseupStar
+				// 			`🚀 ~ file: index.svelte ~ line 335 ~ stars.forEach ~ mouseupStarId`,
+				// 			mouseupStarId
 				// 		);
 				// 		console.log(`clicked same star ✅✅✅`);
 				// 		star.destinationStarId = star.id;
-				// 		originStar = star;
+				// 		originStarId = star;
 				// 	}
-				// 	destinationStar = star;
-				// 	if (mouseupStar !== star) {
+				// 	destinationStarId = star;
+				// 	if (mouseupStarId !== star) {
 				// 		console.log(
-				// 			`🚀 ~ file: index.svelte ~ line 340 ~ stars.forEach ~ mouseupStar`,
-				// 			mouseupStar
+				// 			`🚀 ~ file: index.svelte ~ line 340 ~ stars.forEach ~ mouseupStarId`,
+				// 			mouseupStarId
 				// 		);
 				// 		console.log(`clicked different star ❌❌❌ set DESTINATION STAR ID to ${star.id}`);
-				// 		destinationStar = star;
-				// 		originStar = mouseupStar
+				// 		destinationStarId = star;
+				// 		originStarId = mouseupStarId
 				// 	}
 				// }
 
-				// e.type === 'mousedown' ? (mousedownStar = star) : true;
-				// e.type === 'mouseup' ? (mouseupStar = star) : true;
+				// e.type === 'mousedown' ? (mousedownStarId = star) : true;
+				// e.type === 'mouseup' ? (mouseupStarId = star) : true;
 
 				if (e.type === 'mousedown') {
 					console.log(`🚀 ~ file: index.svelte ~ line 422 ~ stars.forEach ~ star`, star);
@@ -426,29 +430,54 @@
 				}
 			} else {
 				// noHit = true;
-				// originStar = null
-				// destinationStar = null
-				// mousedownStar = null
-				// mouseupStar = null
-				// e.type === 'mouseup' ? (mouseupStar = null) : true;
+				// originStarId = null
+				// destinationStarId = null
+				// mousedownStarId = null
+				// mouseupStarId = null
+				// e.type === 'mouseup' ? (mouseupStarId = null) : true;
 			}
-			if (originStar && destinationStar && originStar !== destinationStar) {
-				originStar.destination = destinationStar.id;
-				originStar.destinationStarId = destinationStar.id;
-				canvas_arrow(ctx, destinationStar.x, destinationStar.y, originStar.x, originStar.y);
+			if(mousedownStarId === mouseupStarId){
+				originStarId = mousedownStarId;
+				if(previousOriginStarId === originStarId){
+					destinationStarId = null
+				} else {
+					let star = getStarById(previousOriginStarId)
+					star.destinationStarId = previousOriginStarId = mouseupStarId
+				}
+			} else {
+				originStarId = mousedownStarId;
+				destinationStarId = mouseupStarId;
+				let origin = getStarById(originStarId)
+				origin.destinationStarId = destinationStarId
+			}
+
+
+
+			if (originStarId && destinationStarId && originStarId !== destinationStarId) {
+				let origin = getStarById(originStarId)
+                console.log(`🚀 ~ file: index.svelte ~ line 458 ~ stars.forEach ~ origin`, origin)
+				let destination = getStarById(destinationStarId)
+                console.log(`🚀 ~ file: index.svelte ~ line 460 ~ stars.forEach ~ destination`, destination)
+				origin.destination = destinationStarId;
+				origin.destinationStarId = destinationStarId;
+				canvas_arrow(ctx, destination, origin);
 			}
 		});
-		// noHit ? originStar = destinationStar = null : null;
-		// if (originStar && destinationStar && originStar !== destinationStar) {
+		// noHit ? originStarId = destinationStarId = null : null;
+		// if (originStarId && destinationStarId && originStarId !== destinationStarId) {
 		// 	console.log(
-		// 		`!!!!!!!!!!!! 🚀🔥🔥🔥✳✳✳✴⭐⭐⭐⭐ ~ file: index.svelte ~ line 336 ~ onClick ~ originStar && destinationStar \n\n`,
-		// 		originStar,
+		// 		`!!!!!!!!!!!! 🚀🔥🔥🔥✳✳✳✴⭐⭐⭐⭐ ~ file: index.svelte ~ line 336 ~ onClick ~ originStarId && destinationStarId \n\n`,
+		// 		originStarId,
 		// 		`\n\n`,
-		// 		destinationStar
+		// 		destinationStarId
 		// 	);
-		// 	originStar.destination = destinationStar.id;
-		// 	canvas_arrow(ctx,  originStar.x, originStar.y,  destinationStar.x, destinationStar.y,);
+		// 	originStarId.destination = destinationStarId.id;
+		// 	canvas_arrow(ctx,  originStarId.x, originStarId.y,  destinationStarId.x, destinationStarId.y,);
 		// }
+	}
+
+	function getStarById(id) {
+		return stars.filter(star => star.id === id)[0]
 	}
 
 	// position along line by percentage - useful, but not what I want here
@@ -466,39 +495,38 @@
 		return { x, y };
 	}
 
-	function canvas_arrow(context, originX, originY, destinationX, destinationY) {
+	function canvas_arrow(context, origin, destination) {
 		console.log(
-			`🚀 ~ file: index.svelte ~ line 376 ~ canvas_arrow 🎯🎯🎯🏹🏹🏹▶▶▶🎯🎯🎯~ originX, originY, destinationX, destinationY`,
-			originX,
-			originY,
-			destinationX,
-			destinationY
+			`🚀 ~ file: index.svelte ~ line 376 ~ canvas_arrow 🎯🎯🎯🏹🏹🏹▶▶▶🎯🎯🎯~ origin`,
+			origin,
+			`\ndestination:`,
+			destination
 		);
-		const dx = originX - destinationX;
-		const dy = originY - destinationY;
+		const dx = origin.x - destination.x
+		const dy = origin.y - destination.y
 		// const headlen = Math.sqrt( dx * dx + dy * dy ) * 0.3; // length of head in pixels, scaled by length of line
 		const headlen = 30; // length of head in pixels absolute
 		const angle = Math.atan2(dy, dx);
 		const lineWidth = 10;
 		let destinationOffsetByDistance = getPointOnVectorByDistance(
-			originX,
-			originY,
-			destinationX,
-			destinationY,
-			originStar.radius + lineWidth * 2
+			origin.x,
+			origin.y,
+			destination.x,
+			destination.y,
+			origin.radius + lineWidth * 2
 		);
 		let originOffsetByDistance = getPointOnVectorByDistance(
-			destinationX,
-			destinationY,
-			originX,
-			originY,
-			originStar.radius + lineWidth * 2
+			destination.x,
+			destination.y,
+			origin.x,
+			origin.y,
+			origin.radius + lineWidth * 2
 		);
 
 		context.beginPath();
-		let grd = ctx.createLinearGradient(originX, originY, destinationX, destinationY);
-		grd.addColorStop(0, `hsla(${originStar.hue}, 50%, 50%, .75)`);
-		grd.addColorStop(1, `hsla(${destinationStar.hue}, 50%, 50%, .1)`);
+		let grd = ctx.createLinearGradient(origin.x, origin.y, destination.x, destination.y);
+		grd.addColorStop(0, `hsla(${origin.hue}, 50%, 50%, .75)`);
+		grd.addColorStop(1, `hsla(${destination.hue}, 50%, 50%, .1)`);
 		ctx.strokeStyle = grd;
 		ctx.lineWidth = lineWidth;
 		ctx.lineCap = 'round';
@@ -517,7 +545,7 @@
 			destinationOffsetByDistance.y - headlen * Math.sin(angle + Math.PI / 6)
 		);
 		context.closePath();
-		context.fillStyle = `hsla(${destinationStar.hue}, 50%, 50%, .75)`;
+		context.fillStyle = `hsla(${destination.hue}, 50%, 50%, .75)`;
 		context.fill();
 		context.stroke();
 	}
