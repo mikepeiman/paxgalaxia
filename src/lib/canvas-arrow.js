@@ -69,4 +69,4 @@ function getPointOnVectorByDistance(x1, y1, x2, y2, distance) {
 }
 
 
-export default canvas_arrow;
+export  {canvas_arrow, getPositionAlongTheLine, getPointOnVectorByDistance};

@@ -6,7 +6,11 @@
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
 	import { storedSettingsChange } from '$stores/stores.js';
-	import canvas_arrow from '$lib/canvas-arrow';
+	import {
+		canvas_arrow,
+		getPositionAlongTheLine,
+		getPointOnVectorByDistance
+	} from '$lib/canvas-arrow';
 
 	$: console.log(
 		`🚀 ~ file: index.svelte ~ line 15 ~ $storedSettingsChange`,
@@ -301,14 +305,14 @@
 	}
 
 	function drawOnHexCoords(starsToggle, shipsToggle, center, outline, vertices) {
-		console.log(
-			`🚀 ~ file: index.svelte ~ line 297 ~ drawOnHexCoords ~ starsToggle, shipsToggle, center, outline, vertices`,
-			starsToggle,
-			shipsToggle,
-			center,
-			outline,
-			vertices
-		);
+		// console.log(
+		// 	`🚀 ~ file: index.svelte ~ line 297 ~ drawOnHexCoords ~ starsToggle, shipsToggle, center, outline, vertices`,
+		// 	starsToggle,
+		// 	shipsToggle,
+		// 	center,
+		// 	outline,
+		// 	vertices
+		// );
 		let i = 0;
 		drawStars(starsToggle, shipsToggle);
 		hexCenterCoords.forEach((hex) => {
@@ -385,7 +389,7 @@
 					}
 					previousOriginStarId = originStarId;
 				}
-			} 
+			}
 		});
 
 		if (e.type === 'mouseup' && e.type !== 'contextmenu') {
@@ -508,9 +512,7 @@
 	}
 
 	function drawShips(star) {
-		let x = 1,
-			y = 1;
-		let ships = star.ships;
+		let x, y;
 		star['ships'].forEach((ship, i) => {
 			theta = theta + ((i / 10000) * data.speed) / 5000;
 			x = star.x + ship.orbit * Math.cos((theta + i) / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
@@ -520,6 +522,38 @@
 			ctx.fillStyle = ship.color;
 			ctx.fill();
 		});
+	}
+
+	function transferShips(star) {
+		if (star.destinationStarId) {
+			let thisShips = star.numShips;
+			let dest = getStarById(star.destinationStarId);
+			let destShips = dest.numShips;
+			console.log(`🚀 ~ file: index.svelte ~ line 524 ~ drawShips ~ thisShips`, thisShips);
+			console.log(`🚀 ~ file: index.svelte ~ line 525 ~ drawShips ~ destShips`, destShips);
+			let shipsPerTick = Math.ceil(thisShips * star.shipsPerTickPercentage) + star.shipsPerTick;
+			console.log(`🚀 ~ file: index.svelte ~ line 528 ~ drawShips ~ shipsPerTick`, shipsPerTick);
+			let shipsToTransfer = [...star['ships'].slice(0, shipsPerTick)];
+			console.log(
+				`🚀 ~ file: index.svelte ~ line 529 ~ drawShips ~ shipsToTransfer`,
+				shipsToTransfer
+			);
+			// transfer shipsPerTick to destination star
+			for (let i = 0; i < 100; i++) {
+				shipsToTransfer.forEach((ship) => {
+					let pos = getPositionAlongTheLine(star.x, star.y, dest.x, dest.y, i / 100);
+					ctx.beginPath();
+					ctx.arc(pos.x, pos.y, 4, 0, 2 * Math.PI);
+					ctx.fillStyle = ship.color;
+					ctx.fill();
+					if (i === 99) {
+						dest.ships.push(ship);
+						dest.numShips++;
+						star.numShips--;
+					}
+				});
+			}
+		}
 	}
 
 	function bounceAlpha() {
@@ -535,6 +569,9 @@
 		if (frame % data.fps === 0) {
 			tick++;
 			tickUpdateShips();
+			stars.forEach((star) => {
+				star.destinationStarId ? transferShips(star) : null;
+			});
 			console.log(`🚀 ~ file: index.svelte ~ line 392 ~ animate ~ tick`, tick);
 		}
 		tick;
@@ -576,7 +613,7 @@
 		stars.forEach((star) => {
 			star.destinationStarId = null;
 		});
-		canvasRedraw()
+		canvasRedraw();
 	}
 
 	class Star {
@@ -596,6 +633,8 @@
 			this.highlighted = false;
 			this.active = false;
 			this.destinationStarId = null;
+			this.shipsPerTickPercentage = 0.01;
+			this.shipsPerTick = 5;
 			// addEventListener('click', this.handleEvent);
 			// addEventListener('mouseover', this.handleEvent);
 		}
