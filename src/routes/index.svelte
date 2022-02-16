@@ -80,7 +80,7 @@
 		drawShips: true,
 		drawCenters: false,
 		drawHexes: true,
-		drawVerticies: false,
+		drawVertices: true,
 		buildVertices: true,
 		drawNumShips: true,
 		stars: []
@@ -138,23 +138,6 @@
 		let dataFound = readData(data);
 		console.log(`🚀 ~ file: index.svelte ~ line 114 ~ onMount ~ dataFound`, dataFound);
 		console.log(`🚀 ~ file: index.svelte ~ line 114 ~ onMount ~ readData(data)		`, readData(data));
-		// dataFound
-		// 	? drawLayers(
-		// 			data.drawStars,
-		// 			data.drawShips,
-		// 			data.drawCenters,
-		// 			data.drawHexes,
-		// 			data.buildVertices,
-		// 			data.drawVertices
-		// 	  )
-		// 	: mapInit(
-		// 			data.drawStars,
-		// 			data.drawShips,
-		// 			data.drawCenters,
-		// 			data.drawHexes,
-		// 			data.buildVertices,
-		// 			data.drawVertices
-		// 	  );
 		mapInit(
 			data.drawStars,
 			data.drawShips,
@@ -204,7 +187,7 @@
 		if (buildVertices) {
 			console.log(`🚀 ~ file: index.svelte ~ line 90 ~ mapInit ~ buildVertices`, buildVertices);
 			// hexVertexCoords = [];
-			data.buildVertices = false;
+			// data.buildVertices = false;
 			getVertexCoords();
 			uniqueVertexCoords = removeDuplicates(hexVertexCoords);
 		}
@@ -238,7 +221,6 @@
 		stars.forEach((star) => {
 			starsToggle ? star.draw(ctx) : null;
 			shipsToggle ? drawShips(star) : null;
-			// console.log(`🚀 ~ file: index.svelte ~ line 127 ~ stars.forEach ~ animating`, animating);
 		});
 	}
 
@@ -253,10 +235,12 @@
 		});
 	}
 
-	function drawHex(cx, cy, r) {
+	function drawHex(cx, cy, r, lineWidth, color) {
 		const a = (2 * Math.PI) / 6;
+		ctx.save()
 		ctx.beginPath();
 		ctx.strokeStyle = `hsla(${cx + cy}, 100%, 50%, 1)`;
+		ctx.lineWidth = lineWidth;
 		// let hex = new Shape().addTo().s("ff0").ss(4).mt(cx, cy).lt(cx + r, cy);
 		for (let i = 0; i <= 6; i++) {
 			const x = roundNum(cx + r * Math.cos(a * i), 3);
@@ -264,6 +248,7 @@
 			ctx.lineTo(x, y);
 		}
 		ctx.stroke();
+		ctx.restore()
 	}
 
 	// let hex = new Path2D();
@@ -306,27 +291,29 @@
 			max % 2 === 0 ? (even = true) : (even = false);
 			even ? (evenTest = 2) : (evenTest = 1);
 		}
-		// console.log(`🚀 ~ file: index.svelte ~ line 69 ~ drawHex ~ hexCoords`, hexCenterCoords);
 	}
 
 	function drawOnHexCoords(starsToggle, shipsToggle, center, outline, vertices) {
 		let i = 0;
 		drawStars(starsToggle, shipsToggle);
 		hexCenterCoords.forEach((hex) => {
+			let color =  `hsla(${i++}, 100%, 50%, 1)`
 			if (center) {
 				ctx.beginPath();
-				ctx.fillStyle = `hsla(${i++}, 100%, 50%, 1)`;
+				ctx.fillStyle = color
 				ctx.arc(hex.x, hex.y, 5, 0, 2 * Math.PI);
 				ctx.fill();
 			}
 			if (outline) {
-				ctx.strokeWidth = 1;
-				drawHex(hex.x, hex.y, hex.r);
+				let lineWidth = 1;
+				drawHex(hex.x, hex.y, hex.r, lineWidth, color);
 			}
 		});
 		if (vertices) {
 			uniqueVertexCoords.forEach((vertex, i) => {
-				drawHex(vertex.x, vertex.y, 5);
+				let color =  `hsla(${i}, 50%, 50%, 1)`
+				let lineWidth = 1;
+				drawHex(vertex.x, vertex.y, 5, lineWidth, color);
 			});
 		}
 	}
@@ -458,7 +445,6 @@
 	function toggleAnimate() {
 		animating ? (animating = false) : (animating = true);
 		animating ? animate() : null;
-		// animating ? gameLoop(timestamp) : null;
 	}
 
 	function reset() {
@@ -477,8 +463,6 @@
 			data.drawHexes,
 			data.drawVertices
 		);
-		// animating ? (animating = false) : (animating = true);
-		// animating ? animate() : null;
 	}
 
 	// write a function that generates stars using random coordinates from hexCenterCoords
@@ -635,13 +619,13 @@
 		});
 	}
 
-	function gameLoop(timestamp) {
-		counter++;
-		let progress = timestamp - lastRender;
-		lastRender = timestamp;
-		animating ? update(progress) : null;
-		requestAnimationFrame(gameLoop);
-	}
+	// function gameLoop(timestamp) {
+	// 	counter++;
+	// 	let progress = timestamp - lastRender;
+	// 	lastRender = timestamp;
+	// 	animating ? update(progress) : null;
+	// 	requestAnimationFrame(gameLoop);
+	// }
 
 	function update(progress) {
 		ctx.fillStyle = '#222';
@@ -738,12 +722,12 @@
 		activeHighlight(ctx) {
 			// ctx.save();
 			this.highlighted = true;
-			ctx.beginPath();
-
+			let lineWidth = 3
+			drawHex(this.x, this.y, this.radius * 2, lineWidth) 
 			// ctx.lineWidth = 1;
-			ctx.arc(this.x, this.y, this.radius * 2.2, 0, 2 * Math.PI);
-			ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
-			ctx.fill();
+			// ctx.arc(this.x, this.y, this.radius * 2.2, 0, 2 * Math.PI);
+			// ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
+			// ctx.fill();
 			// ctx.restore();
 		}
 
