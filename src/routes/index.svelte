@@ -169,6 +169,13 @@
 	function canvasRedraw() {
 		ctx.fillStyle = '#222';
 		ctx.fillRect(0, 0, w, h);
+		drawOnHexCoords(
+			data.drawStars,
+			data.drawShips,
+			data.drawCenters,
+			data.drawHexes,
+			data.drawVertices
+		);
 	}
 
 	async function mapInit(starsToggle, shipsToggle, center, outline, buildVertices, drawVertices) {
@@ -237,7 +244,7 @@
 
 	function drawHex(cx, cy, r, lineWidth, color) {
 		const a = (2 * Math.PI) / 6;
-		ctx.save()
+		ctx.save();
 		ctx.beginPath();
 		ctx.strokeStyle = color;
 		ctx.lineWidth = lineWidth;
@@ -248,7 +255,7 @@
 			ctx.lineTo(x, y);
 		}
 		ctx.stroke();
-		ctx.restore()
+		ctx.restore();
 	}
 
 	// let hex = new Path2D();
@@ -294,14 +301,21 @@
 	}
 
 	function drawOnHexCoords(starsToggle, shipsToggle, center, outline, vertices) {
-        console.log(`🚀 ~ file: index.svelte ~ line 297 ~ drawOnHexCoords ~ starsToggle, shipsToggle, center, outline, vertices`, starsToggle, shipsToggle, center, outline, vertices)
+		console.log(
+			`🚀 ~ file: index.svelte ~ line 297 ~ drawOnHexCoords ~ starsToggle, shipsToggle, center, outline, vertices`,
+			starsToggle,
+			shipsToggle,
+			center,
+			outline,
+			vertices
+		);
 		let i = 0;
 		drawStars(starsToggle, shipsToggle);
 		hexCenterCoords.forEach((hex) => {
-			let color =  `hsla(${i++}, 100%, 50%, 1)`
+			let color = `hsla(${i++}, 100%, 50%, 1)`;
 			if (center) {
 				ctx.beginPath();
-				ctx.fillStyle = color
+				ctx.fillStyle = color;
 				ctx.arc(hex.x, hex.y, 5, 0, 2 * Math.PI);
 				ctx.fill();
 			}
@@ -313,9 +327,9 @@
 		if (vertices) {
 			// getVertexCoords();
 			// uniqueVertexCoords = removeDuplicates(hexVertexCoords);
-			console.log(`🚀 ~ file: index.svelte ~ line 318 ~ uniqueVertexCoords.forEach ~ uniqueVertexCoords`, uniqueVertexCoords)
+			// console.log(`🚀 ~ file: index.svelte ~ line 318 ~ uniqueVertexCoords.forEach ~ uniqueVertexCoords`, uniqueVertexCoords)
 			uniqueVertexCoords.forEach((vertex, i) => {
-				let color =  `hsla(${i}, 50%, 50%, 1)`
+				let color = `hsla(${i}, 50%, 50%, 1)`;
 				let lineWidth = 1;
 				drawHex(vertex.x, vertex.y, 5, lineWidth, color);
 			});
@@ -333,7 +347,7 @@
 				hit = true;
 				if (e.type === 'contextmenu' || e.button === 2) {
 					e.preventDefault();
-					star.destinationStarId = null
+					star.destinationStarId = null;
 				}
 				e.type === 'mousedown' ? (mousedownStarId = star.id) : null;
 				e.type === 'mouseup' ? (mouseupStarId = star.id) : null;
@@ -341,9 +355,9 @@
 
 				if (e.type === 'mouseup' && e.button !== 2) {
 					console.log(`🚀 ~ file: index.svelte ~ line 422 ~ stars.forEach ~ star`, star);
-					activeStar ? activeStar.active = false : null;
-					activeStar = star
-					star.active = true
+					activeStar ? (activeStar.active = false) : null;
+					activeStar = star;
+					star.active = true;
 					if (star.highlighted) {
 						star.unhighlight(ctx);
 					} else {
@@ -369,7 +383,7 @@
 							previousOriginStarId !== originStarId && previousOriginStarId
 						);
 						destinationStarId = originStarId;
-						let origin  = getStarById(previousOriginStarId);
+						let origin = getStarById(previousOriginStarId);
 						origin.destinationStarId = mouseupStarId;
 					}
 					previousOriginStarId = originStarId;
@@ -384,7 +398,6 @@
 				// previousOriginStarId = null
 				// mousedownStarId = null
 				// mouseupStarId = null
-
 			}
 			// if (activeStar && activeStar.id !== star.id) {
 			// 			star.active = false;
@@ -394,13 +407,6 @@
 
 		if (e.type === 'mouseup' && e.type !== 'contextmenu') {
 			canvasRedraw();
-			drawOnHexCoords(
-				data.drawStars,
-				data.drawShips,
-				data.drawCenters,
-				data.drawHexes,
-				data.drawVertices
-			);
 			stars.forEach((star) => {
 				// if (activeStar.id !== star.id) {
 				// 	star.active = false;
@@ -419,11 +425,11 @@
 				activeStar.active = false;
 				activeStar.draw(ctx);
 			}
-			activeStar = null
-			originStarId = null
-			destinationStarId = null
-			previousOriginStarId = null
-			return false
+			activeStar = null;
+			originStarId = null;
+			destinationStarId = null;
+			previousOriginStarId = null;
+			return false;
 		}
 	}
 
@@ -460,13 +466,6 @@
 		console.log('change');
 		console.log(`🚀 ~ file: index.svelte ~ line 194 ~ onChange ~ e`, e.detail);
 		canvasRedraw();
-		drawOnHexCoords(
-			data.drawStars,
-			data.drawShips,
-			data.drawCenters,
-			data.drawHexes,
-			data.drawVertices
-		);
 	}
 
 	// write a function that generates stars using random coordinates from hexCenterCoords
@@ -652,6 +651,13 @@
 		++frame;
 	}
 
+	function clearVectors() {
+		stars.forEach((star) => {
+			star.destinationStarId = null;
+		});
+		canvasRedraw()
+	}
+
 	class Vector {
 		constructor(x, y) {
 			this.x = x;
@@ -690,7 +696,7 @@
 				this.highlight(ctx);
 			}
 			if (this.active) {
-				this.activeHighlight(ctx)
+				this.activeHighlight(ctx);
 			}
 			if (data.drawNumShips) {
 				ctx.font = `bold ${fontSize}px sans-serif`;
@@ -726,9 +732,9 @@
 		activeHighlight(ctx) {
 			// ctx.save();
 			this.highlighted = true;
-			let lineWidth = 3
+			let lineWidth = 3;
 			let color = `hsla(${this.hue}, 100%, 50%, 1)`;
-			drawHex(this.x, this.y, this.radius * 2, lineWidth, color) 
+			drawHex(this.x, this.y, this.radius * 2, lineWidth, color);
 			// ctx.lineWidth = 1;
 			// ctx.arc(this.x, this.y, this.radius * 2.2, 0, 2 * Math.PI);
 			// ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
@@ -844,6 +850,11 @@
 				label="Start"
 				class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded"
 				on:click={toggleAnimate}>Animate</button
+			>
+			<button
+				label="Start"
+				class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded"
+				on:click={clearVectors}>Remove directions</button
 			>
 			<button
 				label="Start"
