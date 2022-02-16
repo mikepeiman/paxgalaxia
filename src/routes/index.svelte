@@ -6,6 +6,7 @@
 	import OptionSelect from '$components/OptionSelect.svelte';
 	import { onMount } from 'svelte';
 	import { storedSettingsChange } from '$stores/stores.js';
+	import canvas_arrow from '$lib/canvas-arrow';
 
 	$: console.log(
 		`🚀 ~ file: index.svelte ~ line 15 ~ $storedSettingsChange`,
@@ -173,6 +174,7 @@
 		ctx.fillRect(0, 0, w, h);
 		canvas.addEventListener('mousedown', onClick);
 		canvas.addEventListener('mouseup', onClick);
+		canvas.addEventListener('contextmenu', onClick);
 		// canvas.addEventListener('mouseenter', onClick);
 		// canvas.addEventListener('mouseleave', onClick);
 		// canvas.addEventListener('mouseover', onClick);
@@ -336,17 +338,11 @@
 			// if we get a pixel hit
 			if (e.x >= star.xMin && e.x <= star.xMax && e.y >= star.yMin && e.y <= star.yMax) {
 				hit = true
-				// 1. assign mousedownStarId and mouseupStarId
-				// 2. process logic after looping through all stars
-				// 3. if mousedownStarId === mouseupStarId, set originStarId to mousedownStarId
-				// 4. if mousedownStarId !== mouseupStarId, set destinationStarId to mouseupStarId
-				// 5. if previousOriginStarId !== originStarId, set previousOriginStarId.destinationStarId to currentStar.id, then set previousOriginStarId to currentStar
-
 				e.type === 'mousedown' ? (mousedownStarId = star.id) : null;
 				e.type === 'mouseup' ? (mouseupStarId = star.id) : null;
 				e.type === 'mousedown' ? console.log(`getStarById: `, getStarById(star.id)) : null;
 
-				if (e.type === 'mousedown') {
+				if (e.type === 'mouseup') {
 					console.log(`🚀 ~ file: index.svelte ~ line 422 ~ stars.forEach ~ star`, star);
 					if (star.highlighted) {
 						star.unhighlight(ctx);
@@ -387,7 +383,7 @@
 			}
 		});
 
-		if (e.type === 'mouseup') {
+		if (e.type === 'mouseup' && e.type !== "contextmenu") {
 			canvasRedraw();
 			drawOnHexCoords(
 					data.drawStars,
@@ -397,26 +393,18 @@
 					data.drawVertices
 				);
 			stars.forEach((star) => {
-				// console.log(`🚀 ~ file: index.svelte ~ line 474 ~ onClick ~ star.destinationStarId 🎯🎯🎯`, star.destinationStarId)
 				if (star.id && star.destinationStarId && star.destinationStarId !== star.id) {
 					let origin = getStarById(star.id);
-					console.log(`🚀 ~ file: index.svelte ~ line 468 ~ onClick ~ origin`, origin);
 					let destination = getStarById(star.destinationStarId);
-					console.log(`🚀 ~ file: index.svelte ~ line 470 ~ onClick ~ destination`, destination);
 					canvas_arrow(ctx, destination, origin);
 
 				}
 			});
 		}
-		// if (originStarId && destinationStarId && originStarId !== destinationStarId) {
-		// 		let origin = getStarById(originStarId)
-		//         console.log(`🚀 ~ file: index.svelte ~ line 458 ~ stars.forEach ~ origin`, origin)
-		// 		let destination = getStarById(destinationStarId)
-		//         console.log(`🚀 ~ file: index.svelte ~ line 460 ~ stars.forEach ~ destination`, destination)
-		// 		origin.destination = destinationStarId;
-		// 		origin.destinationStarId = destinationStarId;
-		// 		canvas_arrow(ctx, destination, origin);
-		// 	}
+		if(e.type === "contextmenu" || e.button === 2){
+			e.preventDefault()
+			// return false
+		}
 	}
 
 	function getStarById(id) {
@@ -438,67 +426,6 @@
 		return { x, y };
 	}
 
-	function canvas_arrow(context, destination, origin) {
-		console.log(
-			`🚀 ~ file: index.svelte ~ line 376 ~ canvas_arrow 🎯🎯🎯🏹🏹🏹▶▶▶🎯🎯🎯~ destination`,
-			destination,
-			`\norigin:`,
-			origin
-		);
-		const dx = destination.x - origin.x;
-		const dy = destination.y - origin.y;
-		// const headlen = Math.sqrt( dx * dx + dy * dy ) * 0.3; // length of head in pixels, scaled by length of line
-		const headlen = 30; // length of head in pixels absolute
-		const angle = Math.atan2(dy, dx);
-		const lineWidth = 12;
-		let originOffsetByDistance = getPointOnVectorByDistance(
-			destination.x,
-			destination.y,
-			origin.x,
-			origin.y,
-			destination.radius + lineWidth * 2
-		);
-		let originOffsetByDistanceArrowhead = getPointOnVectorByDistance(
-			destination.x,
-			destination.y,
-			origin.x,
-			origin.y,
-			destination.radius + lineWidth
-		);
-		let destinationOffsetByDistance = getPointOnVectorByDistance(
-			origin.x,
-			origin.y,
-			destination.x,
-			destination.y,
-			destination.radius + lineWidth * 2
-		);
-
-		context.beginPath();
-		let grd = ctx.createLinearGradient(destination.x, destination.y, origin.x, origin.y);
-		grd.addColorStop(0, `hsla(${origin.hue}, 50%, 50%, .75)`);
-		grd.addColorStop(1, `hsla(${destination.hue}, 50%, 50%, .1)`);
-		ctx.strokeStyle = grd;
-		ctx.lineWidth = lineWidth;
-		ctx.lineCap = 'round';
-		context.moveTo(destinationOffsetByDistance.x, destinationOffsetByDistance.y);
-		context.lineTo(originOffsetByDistance.x, originOffsetByDistance.y);
-		context.stroke();
-		context.beginPath();
-		ctx.lineCap = 'round';
-		context.moveTo(
-			originOffsetByDistanceArrowhead.x - headlen * Math.cos(angle - Math.PI / 6),
-			originOffsetByDistanceArrowhead.y - headlen * Math.sin(angle - Math.PI / 6)
-		);
-		context.lineTo(originOffsetByDistanceArrowhead.x, originOffsetByDistanceArrowhead.y);
-		context.lineTo(
-			originOffsetByDistanceArrowhead.x - headlen * Math.cos(angle + Math.PI / 6),
-			originOffsetByDistanceArrowhead.y - headlen * Math.sin(angle + Math.PI / 6)
-		);
-		context.closePath();
-		context.fillStyle = `hsla(${origin.hue}, 50%, 50%, 1)`;
-		context.fill();
-		// context.stroke();
-	}
 
 	function toggleAnimate() {
 		animating ? (animating = false) : (animating = true);
@@ -753,6 +680,11 @@
 				ctx.fillText(this.id, this.x, this.y - fontSize / 2);
 				ctx.fillStyle = '#000';
 				ctx.fillText(this.ships.length, this.x, this.y + fontSize / 3);
+			}
+			if (this.destinationStarId) {
+				let destination = getStarById(this.destinationStarId);
+				let origin = getStarById(this.id);
+				canvas_arrow(ctx, destination, origin)
 			}
 		}
 
