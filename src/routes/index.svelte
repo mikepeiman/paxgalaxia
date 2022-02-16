@@ -26,7 +26,11 @@
 		lastRender = 0,
 		originStar,
 		destinationStar;
-		$: console.log(`🚀 ~ file: index.svelte ~ line 28 ~ originStar,	destinationStar`, originStar, destinationStar)
+	$: console.log(
+		`🚀 ~ file: index.svelte ~ line 28 ~ originStar,	destinationStar`,
+		originStar,
+		destinationStar
+	);
 
 	$: console.log(w, h);
 	$: w, h;
@@ -156,9 +160,9 @@
 		ctx.fillRect(0, 0, w, h);
 		canvas.addEventListener('mousedown', onClick);
 		canvas.addEventListener('mouseup', onClick);
-		canvas.addEventListener('mouseenter', onClick);
-		canvas.addEventListener('mouseleave', onClick);
-		canvas.addEventListener('mousemouse', onClick);
+		// canvas.addEventListener('mouseenter', onClick);
+		// canvas.addEventListener('mouseleave', onClick);
+		// canvas.addEventListener('mouseover', onClick);
 	}
 
 	function canvasRedraw() {
@@ -239,11 +243,11 @@
 		for (let i = 0; i <= 6; i++) {
 			const x = roundNum(cx + r * Math.cos(a * i), 3);
 			const y = roundNum(cy + r * Math.sin(a * i), 3);
-			ctx.lineTo(x, y)
+			ctx.lineTo(x, y);
 		}
 		ctx.stroke();
 	}
-	
+
 	// let hex = new Path2D();
 	// i < 6 ? ctx.lineTo(x, y) : ctx.closePath()
 	const removeDuplicates = (objArray) => {
@@ -298,6 +302,7 @@
 				ctx.fill();
 			}
 			if (outline) {
+				ctx.strokeWidth = 1;
 				drawHex(hex.x, hex.y, hex.r);
 			}
 		});
@@ -309,8 +314,8 @@
 	}
 
 	function onClick(e) {
-		let noHit = false
-        console.log(`🚀 ~ file: index.svelte ~ line 305 ~ onClick ~ e`, e.type)
+		let noHit = false;
+		console.log(`🚀 ~ file: index.svelte ~ line 305 ~ onClick ~ e`, e.type);
 		console.log('click', e.x, ':', e.y);
 		// drawDot();
 		stars.forEach((star) => {
@@ -321,39 +326,95 @@
 			// 	console.log(`🚀 ~ file: index.svelte ~ line 203 ~ onClick ~ e.y <= star.yMax`, e.y <= star.yMax)
 			// }
 			if (e.x >= star.xMin && e.x <= star.xMax && e.y >= star.yMin && e.y <= star.yMax) {
+				star.handleEvent(e);
 				// console.log('click HIT!!!! ', e.x, ':', e.y, star);
-				e.type === "mousedown" ? originStar = star : originStar;
-				e.type === "mouseup" ? destinationStar = star : destinationStar;
-				if (star.highlighted ) {
+				e.type === 'mousedown' ? (originStar = star) : originStar;
+				e.type === 'mouseup' ? (destinationStar = star) : destinationStar;
+				if (star.highlighted) {
 					star.unhighlight(ctx);
-				} else if(!star.highlighted ) {
+				} else if (!star.highlighted) {
 					star.highlight(ctx);
 				}
 				star.highlighted = !star.highlighted;
 				// console.log(`🚀 ~ file: index.svelte ~ line 188 ~ onClick ~ star HITTTT!!!!`, star);
 			} else {
-				noHit = true
+				noHit = true;
 			}
 		});
 		// noHit ? originStar = destinationStar = null : null;
-		if(originStar && destinationStar && originStar !== destinationStar){
-            console.log(`!!!!!!!!!!!! 🚀 ~ file: index.svelte ~ line 336 ~ onClick ~ originStar && destinationStar`, originStar, destinationStar)
-			createVector(originStar, destinationStar)
-			ctx.beginPath()
-			ctx.moveTo(originStar.x, originStar.y);
-			ctx.lineTo(destinationStar.x, destinationStar.y);
-			ctx.lineWidth = 5;
-			ctx.lineCap = "round"
-			let color = `hsla(${originStar.hue}, 50%, 50%, .75)`;
-            console.log(`🚀 ~ file: index.svelte ~ line 343 ~ onClick ~ color`, color)
-			ctx.strokeStyle = color
-			ctx.stroke();
+		if (originStar && destinationStar && originStar !== destinationStar) {
+			console.log(
+				`!!!!!!!!!!!! 🚀 ~ file: index.svelte ~ line 336 ~ onClick ~ originStar && destinationStar`,
+				originStar,
+				destinationStar
+			);
+			// createVector(originStar, destinationStar);
+			canvas_arrow(ctx, originStar.x, originStar.y, destinationStar.x, destinationStar.y);
 		}
 	}
 
 	function createVector(originStar, destinationStar) {
-        console.log(`🚀 ~ file: index.svelte ~ line 342 ~ createVector ~ originStar, destinationStar`, originStar, destinationStar)
-		
+		ctx.beginPath();
+		ctx.moveTo(originStar.x, originStar.y);
+		ctx.lineTo(destinationStar.x, destinationStar.y);
+		ctx.lineWidth = 5;
+		ctx.lineCap = 'round';
+		let color = `hsla(${originStar.hue}, 50%, 50%, .75)`;
+		console.log(`🚀 ~ file: index.svelte ~ line 343 ~ onClick ~ color`, color);
+		ctx.strokeStyle = color;
+		ctx.stroke();
+	}
+
+	function getPositionAlongTheLine(x1, y1, x2, y2, percentage) {
+		return {
+			x: x1 * (1.0 - percentage) + x2 * percentage,
+			y: y1 * (1.0 - percentage) + y2 * percentage
+		};
+	}
+
+	function getPointOnVectorByDistance(x1, y1, x2, y2, distance) {
+		let angle = Math.atan2(y2 - y1, x2 - x1);
+		let x = x1 + Math.cos(angle) * distance;
+		let y = y1 + Math.sin(angle) * distance;
+		return { x, y };
+	}
+
+	function canvas_arrow(context, originX, originY, destinationX, destinationY) {
+		console.log(
+			`🚀 ~ file: index.svelte ~ line 376 ~ canvas_arrow ~ originX, originY, destinationX, destinationY`,
+			originX,
+			originY,
+			destinationX,
+			destinationY
+		);
+		const dx = originX - destinationX;
+		const dy = originY - destinationY;
+		// const headlen = Math.sqrt( dx * dx + dy * dy ) * 0.3; // length of head in pixels
+		const headlen = 30; // length of head in pixels
+		const angle = Math.atan2(dy, dx);
+		let offsetByPercent = getPositionAlongTheLine(originX, originY, destinationX, destinationY, 0.2);
+        console.log(`🚀 ~ file: index.svelte ~ line 396 ~ canvas_arrow ~ offsetByPercent`, offsetByPercent)
+		let offsetByDistance = getPointOnVectorByDistance(originX, originY, destinationX, destinationY, 40);
+        console.log(`🚀 ~ file: index.svelte ~ line 398 ~ canvas_arrow ~ offsetByDistance`, offsetByDistance)
+		console.log(`🚀 ~ file: index.svelte ~ line 376 ~ canvas_arrow ~ angle`, angle);
+		context.beginPath();
+		ctx.lineWidth = 5;
+		ctx.lineCap = 'round';
+		context.moveTo(destinationX, destinationY);
+		context.lineTo(offsetByDistance.x, offsetByDistance.y);
+		context.stroke();
+		context.beginPath();
+		context.moveTo(
+			offsetByDistance.x - headlen * Math.cos(angle - Math.PI / 6),
+			offsetByDistance.y - headlen * Math.sin(angle - Math.PI / 6)
+		);
+		context.lineTo(offsetByDistance.x, offsetByDistance.y);
+		context.moveTo(
+			offsetByDistance.x - headlen * Math.cos(angle + Math.PI / 6),
+			offsetByDistance.y - headlen * Math.sin(angle + Math.PI / 6)
+		);
+		context.lineTo(offsetByDistance.x, offsetByDistance.y);
+		context.stroke();
 	}
 
 	function toggleAnimate() {
@@ -400,7 +461,7 @@
 					Math.floor(Math.random() * data.numTypes) * (360 / data.numTypes),
 					Math.floor(Math.random() * data.shipsMax)
 				);
-				star.ships = generateShips(star)
+				star.ships = generateShips(star);
 				stars = [...stars, star];
 			} else {
 				// console.log(`🚀 ~ file: index.svelte ~ line 214 ~ generateStars ~ else`);
@@ -422,13 +483,13 @@
 
 	function generateShips(star) {
 		// console.log(`🚀 ~ file: index.svelte ~ line 393 ~ generateShips ~ star.numShips`, star.numShips)
-        // console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
-		let ships = star.ships
-        // console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
+		// console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
+		let ships = star.ships;
+		// console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
 		for (let i = 0; i < star.numShips; i++) {
 			// console.log(`🚀 ~ file: index.svelte ~ line 79 ~ generateShips ~ ship`, ship);
 			let ship = addShipToStar(star, i);
-			ships.push(ship)
+			ships.push(ship);
 		}
 		// console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
 		return ships;
@@ -459,10 +520,10 @@
 			Math.random > 0.5 ? Math.random() + 0.25 : Math.random() - 0.25
 		})`;
 		// console.log(`🚀 ~ file: index.svelte ~ line 418 ~ color ~ star.hue`, star.hue)
-		let radius = Math.random() * 5
-		let orbit = star.radius + Math.random() * (i / 2 - i / 3) + 10
+		let radius = Math.random() * 5;
+		let orbit = star.radius + Math.random() * (i / 2 - i / 3) + 10;
 		let ship = new Ship(radius, color, orbit);
-        // console.log(`🚀 ~ file: index.svelte ~ line 426 ~ addShipToStar ~ ship`, ship)
+		// console.log(`🚀 ~ file: index.svelte ~ line 426 ~ addShipToStar ~ ship`, ship)
 		return ship;
 	}
 
@@ -584,7 +645,7 @@
 			this.xMax = x + radius;
 			this.yMin = y - radius;
 			this.yMax = y + radius;
-			this.ships = []
+			this.ships = [];
 			// addEventListener('click', this.handleEvent);
 			// addEventListener('mouseover', this.handleEvent);
 		}
@@ -615,6 +676,7 @@
 		highlight(ctx) {
 			ctx.save();
 			ctx.beginPath();
+			ctx.lineWidth = 1;
 			ctx.arc(this.x, this.y, this.radius * 1.2, 0, 2 * Math.PI);
 			ctx.fillStyle = `hsla(${this.hue + 20}, 100%, 50%, 1)`;
 			ctx.fill();
@@ -624,6 +686,7 @@
 		unhighlight(ctx) {
 			ctx.save();
 			ctx.beginPath();
+			ctx.lineWidth = 1;
 			ctx.arc(this.x, this.y, this.radius * 1.3, 0, 2 * Math.PI);
 			ctx.fillStyle = '#222';
 			ctx.fill();
@@ -661,7 +724,6 @@
 		}
 	}
 </script>
-
 
 <svelte:head>
 	<!-- <script src="https://zimjs.org/cdn/nft/01/zim.js"></script> -->
