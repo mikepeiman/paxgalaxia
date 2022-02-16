@@ -13,3 +13,7 @@
 - implement drag-vector ship movement between stars
 - implement multiple player identities and zone-of-control background colors
 - implement attack dynamics between stars of opposing players
+- button to reset all destination star IDs for vector arrows
+- option for player to save multiple tactical maps (set of vector assignments for a given map), name them, and switch between them at a click
+- when two stars are attacking each other, draw arrows to meet in middle
+- when two stars are attacking each other, draw arrows at a distance in proportion to star power (num ships)
