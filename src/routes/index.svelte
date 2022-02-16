@@ -315,48 +315,84 @@
 	}
 
 	let mousedownStar = null;
-		let mouseupStar = null;
+	let mouseupStar = null;
 
 	function onClick(e) {
 		let noHit = false;
 		console.log(`🚀 ~ file: index.svelte ~ line 305 ~ onClick ~ e`, e.type);
 		console.log('click', e.x, ':', e.y);
-		// drawDot();
-		let tempStar = null;
-		let destinationStarId = null;
-		let lastStarClicked = null;
 
 		stars.forEach((star) => {
+			// if we get a pixel hit
 			if (e.x >= star.xMin && e.x <= star.xMax && e.y >= star.yMin && e.y <= star.yMax) {
-				if(e.type === 'mousedown'){
-                    console.log(`🚀 ~ file: index.svelte ~ line 331 ~ stars.forEach ~ mousedownStar BEFORE assignment`, mousedownStar)
-					originStar = mousedownStar = star
-                    console.log(`🚀 ~ file: index.svelte ~ line 332 ~ stars.forEach ~ mousedownStar`, mousedownStar)
+				if (e.type === 'mouseup') {
+					mouseupStar = star;
+					if (mousedownStar === star) {
+						if (originStar === star) {
+							destinationStar = null;
+						} else {
+							destinationStar = star;
+						}
+					} else {
+						originStar = mousedownStar;
+						destinationStar = star;
+					}
+					console.log(`🚀 ~ file: index.svelte ~ line 321 ~ onClick ~ mouseupStar`, mouseupStar);
 				}
+				if (e.type === 'mousedown') {
+					mousedownStar = star;
+					console.log(`🚀 ~ file: index.svelte ~ line 327 ~ onClick ~ mousedownStar`, mousedownStar);
+				}
+				// check mousedown first
+				// if (e.type === 'mousedown') {
+				// 	console.log(
+				// 		`🚀 ~ file: index.svelte ~ line 331 ~ stars.forEach ~ mousedownStar BEFORE assignment`,
+				// 		mousedownStar
+				// 	);
+				// 	mousedownStar === star ? (originStar = mousedownStar) : (mousedownStar = star);
+				// 	console.log(
+				// 		`🚀 ~ file: index.svelte ~ line 332 ~ stars.forEach ~ mousedownStar`,
+				// 		mousedownStar
+				// 	);
+				// }
+				// console.log(
+				// 	`🚀 ~ file: index.svelte ~ line 337 ~ stars.forEach ~ mouseupStar BEFORE assignment`,
+				// 	mouseupStar
+				// );
+				// if (mousedownStar !== star) {
+				// 	destinationStar = mouseupStar = star;
+				// 	originStar = mousedownStar;
+				// } else {
+				// 	star.destinationStarId = null;
+				// }
+				// console.log(
+				// 	`🚀 ~ file: index.svelte ~ line 338 ~ stars.forEach ~ mouseupStar`,
+				// 	mouseupStar
+				// );
 
-				e.type === 'mouseup' ? (mouseupStar = star) : null;
-				e.type === 'mouseup' && originStar !== star ? (destinationStar = star) : null;
-				console.log(
-					`🚀 ~ file: index.svelte ~ line 333 ~ stars.forEach ~ mouseupStar`,
-					mouseupStar
-				);
-				e.type === 'mousedown' && mousedownStar !== star ? (destinationStar = star) : null;
-				if (mousedownStar && mouseupStar) {
-					mousedownStar === mouseupStar
-						? ((originStar = star), (star.destinationStarId = null))
-						: null;
-					console.log(
-						`🚀 ~ file: index.svelte ~ line 336 ~ stars.forEach ~ originStar`,
-						originStar
-					);
-					mousedownStar !== mouseupStar
-						? ((destinationStar = mouseupStar), (originStar.destinationStarId = mouseupStar.id))
-						: null;
-					console.log(
-						`🚀 ~ file: index.svelte ~ line 338 ~ stars.forEach ~ destinationStar`,
-						destinationStar
-					);
-				}
+				// e.type === 'mouseup' ? (mouseupStar = star) : null;
+				// e.type === 'mouseup' && originStar !== star ? (destinationStar = star) : null;
+				// console.log(
+				// 	`🚀 ~ file: index.svelte ~ line 333 ~ stars.forEach ~ mouseupStar`,
+				// 	mouseupStar
+				// );
+				// e.type === 'mousedown' && mousedownStar !== star ? (destinationStar = star) : null;
+				// if (mousedownStar && mouseupStar) {
+				// 	mousedownStar === mouseupStar
+				// 		? ((originStar = star), (star.destinationStarId = null))
+				// 		: null;
+				// 	console.log(
+				// 		`🚀 ~ file: index.svelte ~ line 336 ~ stars.forEach ~ originStar`,
+				// 		originStar
+				// 	);
+				// 	mousedownStar !== mouseupStar
+				// 		? ((destinationStar = mouseupStar), (originStar.destinationStarId = mouseupStar.id))
+				// 		: null;
+				// 	console.log(
+				// 		`🚀 ~ file: index.svelte ~ line 338 ~ stars.forEach ~ destinationStar`,
+				// 		destinationStar
+				// 	);
+				// }
 				// mousedown; if the star clicked is the same as the last star clicked, then remove the destination star id from it
 				// if (e.type === 'mousedown') {
 				// 	if (lastStarClicked === star.id) {
