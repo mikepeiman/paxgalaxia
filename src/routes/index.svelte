@@ -325,9 +325,6 @@
 			}
 		});
 		if (vertices) {
-			// getVertexCoords();
-			// uniqueVertexCoords = removeDuplicates(hexVertexCoords);
-			// console.log(`🚀 ~ file: index.svelte ~ line 318 ~ uniqueVertexCoords.forEach ~ uniqueVertexCoords`, uniqueVertexCoords)
 			uniqueVertexCoords.forEach((vertex, i) => {
 				let color = `hsla(${i}, 50%, 50%, 1)`;
 				let lineWidth = 1;
@@ -388,30 +385,12 @@
 					}
 					previousOriginStarId = originStarId;
 				}
-			} else if (!hit && e.type === 'mouseup') {
-				console.log(
-					`🚀 ~ file: index.svelte ~ line 381 ~ stars.forEach ~ !hit && e.type === 'mouseup'`,
-					!hit && e.type === 'mouseup'
-				);
-				// originStarId = null
-				// destinationStarId = null
-				// previousOriginStarId = null
-				// mousedownStarId = null
-				// mouseupStarId = null
-			}
-			// if (activeStar && activeStar.id !== star.id) {
-			// 			star.active = false;
-			// 			// star.draw(ctx);
-			// 		}
+			} 
 		});
 
 		if (e.type === 'mouseup' && e.type !== 'contextmenu') {
 			canvasRedraw();
 			stars.forEach((star) => {
-				// if (activeStar.id !== star.id) {
-				// 	star.active = false;
-				// 	star.draw(ctx);
-				// }
 				if (star.id && star.destinationStarId && star.destinationStarId !== star.id) {
 					let origin = getStarById(star.id);
 					let destination = getStarById(star.destinationStarId);
@@ -437,21 +416,6 @@
 		return stars.filter((star) => star.id === id)[0];
 	}
 
-	// position along line by percentage - useful, but not what I want here
-	function getPositionAlongTheLine(x1, y1, x2, y2, percentage) {
-		return {
-			x: x1 * (1.0 - percentage) + x2 * percentage,
-			y: y1 * (1.0 - percentage) + y2 * percentage
-		};
-	}
-
-	function getPointOnVectorByDistance(x1, y1, x2, y2, distance) {
-		let angle = Math.atan2(y2 - y1, x2 - x1);
-		let x = x1 + Math.cos(angle) * distance;
-		let y = y1 + Math.sin(angle) * distance;
-		return { x, y };
-	}
-
 	function toggleAnimate() {
 		animating ? (animating = false) : (animating = true);
 		animating ? animate() : null;
@@ -470,7 +434,6 @@
 
 	// write a function that generates stars using random coordinates from hexCenterCoords
 	function generateStars(num) {
-		// stars = [];
 		const flag = {};
 		for (let i = 0; i < num; i++) {
 			let coords = hexCenterCoords[Math.floor(Math.random() * hexCenterCoords.length)];
@@ -489,7 +452,6 @@
 				star.ships = generateShips(star);
 				stars = [...stars, star];
 			} else {
-				// console.log(`🚀 ~ file: index.svelte ~ line 214 ~ generateStars ~ else`);
 				i--;
 			}
 		}
@@ -507,16 +469,11 @@
 	}
 
 	function generateShips(star) {
-		// console.log(`🚀 ~ file: index.svelte ~ line 393 ~ generateShips ~ star.numShips`, star.numShips)
-		// console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
 		let ships = star.ships;
-		// console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
 		for (let i = 0; i < star.numShips; i++) {
-			// console.log(`🚀 ~ file: index.svelte ~ line 79 ~ generateShips ~ ship`, ship);
 			let ship = addShipToStar(star, i);
 			ships.push(ship);
 		}
-		// console.log(`🚀 ~ file: index.svelte ~ line 390 ~ generateShips ~ star.ships`, star.ships)
 		return ships;
 	}
 
@@ -544,20 +501,16 @@
 		}%, ${Math.random > 0.5 ? 75 + Math.random() * i * 5 : 50 - Math.random() * i}%, ${
 			Math.random > 0.5 ? Math.random() + 0.25 : Math.random() - 0.25
 		})`;
-		// console.log(`🚀 ~ file: index.svelte ~ line 418 ~ color ~ star.hue`, star.hue)
 		let radius = Math.random() * 5;
 		let orbit = star.radius + Math.random() * (i / 2 - i / 3) + 10;
 		let ship = new Ship(radius, color, orbit);
-		// console.log(`🚀 ~ file: index.svelte ~ line 426 ~ addShipToStar ~ ship`, ship)
 		return ship;
 	}
 
 	function drawShips(star) {
-		// console.log(`🚀 ~ file: index.svelte ~ line 87 ~ drawShips ~ star`, star);
 		let x = 1,
 			y = 1;
 		let ships = star.ships;
-		// console.log(`🚀 ~ file: index.svelte ~ line 86 ~ drawShips ~ ships`, ships);
 		star['ships'].forEach((ship, i) => {
 			theta = theta + ((i / 10000) * data.speed) / 5000;
 			x = star.x + ship.orbit * Math.cos((theta + i) / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
@@ -573,9 +526,7 @@
 		alpha >= 1 ? (modAlpha = -1) : null;
 		alpha <= 0 ? (modAlpha = 1) : null;
 		let inc = 0.007 * modAlpha;
-		// console.log(`🚀 ~ file: index.svelte ~ line 67 ~ bounceAlpha ~ inc`, inc)
 		alpha += inc;
-
 		return alpha.toFixed(3);
 	}
 
@@ -608,7 +559,6 @@
 				);
 				ctx.restore();
 				++frame;
-				// }, 1000 / data.tickRate);
 			}, 1000 / data.fps);
 		} else {
 			return;
@@ -622,35 +572,6 @@
 		});
 	}
 
-	// function gameLoop(timestamp) {
-	// 	counter++;
-	// 	let progress = timestamp - lastRender;
-	// 	lastRender = timestamp;
-	// 	animating ? update(progress) : null;
-	// 	requestAnimationFrame(gameLoop);
-	// }
-
-	function update(progress) {
-		ctx.fillStyle = '#222';
-		ctx.fillRect(0, 0, w, h);
-		ctx.save();
-		stars.forEach((star) => {
-			data.drawStars ? star.draw(ctx) : null;
-			data.drawShips ? drawShips(star) : null;
-		});
-		ctx.restore();
-		ctx.save();
-		drawOnHexCoords(
-			data.drawStars,
-			data.drawShips,
-			data.drawCenters,
-			data.drawHexes,
-			data.drawVertices
-		);
-		ctx.restore();
-		++frame;
-	}
-
 	function clearVectors() {
 		stars.forEach((star) => {
 			star.destinationStarId = null;
@@ -658,12 +579,6 @@
 		canvasRedraw()
 	}
 
-	class Vector {
-		constructor(x, y) {
-			this.x = x;
-			this.y = y;
-		}
-	}
 	class Star {
 		constructor(id, x, y, radius, type, hue, numShips) {
 			this.id = id;
