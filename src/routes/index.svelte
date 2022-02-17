@@ -74,6 +74,7 @@
 		shipsMin: 1,
 		shipsMax: 50,
 		starRadius: 20,
+		shipRadius: 5,
 		gridRadius: 55,
 		gridOffset: 0,
 		orbitXmod: 1,
@@ -488,6 +489,13 @@
 		star.ships.length < star.numShips
 			? (star.ships = [...star.ships, generateShips(star, star.numShips - star.ships.length)])
 			: null;
+		setShipOrbits(star);
+	}
+
+	function setShipOrbits(star) {
+		star.ships.forEach((ship, i) => {
+			ship.orbit = star.radius + (data.shipRadius * Math.sqrt(i) );
+		});
 	}
 
 	function destroyShips(star, num) {
@@ -500,25 +508,28 @@
 	}
 
 	function addShipToStar(star, i) {
-		let color = `hsla(${star.hue + Math.random() * i}, ${
-			Math.random > 0.5 ? 50 + Math.random() * i * 5 : 50 - Math.random() * i
-		}%, ${Math.random > 0.5 ? 75 + Math.random() * i * 5 : 50 - Math.random() * i}%, ${
-			Math.random > 0.5 ? Math.random() + 0.25 : Math.random() - 0.25
-		})`;
-		let radius = Math.random() * 5;
-		let orbit = star.radius + Math.random() * (i / 2 - i / 3) + 10;
+		// let color = `hsla(${star.hue + Math.random() * i}, ${
+		// 	Math.random > 0.5 ? 50 + Math.random() * i * 5 : 50 - Math.random() * i
+		// }%, ${Math.random > 0.5 ? 75 + Math.random() * i * 5 : 50 - Math.random() * i}%, ${
+		// 	Math.random > 0.5 ? Math.random() + 0.25 : Math.random() - 0.25
+		// })`;
+		let color = `hsla(${star.hue}, 50%, 80%, 0.25)`
+		let radius = data.shipRadius;
+		let orbit = star.radius + data.shipRadius + 3;
 		let ship = new Ship(radius, color, orbit);
 		return ship;
 	}
 
 	function drawShips(star) {
-		let x, y;
+		let x, y
 		star['ships'].forEach((ship, i) => {
 			theta = theta + ((i / 10000) * data.speed) / 5000;
 			x = star.x + ship.orbit * Math.cos((theta + i) / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
 			y = star.y + ship.orbit * Math.sin(theta + i / data.orbitYmod);
+			ship.pos = { x, y };
 			ctx.beginPath();
 			ctx.arc(x, y, 4, 0, 2 * Math.PI);
+			ctx.fillStyle = ship.color;
 			ctx.fillStyle = ship.color;
 			ctx.fill();
 		});
@@ -526,39 +537,35 @@
 
 	function transferShips(star) {
 		if (star.destinationStarId) {
-			let thisShips = star.numShips;
 			let dest = getStarById(star.destinationStarId);
-			let destShips = dest.numShips;
-			console.log(`🚀 ~ file: index.svelte ~ line 524 ~ drawShips ~ thisShips`, thisShips);
-			console.log(`🚀 ~ file: index.svelte ~ line 525 ~ drawShips ~ destShips`, destShips);
-			let shipsPerTick = Math.ceil(thisShips * star.shipsPerTickPercentage) + star.shipsPerTick;
-			console.log(`🚀 ~ file: index.svelte ~ line 528 ~ drawShips ~ shipsPerTick`, shipsPerTick);
-			let shipsToTransfer = [...star['ships'].slice(0, shipsPerTick)];
-			console.log(
-				`🚀 ~ file: index.svelte ~ line 529 ~ drawShips ~ shipsToTransfer`,
-				shipsToTransfer
-			);
 			let j = 0
-			shipsToTransfer.forEach((ship,i) => {
-				ship.distance++;
+			star.shipsToTransfer.forEach((ship,i) => {
+				// ship.distance++;
+				// console.log(`🚀 ~ file: index.svelte ~ line 559 ~ shipsToTransfer.forEach ~ ship`, ship)
 				ship.distance += j;
 				j++
-				let pos = getPositionAlongTheLine(star.x, star.y, dest.x, dest.y, ship.distance / 100);
+				let pos = getPositionAlongTheLine(ship.pos.x, ship.pos.y, dest.x, dest.y, ship.distance / 100);
 				ctx.beginPath();
-				ctx.arc(pos.x, pos.y, 4, 0, 2 * Math.PI);
+				ctx.arc(pos.x, pos.y, ship.radius, 0, 2 * Math.PI);
 				ctx.fillStyle = ship.color;
 				ctx.fill();
-				if (ship.distance >= 100) {
+				if (ship.distance >= 95) {
+					ship.distance = 0
 					dest.ships.push(ship);
-					shipsToTransfer.splice(i, 1);
+					star.shipsToTransfer.splice(i, 1);
 					dest.numShips++;
 					star.numShips--;
-					ship.distance = 0
 				}
 			});
 			// transfer shipsPerTick to destination star
 
 		}
+	}
+
+	function calculateNumberOfShips(star) {
+		let shipsPerTick = Math.ceil(star.numShips * star.shipsPerTickPercentage);
+		star.shipsPerTick = shipsPerTick;
+		star.shipsToTransfer = [...star['ships'].slice(0, shipsPerTick)];
 	}
 
 	function bounceAlpha() {
@@ -611,6 +618,7 @@
 	function tickUpdateShips() {
 		stars.forEach((star) => {
 			star.update();
+			calculateNumberOfShips(star) 
 			adjustShipNumber(star);
 		});
 	}
@@ -639,8 +647,9 @@
 			this.highlighted = false;
 			this.active = false;
 			this.destinationStarId = null;
-			this.shipsPerTickPercentage = 0.01;
-			this.shipsPerTick = 5;
+			this.shipsPerTickPercentage = 0.05;
+			this.shipsPerTick = 2;
+			this.shipsToTransfer = [];
 			// addEventListener('click', this.handleEvent);
 			// addEventListener('mouseover', this.handleEvent);
 		}
@@ -675,7 +684,11 @@
 		}
 
 		update() {
-			this.type < 3 && tick % 5 == 0 ? this.numShips++ : null;
+			this.type === 1  ? this.numShips++ : null;
+			this.type === 2 && tick % 2 == 0 ? this.numShips++ : null;
+			this.type === 3 && tick % 3 == 0 ? this.numShips++ : null;
+			this.type === 4 && tick % 4 == 0 ? this.numShips++ : null;
+			this.type === 5 && tick % 5 == 0 ? this.numShips++ : null;
 		}
 
 		highlight(ctx) {
@@ -743,6 +756,7 @@
 			this.color = color;
 			this.orbit = orbit;
 			this.distance = 0;
+			this.pos = {x: 0, y:0 }
 		}
 	}
 </script>
