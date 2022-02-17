@@ -538,21 +538,26 @@
 				`🚀 ~ file: index.svelte ~ line 529 ~ drawShips ~ shipsToTransfer`,
 				shipsToTransfer
 			);
+			let j = 0
+			shipsToTransfer.forEach((ship,i) => {
+				ship.distance++;
+				ship.distance += j;
+				j++
+				let pos = getPositionAlongTheLine(star.x, star.y, dest.x, dest.y, ship.distance / 100);
+				ctx.beginPath();
+				ctx.arc(pos.x, pos.y, 4, 0, 2 * Math.PI);
+				ctx.fillStyle = ship.color;
+				ctx.fill();
+				if (ship.distance >= 100) {
+					dest.ships.push(ship);
+					shipsToTransfer.splice(i, 1);
+					dest.numShips++;
+					star.numShips--;
+					ship.distance = 0
+				}
+			});
 			// transfer shipsPerTick to destination star
-			for (let i = 0; i < 100; i++) {
-				shipsToTransfer.forEach((ship) => {
-					let pos = getPositionAlongTheLine(star.x, star.y, dest.x, dest.y, i / 100);
-					ctx.beginPath();
-					ctx.arc(pos.x, pos.y, 4, 0, 2 * Math.PI);
-					ctx.fillStyle = ship.color;
-					ctx.fill();
-					if (i === 99) {
-						dest.ships.push(ship);
-						dest.numShips++;
-						star.numShips--;
-					}
-				});
-			}
+
 		}
 	}
 
@@ -569,9 +574,6 @@
 		if (frame % data.fps === 0) {
 			tick++;
 			tickUpdateShips();
-			stars.forEach((star) => {
-				star.destinationStarId ? transferShips(star) : null;
-			});
 			console.log(`🚀 ~ file: index.svelte ~ line 392 ~ animate ~ tick`, tick);
 		}
 		tick;
@@ -581,9 +583,13 @@
 				ctx.fillStyle = '#222';
 				ctx.fillRect(0, 0, w, h);
 				ctx.save();
+
 				stars.forEach((star) => {
 					data.drawStars ? star.draw(ctx) : null;
 					data.drawShips ? drawShips(star) : null;
+				});
+				stars.forEach((star) => {
+					star.destinationStarId ? transferShips(star) : null;
 				});
 				ctx.restore();
 				ctx.save();
@@ -736,6 +742,7 @@
 			this.radius = radius;
 			this.color = color;
 			this.orbit = orbit;
+			this.distance = 0;
 		}
 	}
 </script>
