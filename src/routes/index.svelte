@@ -494,7 +494,7 @@
 
 	function setShipOrbits(star) {
 		star.ships.forEach((ship, i) => {
-			ship.orbit = star.radius + (data.shipRadius * Math.sqrt(i) );
+			ship.orbit = star.radius +(data.shipRadius + Math.sqrt(i)) ;
 		});
 	}
 
@@ -550,7 +550,7 @@
 				ctx.fillStyle = ship.color;
 				ctx.fill();
 				if (ship.distance >= 95) {
-					ship.distance = 0
+					// ship.distance = 0
 					dest.ships.push(ship);
 					star.shipsToTransfer.splice(i, 1);
 					dest.numShips++;
