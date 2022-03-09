@@ -1,5 +1,5 @@
 {
-	"name": "metabrain",
+	"name": "paxgalaxia",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "env-cmd svelte-kit dev -p 3032",
