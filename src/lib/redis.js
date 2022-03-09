@@ -9,8 +9,7 @@ async function connect() {
     }
 }
 
-class Hero extends Entity {
-}
+class Hero extends Entity {}
 let schema = new Schema(
     Hero,
     {
@@ -21,7 +20,6 @@ let schema = new Schema(
         dexterity: { type: 'number' },
         intelligence: { type: 'number' },
     },
-    dataStructure: 'JSON'
 )
 
 
