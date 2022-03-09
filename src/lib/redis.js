@@ -10,6 +10,7 @@ async function connect() {
 }
 
 class Hero extends Entity {
+}
 let schema = new Schema(
     Hero,
     {
@@ -22,7 +23,7 @@ let schema = new Schema(
     },
     dataStructure: 'JSON'
 )
-}
+
 
 export async function createHero(data) {
     await connect()

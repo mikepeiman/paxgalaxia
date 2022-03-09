@@ -77,7 +77,7 @@
 		shipRadius: 5,
 		gridRadius: 55,
 		gridOffset: 0,
-		orbitXmod: 1,
+		orbitXmod: 1, // interesting variations: 5:5, everything 4.5+:5, 3.3:5, 2.5:5, 1.7:5, 1.6:5, .8:5, 0.6:5, 0.3:5
 		orbitYmod: 1,
 		speed: 10,
 		clearLS: false,
@@ -479,6 +479,7 @@
 			let ship = addShipToStar(star, i);
 			ships.push(ship);
 		}
+		// setShipOrbits(star)
 		return ships;
 	}
 
@@ -489,12 +490,12 @@
 		star.ships.length < star.numShips
 			? (star.ships = [...star.ships, generateShips(star, star.numShips - star.ships.length)])
 			: null;
-		setShipOrbits(star);
+		// setShipOrbits(star);
 	}
 
 	function setShipOrbits(star) {
 		star.ships.forEach((ship, i) => {
-			ship.orbit = star.radius +(data.shipRadius + Math.sqrt(i)) ;
+			ship.orbit =  2 * (data.shipRadius + Math.sqrt(i)) ;
 		});
 	}
 
@@ -515,7 +516,12 @@
 		// })`;
 		let color = `hsla(${star.hue}, 50%, 80%, 0.25)`
 		let radius = data.shipRadius;
-		let orbit = star.radius + data.shipRadius + 3;
+		let orbit = star.radius + data.shipRadius * 2
+		// let orbit = star.radius + data.shipRadius + 3;
+		// let orbit = star.radius + i ;
+		// let orbit = star.radius + i % 2
+		// let orbit = star.radius + i % (data.shipRadius + 3);
+		// let orbit = star.radius + i % 2 * (data.shipRadius + 3);
 		let ship = new Ship(radius, color, orbit);
 		return ship;
 	}
@@ -523,15 +529,26 @@
 	function drawShips(star) {
 		let x, y
 		star['ships'].forEach((ship, i) => {
-			theta = theta + ((i / 10000) * data.speed) / 5000;
-			x = star.x + ship.orbit * Math.cos((theta + i) / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
-			y = star.y + ship.orbit * Math.sin(theta + i / data.orbitYmod);
+			theta = theta + ((i / 10000) * data.speed) / 15000;
+			// let variedOrbitModifierX = data.orbitXmod + i / (i-1)
+			// let variedOrbitModifierY = data.orbitYmod + i / (i-1)
+			let variedOrbitModifierX = data.orbitXmod  
+			let variedOrbitModifierY = data.orbitYmod  
+			// x = star.x + ship.orbit * Math.cos((theta + i) / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
+			// y = star.y + ship.orbit * Math.sin(theta + i / data.orbitYmod);
+			// x = star.x + ship.orbit * Math.cos((theta + i) - data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
+			// y = star.y + ship.orbit * Math.sin((theta + i) - data.orbitYmod);
+			x = star.x + ship.orbit * Math.cos((theta + i) + variedOrbitModifierX); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
+			y = star.y + ship.orbit * Math.sin((theta + i) + variedOrbitModifierY);
 			ship.pos = { x, y };
+			// i === 0 ? console.log(`a ship from drawShips: `, ship) : null;
 			ctx.beginPath();
 			ctx.arc(x, y, 4, 0, 2 * Math.PI);
-			ctx.fillStyle = ship.color;
-			ctx.fillStyle = ship.color;
-			ctx.fill();
+			// ctx.fillStyle = ship.color;
+			ctx.lineWidth = 1
+			ctx.strokeStyle = ship.color;
+			ctx.stroke()
+			// ctx.fill();
 		});
 	}
 
@@ -545,12 +562,16 @@
 				ship.distance += j;
 				j++
 				let pos = getPositionAlongTheLine(ship.pos.x, ship.pos.y, dest.x, dest.y, ship.distance / 100);
+				// ctx.save()
 				ctx.beginPath();
 				ctx.arc(pos.x, pos.y, ship.radius, 0, 2 * Math.PI);
-				ctx.fillStyle = ship.color;
-				ctx.fill();
+				// ctx.fillStyle = ship.color;
+				ctx.strokeStyle = ship.color;
+				ctx.stroke()
+				// ctx.fill();
+				// ctx.restore()
 				if (ship.distance >= 95) {
-					// ship.distance = 0
+					ship.distance = 0
 					dest.ships.push(ship);
 					star.shipsToTransfer.splice(i, 1);
 					dest.numShips++;
@@ -594,10 +615,10 @@
 				stars.forEach((star) => {
 					data.drawStars ? star.draw(ctx) : null;
 					data.drawShips ? drawShips(star) : null;
-				});
-				stars.forEach((star) => {
 					star.destinationStarId ? transferShips(star) : null;
 				});
+				// stars.forEach((star) => {
+				// });
 				ctx.restore();
 				ctx.save();
 				drawOnHexCoords(

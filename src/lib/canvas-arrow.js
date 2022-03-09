@@ -32,7 +32,7 @@ function canvas_arrow(ctx, destination, origin) {
     grd.addColorStop(0, `hsla(${origin.hue}, 50%, 50%, .75)`);
     grd.addColorStop(1, `hsla(${destination.hue}, 50%, 50%, .1)`);
     ctx.strokeStyle = grd;
-    ctx.lineWidth = lineWidth;
+    ctx.lineWidth = lineWidth;  
     ctx.lineCap = 'round';
     ctx.moveTo(destinationOffsetByDistance.x, destinationOffsetByDistance.y);
     ctx.lineTo(originOffsetByDistance.x, originOffsetByDistance.y);
