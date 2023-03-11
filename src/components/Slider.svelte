@@ -5,7 +5,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let label = '';
-	export let value;
+	export let value = 0;
 	export let min = 1;
 	export let max = 100;
 	export let step = 1;
@@ -16,6 +16,7 @@
 		})
             console.log(`🚀 ~ file: Slider.svelte ~ line 17 ~ dispatchMessage ~ ${label}: `, value)
 	}
+	$: value
 </script>
 
 <Param {label} {color}>

@@ -79,7 +79,7 @@
 		gridOffset: 0,
 		orbitXmod: 1, // interesting variations: 5:5, everything 4.5+:5, 3.3:5, 2.5:5, 1.7:5, 1.6:5, .8:5, 0.6:5, 0.3:5
 		orbitYmod: 1,
-		speed: 10,
+		speed: 0.01,
 		clearLS: false,
 		drawStars: true,
 		drawShips: true,
@@ -516,32 +516,24 @@
 		// })`;
 		let color = `hsla(${star.hue}, 50%, 80%, 0.25)`
 		let radius = data.shipRadius;
-		let orbit = star.radius + data.shipRadius * 2
+		let orbit = star.radius + data.shipRadius * 3
+		let angle = 2 * Math.PI * i / star.numShips
 		// let orbit = star.radius + data.shipRadius + 3;
 		// let orbit = star.radius + i ;
 		// let orbit = star.radius + i % 2
 		// let orbit = star.radius + i % (data.shipRadius + 3);
 		// let orbit = star.radius + i % 2 * (data.shipRadius + 3);
-		let ship = new Ship(radius, color, orbit);
+		let ship = new Ship(radius, color, orbit, angle);
 		return ship;
 	}
 
 	function drawShips(star) {
 		let x, y
 		star['ships'].forEach((ship, i) => {
-			theta = theta + ((i / 10000) * data.speed) / 15000;
-			// let variedOrbitModifierX = data.orbitXmod + i / (i-1)
-			// let variedOrbitModifierY = data.orbitYmod + i / (i-1)
-			let variedOrbitModifierX = data.orbitXmod  
-			let variedOrbitModifierY = data.orbitYmod  
-			// x = star.x + ship.orbit * Math.cos((theta + i) / data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
-			// y = star.y + ship.orbit * Math.sin(theta + i / data.orbitYmod);
-			// x = star.x + ship.orbit * Math.cos((theta + i) - data.orbitXmod); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
-			// y = star.y + ship.orbit * Math.sin((theta + i) - data.orbitYmod);
-			x = star.x + ship.orbit * Math.cos((theta + i) + variedOrbitModifierX); // adjustments to theta, like using i only on x or y, or i / 2, gives different results
-			y = star.y + ship.orbit * Math.sin((theta + i) + variedOrbitModifierY);
+			ship.angle += data.speed
+			x = star.x + Math.cos(ship.angle) * ship.orbit * data.orbitYmod ;
+			y = star.y + Math.sin(ship.angle) * ship.orbit * data.orbitYmod ;
 			ship.pos = { x, y };
-			// i === 0 ? console.log(`a ship from drawShips: `, ship) : null;
 			ctx.beginPath();
 			ctx.arc(x, y, 4, 0, 2 * Math.PI);
 			// ctx.fillStyle = ship.color;
@@ -772,12 +764,13 @@
 	}
 
 	class Ship {
-		constructor(radius, color, orbit) {
+		constructor(radius, color, orbit, angle) {
 			this.radius = radius;
 			this.color = color;
 			this.orbit = orbit;
 			this.distance = 0;
-			this.pos = {x: 0, y:0 }
+			this.pos = {x: 0, y:0 };
+			this.angle = angle;
 		}
 	}
 </script>
@@ -821,9 +814,9 @@
 				label="Speed"
 				on:message={onChange}
 				bind:value={data.speed}
-				min="5"
-				max="100"
-				step="5"
+				min=".005"
+				max=".05"
+				step=".005"
 			/>
 			<Slider label="FPS" on:message={onChange} bind:value={data.fps} min="1" max="60" step="1" />
 			<Slider
@@ -889,6 +882,12 @@
 				label="Draw Vertices"
 				on:change={(e) => onChange(e)}
 				bind:checked={data.drawVertices}
+			/>
+			<Checkbox
+				duration="200"
+				label="Draw Labels"
+				on:change={(e) => onChange(e)}
+				bind:checked={data.drawNumShips}
 			/>
 			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
 		</CanvasManager>
