@@ -16,7 +16,7 @@
 		})
             console.log(`🚀 ~ file: Slider.svelte ~ line 17 ~ dispatchMessage ~ ${label}: `, value)
 	}
-	$: value
+	$: value = value
 </script>
 
 <Param {label} {color}>

@@ -69,10 +69,10 @@
 		TITLE: 'Pax01-vanilla',
 		fps: 60,
 		tickRate: 10,
-		numStars: 10,
-		numTypes: 5,
-		shipsMin: 1,
-		shipsMax: 50,
+		numStars: 1,
+		numTypes: 1,
+		shipsMin: 10,
+		shipsMax: 10,
 		starRadius: 20,
 		shipRadius: 5,
 		gridRadius: 55,
@@ -87,7 +87,7 @@
 		drawHexes: true,
 		drawVertices: true,
 		buildVertices: true,
-		drawNumShips: true,
+		drawLabels: true,
 		stars: []
 	};
 	let hexCenterCoords = [];
@@ -193,6 +193,8 @@
 			buildVertices,
 			drawVertices
 		);
+
+		window.localStorage.removeItem(`${data.TITLE}`);
 
 		// hexCenterCoords = [];
 		generateHexGrid(w, h, data.gridRadius, data.gridOffset);
@@ -426,9 +428,9 @@
 		animating ? animate() : null;
 	}
 
-	function reset() {
-		// data.clearLS = true
-		init();
+	function clearLS() {
+		window.localStorage.removeItem(`${data.TITLE}`);
+		window.location.reload();
 	}
 
 	function onChange(e) {
@@ -450,7 +452,7 @@
 					coords.x,
 					coords.y,
 					starType + data.starRadius,
-					starType,
+					starType + 1,
 					Math.floor(Math.random() * data.numTypes) * (360 / data.numTypes),
 					Math.floor(Math.random() * data.shipsMax)
 				);
@@ -474,28 +476,45 @@
 	}
 
 	function generateShips(star) {
-		let ships = star.ships;
-		for (let i = 0; i < star.numShips; i++) {
+		let ships = star.ships = []
+		let numShips = star.numShips;
+		for (let i = 0; i < numShips; i++) {
 			let ship = addShipToStar(star, i);
 			ships.push(ship);
 		}
 		// setShipOrbits(star)
+		drawShips(star);
 		return ships;
 	}
 
 	function adjustShipNumber(star) {
-		star.ships.length > star.numShips
-			? destroyShips(star, star.ships.length - star.numShips)
-			: null;
-		star.ships.length < star.numShips
-			? (star.ships = [...star.ships, generateShips(star, star.numShips - star.ships.length)])
-			: null;
+		let currentNumberOfShips = star.ships.length;
+		console.log(`🚀 ~ file: index.svelte:493 ~ adjustShipNumber ~ star.numShips:`, star.numShips);
+		console.log(`🚀 ~ file: index.svelte:490 ~ adjustShipNumber ~ currentNumberOfShips:`, currentNumberOfShips)
+		star.numShips;
+		if(currentNumberOfShips > star.numShips) {
+			destroyShips(star, star.ships.length - star.numShips)
+			drawShips(star);
+		}
+		if (currentNumberOfShips < star.numShips) {
+			generateShips(star);
+
+		} else {
+			return
+		}
+
+
+		console.log(`⚡ ~ file: index.svelte:502 ~ adjustShipNumber ~ star.numShips:`, star.numShips);
+		console.log(
+			`⚡ ~ file: index.svelte:504 ~ adjustShipNumber ~ star.ships.length:`,
+			star.ships.length
+		);
 		// setShipOrbits(star);
 	}
 
 	function setShipOrbits(star) {
 		star.ships.forEach((ship, i) => {
-			ship.orbit =  2 * (data.shipRadius + Math.sqrt(i)) ;
+			ship.orbit = 2 * (data.shipRadius + Math.sqrt(i));
 		});
 	}
 
@@ -514,10 +533,10 @@
 		// }%, ${Math.random > 0.5 ? 75 + Math.random() * i * 5 : 50 - Math.random() * i}%, ${
 		// 	Math.random > 0.5 ? Math.random() + 0.25 : Math.random() - 0.25
 		// })`;
-		let color = `hsla(${star.hue}, 50%, 80%, 0.25)`
+		let color = `hsla(${star.hue}, 50%, 80%, 0.25)`;
 		let radius = data.shipRadius;
-		let orbit = star.radius + data.shipRadius * 3
-		let angle = 2 * Math.PI * i / star.numShips
+		let orbit = star.radius + data.shipRadius * 3;
+		let angle = (2 * Math.PI * i) / star.numShips;
 		// let orbit = star.radius + data.shipRadius + 3;
 		// let orbit = star.radius + i ;
 		// let orbit = star.radius + i % 2
@@ -528,18 +547,18 @@
 	}
 
 	function drawShips(star) {
-		let x, y
+		let x, y;
 		star['ships'].forEach((ship, i) => {
-			ship.angle += data.speed
-			x = star.x + Math.cos(ship.angle) * ship.orbit * data.orbitYmod ;
-			y = star.y + Math.sin(ship.angle) * ship.orbit * data.orbitYmod ;
+			ship.angle += data.speed;
+			x = star.x + Math.cos(ship.angle) * ship.orbit * data.orbitYmod;
+			y = star.y + Math.sin(ship.angle) * ship.orbit * data.orbitYmod;
 			ship.pos = { x, y };
 			ctx.beginPath();
 			ctx.arc(x, y, 4, 0, 2 * Math.PI);
 			// ctx.fillStyle = ship.color;
-			ctx.lineWidth = 1
+			ctx.lineWidth = 1;
 			ctx.strokeStyle = ship.color;
-			ctx.stroke()
+			ctx.stroke();
 			// ctx.fill();
 		});
 	}
@@ -547,23 +566,29 @@
 	function transferShips(star) {
 		if (star.destinationStarId) {
 			let dest = getStarById(star.destinationStarId);
-			let j = 0
-			star.shipsToTransfer.forEach((ship,i) => {
+			let j = 0;
+			star.shipsToTransfer.forEach((ship, i) => {
 				// ship.distance++;
 				// console.log(`🚀 ~ file: index.svelte ~ line 559 ~ shipsToTransfer.forEach ~ ship`, ship)
 				ship.distance += j;
-				j++
-				let pos = getPositionAlongTheLine(ship.pos.x, ship.pos.y, dest.x, dest.y, ship.distance / 100);
+				j++;
+				let pos = getPositionAlongTheLine(
+					ship.pos.x,
+					ship.pos.y,
+					dest.x,
+					dest.y,
+					ship.distance / 100
+				);
 				// ctx.save()
 				ctx.beginPath();
 				ctx.arc(pos.x, pos.y, ship.radius, 0, 2 * Math.PI);
 				// ctx.fillStyle = ship.color;
 				ctx.strokeStyle = ship.color;
-				ctx.stroke()
+				ctx.stroke();
 				// ctx.fill();
 				// ctx.restore()
 				if (ship.distance >= 95) {
-					ship.distance = 0
+					ship.distance = 0;
 					dest.ships.push(ship);
 					star.shipsToTransfer.splice(i, 1);
 					dest.numShips++;
@@ -571,12 +596,15 @@
 				}
 			});
 			// transfer shipsPerTick to destination star
-
 		}
 	}
 
 	function calculateNumberOfShips(star) {
 		let shipsPerTick = Math.ceil(star.numShips * star.shipsPerTickPercentage);
+		console.log(
+			`🚀 ~ file: index.svelte:584 ~ calculateNumberOfShips ~ shipsPerTick:`,
+			shipsPerTick
+		);
 		star.shipsPerTick = shipsPerTick;
 		star.shipsToTransfer = [...star['ships'].slice(0, shipsPerTick)];
 	}
@@ -629,9 +657,14 @@
 	}
 
 	function tickUpdateShips() {
+		console.log(
+			`🚀 ~ file: index.svelte:637 ~ stars.forEach ~ star[0]:`,
+			stars[0],
+			stars[0].ships.length
+		);
 		stars.forEach((star) => {
 			star.update();
-			calculateNumberOfShips(star) 
+			calculateNumberOfShips(star);
 			adjustShipNumber(star);
 		});
 	}
@@ -680,7 +713,7 @@
 			if (this.active) {
 				this.activeHighlight(ctx);
 			}
-			if (data.drawNumShips) {
+			if (data.drawLabels) {
 				ctx.font = `bold ${fontSize}px sans-serif`;
 				ctx.textAlign = 'center';
 				// ctx.fillText(this.ships.length, this.x - this.radius / 3, this.y + fontSize / 3);
@@ -697,7 +730,7 @@
 		}
 
 		update() {
-			this.type === 1  ? this.numShips++ : null;
+			this.type === 1 ? this.numShips++ : null;
 			this.type === 2 && tick % 2 == 0 ? this.numShips++ : null;
 			this.type === 3 && tick % 3 == 0 ? this.numShips++ : null;
 			this.type === 4 && tick % 4 == 0 ? this.numShips++ : null;
@@ -769,7 +802,7 @@
 			this.color = color;
 			this.orbit = orbit;
 			this.distance = 0;
-			this.pos = {x: 0, y:0 };
+			this.pos = { x: 0, y: 0 };
 			this.angle = angle;
 		}
 	}
@@ -851,6 +884,9 @@
 				on:click={drawOnHexCoords}>Redraw grid</button
 			>
 			<button label="Start" class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded" on:click={mapInit}
+				>Re-initialize map</button
+			>
+			<button label="Start" class="p-3 m-2 bg-sky-600 hover:bg-sky-500 rounded" on:click={clearLS}
 				>Clear localStorage</button
 			>
 			<Checkbox
@@ -887,7 +923,7 @@
 				duration="200"
 				label="Draw Labels"
 				on:change={(e) => onChange(e)}
-				bind:checked={data.drawNumShips}
+				bind:checked={data.drawLabels}
 			/>
 			<OptionSelect items={data.colorFunctions} bind:selected={data.colorFunctionsIndex} />
 		</CanvasManager>
