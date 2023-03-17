@@ -69,10 +69,10 @@
 		TITLE: 'Pax01-vanilla',
 		fps: 60,
 		tickRate: 10,
-		numStars: 1,
-		numTypes: 1,
+		numStars: 10,
+		numTypes: 5,
 		shipsMin: 10,
-		shipsMax: 10,
+		shipsMax: 30,
 		starRadius: 20,
 		shipRadius: 5,
 		gridRadius: 55,
@@ -489,8 +489,6 @@
 
 	function adjustShipNumber(star) {
 		let currentNumberOfShips = star.ships.length;
-		console.log(`🚀 ~ file: index.svelte:493 ~ adjustShipNumber ~ star.numShips:`, star.numShips);
-		console.log(`🚀 ~ file: index.svelte:490 ~ adjustShipNumber ~ currentNumberOfShips:`, currentNumberOfShips)
 		star.numShips;
 		if(currentNumberOfShips > star.numShips) {
 			destroyShips(star, star.ships.length - star.numShips)
@@ -502,14 +500,6 @@
 		} else {
 			return
 		}
-
-
-		console.log(`⚡ ~ file: index.svelte:502 ~ adjustShipNumber ~ star.numShips:`, star.numShips);
-		console.log(
-			`⚡ ~ file: index.svelte:504 ~ adjustShipNumber ~ star.ships.length:`,
-			star.ships.length
-		);
-		// setShipOrbits(star);
 	}
 
 	function setShipOrbits(star) {
@@ -601,10 +591,6 @@
 
 	function calculateNumberOfShips(star) {
 		let shipsPerTick = Math.ceil(star.numShips * star.shipsPerTickPercentage);
-		console.log(
-			`🚀 ~ file: index.svelte:584 ~ calculateNumberOfShips ~ shipsPerTick:`,
-			shipsPerTick
-		);
 		star.shipsPerTick = shipsPerTick;
 		star.shipsToTransfer = [...star['ships'].slice(0, shipsPerTick)];
 	}
